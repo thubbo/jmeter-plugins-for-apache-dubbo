@@ -85,12 +85,12 @@ public class DubboSampleGui extends AbstractSamplerGui {
         settingPanel.setBorder(makeBorder());
         Container container = makeTitlePanel();
         
-        JLabel linklabel = new JLabel("<html><a href='https://github.com/ningyu1'>The plug-in author is Ningyu, Plug-in GitHub</a></html>");
+        JLabel linklabel = new JLabel("<html><a href='https://github.com/ningyu1/jmeter-plugins-dubbo'>The plug-in author is Ningyu, Plug-in GitHub</a></html>");
         linklabel.setIcon(new ImageIcon(getClass().getResource("/images/about.png")));
         linklabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 try {
-                    Desktop.getDesktop().browse(new URL("https://github.com/ningyu1").toURI());
+                    Desktop.getDesktop().browse(new URL("https://github.com/ningyu1/jmeter-plugins-dubbo").toURI());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
