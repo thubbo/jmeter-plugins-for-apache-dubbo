@@ -64,7 +64,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
     private JTextField interfaceText;
     private JTextField methodText;
     private DefaultTableModel model;
-    private String[] columnNames = {"name", "value"};
+    private String[] columnNames = {"paramType", "paramValue"};
     private String[] tmpRow = {"", ""};
 
     public DubboSampleGui() {
@@ -232,8 +232,8 @@ public class DubboSampleGui extends AbstractSamplerGui {
         interfaceText.setText(sample.getInterface());
         methodText.setText(sample.getMethod());
         Vector<String> columnNames = new Vector<String>();
-        columnNames.add("name");
-        columnNames.add("value");
+        columnNames.add("paramType");
+        columnNames.add("paramValue");
         model.setDataVector(sample.getMethodArgs(), columnNames);
     }
 
