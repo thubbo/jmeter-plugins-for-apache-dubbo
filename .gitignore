@@ -1,0 +1,10 @@
+/target/*
+/bin/*
+/*/target/*
+/*/bin/*
+/*.bat
+.project
+.classpath
+/target/
+
+.settings/*
