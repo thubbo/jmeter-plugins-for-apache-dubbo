@@ -61,7 +61,7 @@ log4j-over-slf4j-1.7.5.jar
 
 ![](https://ningyu1.github.io/site/img/jmeter-plugins-dubbo/4.png)
 
-![](https://ningyu1.github.io/site/img/jmeter-plugins-dubbo/5.png)
+![](https://ningyu1.github.io/site/img/jmeter-plugins-dubbo/51.png)
 
 ![](https://ningyu1.github.io/site/img/jmeter-plugins-dubbo/6.png)
 
