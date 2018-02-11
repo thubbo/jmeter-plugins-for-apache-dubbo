@@ -2,7 +2,7 @@
 
 # 介绍
 
-Dubbo Plugin for Apache JMeter是用来在Jmeter里面方便的测试Dubbo接口而开发的插件
+Dubbo Plugin for Apache JMeter是用来在Jmeter里更加方便的测试Dubbo接口而开发的插件
 
 # 项目地址
 
