@@ -26,7 +26,7 @@ Jmeter版本：3.0
 ${Path}\apache-jmeter-3.0\lib\ext
 ```
 
-如果使用的是:`jmeter-plugins-dubbo-1.0.0-SNAPSHOT-jar-with-dependencies.jar`包含所有依赖，推荐使用这个包。
+如果使用的是：`jmeter-plugins-dubbo-1.0.0-SNAPSHOT-jar-with-dependencies.jar`包含所有依赖，推荐使用这个包。
 
 如果使用的是：`jmeter-plugins-dubbo-1.0.0-SNAPSHOT.jar`需要自行添加插件的依赖包，依赖包版本如下：
 
