@@ -19,8 +19,8 @@ Dubbo Plugin for Apache JMeter是用来在Jmeter里更加方便的测试Dubbo接
 3. 主要用于Dubbo RPC接口测试
 
 [V1.1.0](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.1.0)
-1. 工具界面输入信息均支持使用jmeter变量var，函数{__RandomString(5,12345,ids)}进行参数化。
-2. 接口参数类型与值支持使用jmeter变量var，函数{__RandomString(5,12345,ids)}进行参数化
+1. 工具界面输入信息均支持使用jmeter变量${var}，函数${__RandomString(5,12345,ids)}进行参数化。
+2. 接口参数类型与值支持使用jmeter变量${var}，函数${__RandomString(5,12345,ids)}进行参数化
 
 ps.很遗憾的是升级插件后以前的jmx文件无法打开需要重新创建jmx脚本
 
