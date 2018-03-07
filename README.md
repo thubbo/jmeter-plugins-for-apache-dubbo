@@ -12,6 +12,19 @@ Dubbo Plugin for Apache JMeter是用来在Jmeter里更加方便的测试Dubbo接
 
 <a href="https://github.com/ningyu1/jmeter-plugins-dubbo/releases"><img src="https://img.shields.io/github/release/ningyu1/jmeter-plugins-dubbo.svg?style=social&amp;label=Release"></a>&nbsp;<a href="https://github.com/ningyu1/jmeter-plugins-dubbo/stargazers"><img src="https://img.shields.io/github/stars/ningyu1/jmeter-plugins-dubbo.svg?style=social&amp;label=Star"></a>&nbsp;<a href="https://github.com/ningyu1/jmeter-plugins-dubbo/fork"><img src="https://img.shields.io/github/forks/ningyu1/jmeter-plugins-dubbo.svg?style=social&amp;label=Fork"></a>&nbsp;<a href="https://github.com/ningyu1/jmeter-plugins-dubbo/watchers"><img src="https://img.shields.io/github/watchers/ningyu1/jmeter-plugins-dubbo.svg?style=social&amp;label=Watch"></a> <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 
+# 版本更新
+[V1.0.0](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.0.0)
+1. 增加了DubboSample，协议支持：zookeeper、dubbo
+2. 增加调用接口与方法以及参数支持
+3. 主要用于Dubbo RPC接口测试
+
+[V1.1.0](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.1.0)
+1. 工具界面所有输入信息均支持使用jmeter变量与函数
+2. 接口参数支持使用jmeter变量与函数
+![1](https://user-images.githubusercontent.com/3387548/37082704-310fa8ce-2228-11e8-88ff-f278ce1a0009.png)
+![2](https://user-images.githubusercontent.com/3387548/37082705-315581b4-2228-11e8-930a-e246f18dc371.png)
+![3](https://user-images.githubusercontent.com/3387548/37082707-319ca698-2228-11e8-8b20-47cf315ee267.png)
+
 # DubboSample使用
 
 ## 支持Jmeter版本
