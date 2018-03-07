@@ -18,6 +18,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -40,6 +43,7 @@ import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
 import cn.tsoft.framework.testing.jmeter.plugin.dubbo.sample.DubboSample;
+import cn.tsoft.framework.testing.jmeter.plugin.dubbo.sample.MethodArgument;
 
 /**
  * gui上创建一个sampler，其调用的顺序是**clearGui()->createTestElement()->modifyTestElement()->configure()**
@@ -175,7 +179,8 @@ public class DubboSampleGui extends AbstractSamplerGui {
         //Args
         JLabel argsLable = new JLabel("        Args:", SwingConstants.RIGHT);
         model = new DefaultTableModel();
-        model.setDataVector(new String[][]{{"", ""}}, columnNames);
+//        model.setDataVector(new String[][]{{"", ""}}, columnNames);
+        model.setDataVector(null, columnNames);
         final JTable table = new JTable(model);
         table.setRowHeight(40);
         //添加按钮
@@ -226,15 +231,15 @@ public class DubboSampleGui extends AbstractSamplerGui {
         protocolText.setSelectedItem(sample.getProtocol());
         addressText.setText(sample.getAddress());
         versionText.setText(sample.getVersion());
-        timeoutText.setText(String.valueOf(sample.getTimeout()));
-        retriesText.setText(String.valueOf(sample.getRetries()));
+        timeoutText.setText(sample.getTimeout());
+        retriesText.setText(sample.getRetries());
         clusterText.setText(sample.getCluster());
         interfaceText.setText(sample.getInterface());
         methodText.setText(sample.getMethod());
         Vector<String> columnNames = new Vector<String>();
         columnNames.add("paramType");
         columnNames.add("paramValue");
-        model.setDataVector(sample.getMethodArgs(), columnNames);
+        model.setDataVector(paserMethodArgsData(sample.getMethodArgs()), columnNames);
     }
 
     /**
@@ -267,15 +272,41 @@ public class DubboSampleGui extends AbstractSamplerGui {
         //给sample赋值
         super.configureTestElement(element);
         DubboSample sample = (DubboSample) element;
-        sample.setProtocol((String) protocolText.getSelectedItem());
+        sample.setProtocol(protocolText.getSelectedItem().toString());
         sample.setAddress(addressText.getText());
-        sample.setTimeout(Integer.valueOf(timeoutText.getText()));
+        sample.setTimeout(timeoutText.getText());
         sample.setVersion(versionText.getText());
-        sample.setRetries(Integer.parseInt(retriesText.getText()));
+        sample.setRetries(retriesText.getText());
         sample.setCluster(clusterText.getText());
         sample.setInterfaceName(interfaceText.getText());
         sample.setMethod(methodText.getText());
-        sample.setMethodArgs(model.getDataVector());
+        sample.setMethodArgs(getMethodArgsData(model.getDataVector()));
+    }
+    
+    private Vector<Vector<String>> paserMethodArgsData(List<MethodArgument> list) {
+    	Vector<Vector<String>> res = new Vector<Vector<String>>();
+    	for (MethodArgument args : list) {
+    		Vector<String> v = new Vector<String>();
+    		v.add(args.getParamType());
+    		v.add(args.getParamValue());
+    		res.add(v);
+    	}
+    	return res;
+    }
+    
+    private List<MethodArgument> getMethodArgsData(Vector<Vector<String>> data) {
+    	List<MethodArgument> params = new ArrayList<MethodArgument>();
+    	if (!data.isEmpty()) {
+    		 //处理参数
+            Iterator<Vector<String>> it = data.iterator();
+            while(it.hasNext()) {
+                Vector<String> param = it.next();
+                if (!param.isEmpty()) {
+                	params.add(new MethodArgument(param.get(0), param.get(1)));
+                }
+            }
+    	}
+    	return params;
     }
 
     /**
@@ -283,7 +314,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
      */
     @Override
     public String getStaticLabel() {
-        return "DubboSample";
+        return "Dubbo Sample";
     }
 
     /**
@@ -299,7 +330,8 @@ public class DubboSampleGui extends AbstractSamplerGui {
         versionText.setText("1.0.0");
         interfaceText.setText("");
         methodText.setText("");
-        model.setDataVector(new String[][]{{"", ""}}, columnNames);
+//        model.setDataVector(new String[][]{{"", ""}}, columnNames);
+        model.setDataVector(null, columnNames);
     }
 
 }

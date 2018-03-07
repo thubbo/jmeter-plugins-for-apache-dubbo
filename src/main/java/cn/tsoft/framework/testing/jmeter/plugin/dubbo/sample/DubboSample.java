@@ -15,13 +15,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
-import org.apache.jmeter.testelement.property.JMeterProperty;
-import org.apache.jmeter.testelement.property.ObjectProperty;
+import org.apache.jmeter.testelement.property.IntegerProperty;
+import org.apache.jmeter.testelement.property.StringProperty;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
@@ -56,9 +55,10 @@ public class DubboSample extends AbstractSampler {
     public static String FIELD_DUBBO_INTERFACE = "FIELD_DUBBO_INTERFACE";
     public static String FIELD_DUBBO_METHOD = "FIELD_DUBBO_METHOD";
     public static String FIELD_DUBBO_METHOD_ARGS = "FIELD_DUBBO_METHOD_ARGS";
-    public static int DEFAULT_TIMEOUT = 1200000;
+    public static String FIELD_DUBBO_METHOD_ARGS_SIZE = "FIELD_DUBBO_METHOD_ARGS_SIZE";
+    public static String DEFAULT_TIMEOUT = "1200000";
     public static String DEFAULT_VERSION = "1.0.0";
-    public static int DEFAULT_RETRIES = 0;
+    public static String DEFAULT_RETRIES = "0";
     public static String DEFAULT_CLUSTER = "failfast";
 
     /**
@@ -74,7 +74,7 @@ public class DubboSample extends AbstractSampler {
      * @param protocol the protocol to set
      */
     public void setProtocol(String protocol) {
-        this.setProperty(FIELD_DUBBO_PROTOCOL, protocol);
+        this.setProperty(new StringProperty(FIELD_DUBBO_PROTOCOL, protocol));
     }
 
     /**
@@ -90,23 +90,23 @@ public class DubboSample extends AbstractSampler {
      * @param address the address to set
      */
     public void setAddress(String address) {
-        this.setProperty(FIELD_DUBBO_ADDRESS, address);
+        this.setProperty(new StringProperty(FIELD_DUBBO_ADDRESS, address));
     }
 
     /**
      * 获取 timeout
      * @return the timeout
      */
-    public int getTimeout() {
-        return this.getPropertyAsInt(FIELD_DUBBO_TIMEOUT, DEFAULT_TIMEOUT);
+    public String getTimeout() {
+        return this.getPropertyAsString(FIELD_DUBBO_TIMEOUT, DEFAULT_TIMEOUT);
     }
 
     /**
      * 设置 timeout
      * @param timeout the timeout to set
      */
-    public void setTimeout(int timeout) {
-        this.setProperty(FIELD_DUBBO_TIMEOUT, timeout);
+    public void setTimeout(String timeout) {
+        this.setProperty(new StringProperty(FIELD_DUBBO_TIMEOUT, timeout));
     }
 
     /**
@@ -122,23 +122,23 @@ public class DubboSample extends AbstractSampler {
      * @param version the version to set
      */
     public void setVersion(String version) {
-        this.setProperty(FIELD_DUBBO_VERSION, version);
+        this.setProperty(new StringProperty(FIELD_DUBBO_VERSION, version));
     }
     
     /**
      * 获取 retries
      * @return the retries
      */
-    public int getRetries() {
-        return this.getPropertyAsInt(FIELD_DUBBO_RETRIES, DEFAULT_RETRIES);
+    public String getRetries() {
+        return this.getPropertyAsString(FIELD_DUBBO_RETRIES, DEFAULT_RETRIES);
     }
 
     /**
      * 设置 retries
      * @param retries the retries to set
      */
-    public void setRetries(int retries) {
-        this.setProperty(FIELD_DUBBO_RETRIES, retries);
+    public void setRetries(String retries) {
+        this.setProperty(new StringProperty(FIELD_DUBBO_RETRIES, retries));
     }
     
     /**
@@ -154,7 +154,7 @@ public class DubboSample extends AbstractSampler {
      * @param cluster the cluster to set
      */
     public void setCluster(String cluster) {
-        this.setProperty(FIELD_DUBBO_CLUSTER, cluster);
+        this.setProperty(new StringProperty(FIELD_DUBBO_CLUSTER, cluster));
     }
 
     /**
@@ -170,7 +170,7 @@ public class DubboSample extends AbstractSampler {
      * @param interfaceName the interfaceName to set
      */
     public void setInterfaceName(String interfaceName) {
-        this.setProperty(FIELD_DUBBO_INTERFACE, interfaceName);
+        this.setProperty(new StringProperty(FIELD_DUBBO_INTERFACE, interfaceName));
     }
 
     /**
@@ -186,29 +186,42 @@ public class DubboSample extends AbstractSampler {
      * @param method the method to set
      */
     public void setMethod(String method) {
-        this.setProperty(FIELD_DUBBO_METHOD, method);
+        this.setProperty(new StringProperty(FIELD_DUBBO_METHOD, method));
     }
 
     /**
      * 获取 methodArgs
      * @return the methodArgs
      */
-    @SuppressWarnings("unchecked")
-    public Vector<Vector<String>> getMethodArgs() {
-        JMeterProperty p = this.getProperty(FIELD_DUBBO_METHOD_ARGS);
-        return (Vector<Vector<String>>) p.getObjectValue();
+    public List<MethodArgument> getMethodArgs() {
+    	int paramsSize = this.getPropertyAsInt(FIELD_DUBBO_METHOD_ARGS_SIZE, 0);
+    	List<MethodArgument> list = new ArrayList<MethodArgument>();
+		for (int i = 1; i <= paramsSize; i++) {
+			String paramType = this.getPropertyAsString(FIELD_DUBBO_METHOD_ARGS + "_PARAM_TYPE" + i);
+			String paramValue = this.getPropertyAsString(FIELD_DUBBO_METHOD_ARGS + "_PARAM_VALUE" + i);
+			MethodArgument args = new MethodArgument(paramType, paramValue);
+			list.add(args);
+		}
+    	return list;
     }
 
     /**
      * 设置 methodArgs
      * @param methodArgs the methodArgs to set
      */
-    public void setMethodArgs(Vector<Vector<String>> methodArgs) {
-        JMeterProperty p = new ObjectProperty(FIELD_DUBBO_METHOD_ARGS, methodArgs);
-        this.setProperty(p);
+    public void setMethodArgs(List<MethodArgument> methodArgs) {
+    	int size = methodArgs == null ? 0 : methodArgs.size();
+    	this.setProperty(new IntegerProperty(FIELD_DUBBO_METHOD_ARGS_SIZE, size));
+    	if (size > 0) {
+    		for (int i = 1; i <= methodArgs.size(); i++) {
+    			this.setProperty(new StringProperty(FIELD_DUBBO_METHOD_ARGS + "_PARAM_TYPE" + i, methodArgs.get(i-1).getParamType()));
+    			this.setProperty(new StringProperty(FIELD_DUBBO_METHOD_ARGS + "_PARAM_VALUE" + i, methodArgs.get(i-1).getParamValue()));
+    		}
+    	}
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public SampleResult sample(Entry entry) {
         SampleResult res = new SampleResult();
         res.setSampleLabel("DubboResult");
@@ -234,16 +247,16 @@ public class DubboSample extends AbstractSampler {
      * @return
      */
     private String getSampleData() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("Protocol:").append(getProtocol()).append("\n");
-        sb.append("Address:").append(getAddress()).append("\n");
-        sb.append("Timeout:").append(getTimeout()).append("\n");
-        sb.append("Version:").append(getVersion()).append("\n");
-        sb.append("Retries:").append(getRetries()).append("\n");
-        sb.append("Cluster:").append(getCluster()).append("\n");
-        sb.append("Interface:").append(getInterface()).append("\n");
-        sb.append("Method:").append(getMethod()).append("\n");
-        sb.append("Method Args:").append(getMethodArgs().toString());
+    	StringBuilder sb = new StringBuilder();
+        sb.append("Protocol: ").append(getProtocol()).append("\n");
+        sb.append("Address: ").append(getAddress()).append("\n");
+        sb.append("Timeout: ").append(getTimeout()).append("\n");
+        sb.append("Version: ").append(getVersion()).append("\n");
+        sb.append("Retries: ").append(getRetries()).append("\n");
+        sb.append("Cluster: ").append(getCluster()).append("\n");
+        sb.append("Interface: ").append(getInterface()).append("\n");
+        sb.append("Method: ").append(getMethod()).append("\n");
+        sb.append("Method Args: ").append(getMethodArgs().toString());
         return sb.toString();
     }
     
@@ -274,10 +287,10 @@ public class DubboSample extends AbstractSampler {
         try {
             Class clazz = Class.forName(getInterface());
             reference.setInterface(clazz);
-            reference.setRetries(getRetries());
+            reference.setRetries(Integer.valueOf(getRetries()));
             reference.setCluster(getCluster());
             reference.setVersion(getVersion());
-            reference.setTimeout(getTimeout());
+            reference.setTimeout(Integer.valueOf(getTimeout()));
             Object target = reference.get();
             Method method = null;
             Class[] parameterTypes = null;
@@ -285,14 +298,15 @@ public class DubboSample extends AbstractSampler {
             
             List<Class> parameterTypesList = new ArrayList<Class>();
             List<Object> parameterValuesList = new ArrayList<Object>();
-            Vector<Vector<String>> vector = getMethodArgs();
-            if (!vector.isEmpty()) {
+            List<MethodArgument> args = getMethodArgs();
+            if (args.size() > 0) {
                 //处理参数
-                Iterator<Vector<String>> it = vector.iterator();
+                Iterator<MethodArgument> it = args.iterator();
                 while(it.hasNext()) {
-                    Vector<String> param = it.next();
-                    String paramType = param.get(0);
-                    String paramValue = param.get(1);
+                	MethodArgument param = it.next();
+                    String paramType = param.getParamType();
+                    String paramValue = param.getParamValue();
+                    log.info("paramValue:"+paramValue);
                     if (null == paramType || "".equals(paramType.trim())) {
                         continue;
                     } else {
