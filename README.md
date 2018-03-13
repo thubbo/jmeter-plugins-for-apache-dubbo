@@ -30,7 +30,7 @@ Dubbo Plugin for Apache JMeter是用来在Jmeter里更加方便的测试Dubbo接
 |long|long|1|
 |byte|byte|字节|
 |boolean|boolean|true或false|
-|char|char|A，如果字符过长取值为："STR".charAt(0)|
+|char|char|'a'，如果字符过长取值为："STR".charAt(0)|
 |java.lang.String|java.lang.String或String或string|字符串|
 |java.lang.Integer|java.lang.Integer或Integer或integer|1|
 |java.lang.Double|java.lang.Double或Double|1.2|
