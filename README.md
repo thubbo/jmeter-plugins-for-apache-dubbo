@@ -21,7 +21,7 @@ Dubbo Plugin for Apache JMeter是用来在Jmeter里更加方便的测试Dubbo接
 
 本次版本主要对反射参数类型进行了增强，支持复杂类型、支持参数泛型，可以参考如下的参数对照表：
 
-![image](https://user-images.githubusercontent.com/3387548/37323687-50e01eb2-26c0-11e8-8274-9db07b66b41d.png)
+![image](https://user-images.githubusercontent.com/3387548/37324055-495fbb50-26c2-11e8-9bfa-3fb0739a5cf6.png)
 
 [V1.1.0](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.1.0)
 1. 工具界面输入信息均支持使用jmeter变量${var}，函数${__RandomString(5,12345,ids)}进行参数化。
