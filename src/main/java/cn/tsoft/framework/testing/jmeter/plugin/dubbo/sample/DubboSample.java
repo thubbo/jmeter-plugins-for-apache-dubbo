@@ -10,10 +10,9 @@
  */
 package cn.tsoft.framework.testing.jmeter.plugin.dubbo.sample;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.jmeter.samplers.AbstractSampler;
@@ -24,11 +23,13 @@ import org.apache.jmeter.testelement.property.StringProperty;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
-import com.alibaba.dubbo.common.json.JSON;
-import com.alibaba.dubbo.common.json.ParseException;
+import cn.tsoft.framework.testing.jmeter.plugin.util.ClassUtils;
+import cn.tsoft.framework.testing.jmeter.plugin.util.JsonUtils;
+
 import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
+import com.alibaba.dubbo.rpc.service.GenericService;
 
 /**
  * <功能描述>
@@ -224,12 +225,12 @@ public class DubboSample extends AbstractSampler {
 	@Override
     public SampleResult sample(Entry entry) {
         SampleResult res = new SampleResult();
-        res.setSampleLabel("DubboResult");
+        res.setSampleLabel(getName());
         res.sampleStart();
         //构造请求数据
         res.setSamplerData(getSampleData());
         //调用dubbo
-        res.setResponseData(toJson(callDubbo(res)));
+        res.setResponseData(JsonUtils.toJson(callDubbo(res)));
         //构造响应数据
         res.setDataType(SampleResult.TEXT);
         res.setResponseCodeOK();
@@ -291,107 +292,113 @@ public class DubboSample extends AbstractSampler {
             reference.setCluster(getCluster());
             reference.setVersion(getVersion());
             reference.setTimeout(Integer.valueOf(getTimeout()));
-            Object target = reference.get();
+            reference.setGeneric(true);
+            GenericService genericService = (GenericService) reference.get();
             Method method = null;
-            Class[] parameterTypes = null;
+            String[] parameterTypes = null;
             Object[] parameterValues = null;
-            
-            List<Class> parameterTypesList = new ArrayList<Class>();
-            List<Object> parameterValuesList = new ArrayList<Object>();
             List<MethodArgument> args = getMethodArgs();
-            if (args.size() > 0) {
-                //处理参数
-                Iterator<MethodArgument> it = args.iterator();
-                while(it.hasNext()) {
-                	MethodArgument param = it.next();
-                    String paramType = param.getParamType();
-                    String paramValue = param.getParamValue();
-                    log.info("paramValue:"+paramValue);
-                    if (null == paramType || "".equals(paramType.trim())) {
-                        continue;
-                    } else {
-                        if (paramType.equals("int")) {
-                            parameterTypesList.add(int.class);
-                            parameterValuesList.add(Integer.parseInt(paramValue));
-                        } else if (paramType.equals("double")) {
-                            parameterTypesList.add(double.class);
-                            parameterValuesList.add(Double.parseDouble(paramValue));
-                        } else if (paramType.equals("short")) {
-                            parameterTypesList.add(short.class);
-                            parameterValuesList.add(Short.parseShort(paramValue));
-                        } else if (paramType.equals("float")) {
-                            parameterTypesList.add(float.class);
-                            parameterValuesList.add(Float.parseFloat(paramValue));
-                        } else if (paramType.equals("long")) {
-                            parameterTypesList.add(long.class);
-                            parameterValuesList.add(Long.parseLong(paramValue));
-                        } else if (paramType.equals("byte")) {
-                            parameterTypesList.add(byte.class);
-                            parameterValuesList.add(Byte.parseByte(paramValue));
-                        } else if (paramType.equals("boolean")) {
-                            parameterTypesList.add(boolean.class);
-                            parameterValuesList.add(Boolean.parseBoolean(paramValue));
-                        } else if (paramType.equals("char")) {
-                            parameterTypesList.add(char.class);
-                            parameterValuesList.add(paramValue.charAt(0));
-                        } else {
-                            Class c = Class.forName(paramType);
-                            parameterTypesList.add(c);
-                            parameterValuesList.add(formJson(paramValue, c));
-                        }
-                    }
-                }
-                parameterTypes = new Class[parameterTypesList.size()];
-                parameterTypesList.toArray(parameterTypes);
-                if (parameterTypes.length > 0) {
-                    method = target.getClass().getMethod(getMethod(), parameterTypes);
-                } else {
-                    method = target.getClass().getMethod(getMethod(), null);
-                }
-                
-            } else {
-                method = target.getClass().getMethod(getMethod(), null);
-            }
+            List<String> paramterTypeList = null;
+            List<Object> parameterValuesList = null;
+            Method[] methods = clazz.getMethods();
+			for (int i = 0; i < methods.length; i++) {
+				Method m = methods[i];
+				Type[] paramTypes = m.getGenericParameterTypes();
+				paramterTypeList = new ArrayList<String>();
+				parameterValuesList = new ArrayList<Object>();
+				log.info("paramTypes.length="+paramTypes.length+"|args.size()="+args.size());
+				if (m.getName().equals(getMethod()) && paramTypes.length == args.size()) {
+					//名称与参数数量匹配，进行参数类型转换
+					for (int j = 0; j < paramTypes.length; j++) {
+						paramterTypeList.add(args.get(j).getParamType());
+						ClassUtils.parseParameter(paramTypes[j], parameterValuesList, args.get(j));
+					}
+					if (parameterValuesList.size() == paramTypes.length) {
+						//没有转换错误，数量应该一致
+						method = m;
+						break;
+					}
+				}
+			}
             if (method == null) {
                 res.setSuccessful(false);
-                return null;
+                return "Method["+getMethod()+"] Not found!";
             }
             //发起调用
-            parameterValues = new Object[parameterValuesList.size()];
-            parameterValuesList.toArray(parameterValues);
-            Object result = method.invoke(target, parameterValues);
-            res.setSuccessful(true);
+            parameterTypes = paramterTypeList.toArray(new String[paramterTypeList.size()]);
+            parameterValues = parameterValuesList.toArray(new Object[parameterValuesList.size()]);
+            Object result = null;
+			try {
+				result = genericService.$invoke(getMethod(), parameterTypes, parameterValues);
+				res.setSuccessful(true);
+			} catch (Throwable e) {
+				log.error("接口返回异常：", e);
+				res.setSuccessful(false);
+				result = e;
+			}
             return result;
         } catch (Exception e) {
             log.error("调用dubbo接口出错：", e);
             res.setSuccessful(false);
+            return e;
         } finally {
             if (registry != null) {
                 registry.destroyAll();
             }
             reference.destroy();
         }
-        return null;
     }
     
-    public static <T> T formJson(String json, Class<T> classOfT) {
-        try {
-            return JSON.parse(json, classOfT);
-        } catch (ParseException e) {
-            log.error("json to class is error! "+classOfT.getName(), e);
-        }
-        return null;
-    }
-    
-    public static String toJson(Object obj) {
-        try {
-            return JSON.json(obj);
-        } catch (IOException e) {
-            log.error("class to json is error!", e);
-        }
-        return null;
-    }
+    public static void main(String[] args) throws Exception {
+//    	  ApplicationConfig application = new ApplicationConfig();
+//        application.setName("DubboSample");
+//        
+//        // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏
+//        ReferenceConfig reference = new ReferenceConfig();
+//        // 引用远程服务
+//        reference.setApplication(application);
+//        RegistryConfig registry = null;
+//        
+//        StringBuffer sb = new StringBuffer();
+//        sb.append("dubbo").append("://").append("192.168.6.47:20835").append("/").append("com.jiuyescm.tenant.api.IMenuResourceService");
+//        log.info("rpc invoker url : " + sb.toString());
+//        reference.setUrl(sb.toString());
+//        Class clazz = Class.forName("com.jiuyescm.tenant.api.IMenuResourceService");
+//        reference.setInterface(clazz);
+//        reference.setRetries(Integer.valueOf("0"));
+//        reference.setCluster("failfast");
+//        reference.setVersion("1.0.0");
+//        reference.setTimeout(Integer.valueOf("1200000"));
+//        Object target = reference.get();
+//        Method method = null;
+//        Object[] parameterValues = null;
+//        Method[] methods = target.getClass().getMethods();
+//    	String methodName = "createMenuResourceMapping";
+//    	List<MethodArgument> list = new ArrayList<MethodArgument>();
+//    	list.add(new MethodArgument("java.util.List", "[{\"menuId\":30002,\"appId\":8,\"resourceId\":40052},{\"menuId\":30003,\"appId\":8,\"resourceId\":40052}]"));
+//    	Class clazz = Class.forName("com.jiuyescm.tenant.api.IResourceService");
+//    	String methodName = "query";
+//    	List<MethodArgument> list = new ArrayList<MethodArgument>();
+//    	list.add(new MethodArgument("com.jiuyescm.tenant.vo.ResourceVo", "{\"menuId\":30002,\"appId\":8,\"resourceId\":40052}"));
+//    	list.add(new MethodArgument("java.lang.Integer", "1"));
+//    	list.add(new MethodArgument("java.lang.Integer", "10"));
+//    	List<Object> parameterValuesList = null;
+//    	Class clazz = Class.forName("com.jiuyescm.tenant.api.IResourceService");
+//    	String methodName = "testMethod";
+//    	List<MethodArgument> list = new ArrayList<MethodArgument>();
+//    	list.add(new MethodArgument("java.util.Map", "{\"name\":\"name\",\"value\":{\"service\":\"test1\",\"url\":\"test\",\"action\":\"GET\",\"enabled\":true,\"isPublic\":false,\"appId\":8,\"menuId\":30001}}"));
+//    	list.add(new MethodArgument("java.util.List", "[{\"name\":1,\"value\":{\"service\":\"test1\",\"url\":\"test\",\"action\":\"GET\",\"enabled\":true,\"isPublic\":false,\"appId\":8,\"menuId\":30001}},{\"name\":2,\"value\":{\"service\":\"test1\",\"url\":\"test\",\"action\":\"GET\",\"enabled\":true,\"isPublic\":false,\"appId\":8,\"menuId\":30001}}]"));
+//    	Method[] methods = clazz.getMethods();
+//    	parameterValuesList = new ArrayList<Object>();
+//    	for (Method m : methods) {
+//    		if (m.getName().equals(methodName)) {
+//    			Type[] paramTypes = m.getGenericParameterTypes();
+//				for (int j = 0; j < paramTypes.length; j++) {
+//					ClassUtils.parseParameter(paramTypes[j], parameterValuesList, list.get(j));
+//				}
+//    		}
+//    	}
+//		System.out.println(int.class.getName());
+	}
 
 }
-
-

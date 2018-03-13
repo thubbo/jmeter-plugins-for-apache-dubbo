@@ -2,11 +2,10 @@ package cn.tsoft.framework.testing.jmeter.plugin.dubbo.sample;
 
 import java.io.Serializable;
 
+import cn.tsoft.framework.testing.jmeter.plugin.util.JsonUtils;
 
 public class MethodArgument implements Serializable {
-	
-	/**
-	 */
+
 	private static final long serialVersionUID = -2567457932227227262L;
 	private String paramType;
 	private String paramValue;
@@ -34,7 +33,7 @@ public class MethodArgument implements Serializable {
 
 	@Override
 	public String toString() {
-		return DubboSample.toJson(this);
+		return JsonUtils.toJson(this);
 	}
 
 }
