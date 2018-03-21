@@ -14,6 +14,12 @@ Dubbo Plugin for Apache JMeter是用来在Jmeter里更加方便的测试Dubbo接
 
 # 版本更新
 
+[V1.2.1](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.1)
+
+1. 支持注册中心增加：multicast、redis、simple
+2. 修改GUI中Protocol值显示方式，增加了描述，例如：dubbo修改为dubbo@直连、zookeeper修改为zookeeper@注册中心
+![image](https://user-images.githubusercontent.com/3387548/37705925-8fcc0b58-2d38-11e8-8095-656687f13951.png)
+
 [V1.2.0](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.0)
 1. 使用gson进行json序列化、反序列化
 2. 使用dubbo泛化调用方式重构反射调用方式
