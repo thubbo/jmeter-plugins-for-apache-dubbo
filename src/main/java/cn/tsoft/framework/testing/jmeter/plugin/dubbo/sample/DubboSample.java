@@ -272,19 +272,51 @@ public class DubboSample extends AbstractSampler {
         reference.setApplication(application);
         RegistryConfig registry = null;
         
-        String protocol = getProtocol();
-        if ("zookeeper".equals(protocol)) {
-            // 连接注册中心配置
-            registry = new RegistryConfig();
-            registry.setProtocol("zookeeper");
-            registry.setAddress(getAddress());
-            reference.setRegistry(registry); // 多个注册中心可以用setRegistries()
-        } else {
-            StringBuffer sb = new StringBuffer();
-            sb.append(protocol).append("://").append(getAddress()).append("/").append(getInterface());
-            log.info("rpc invoker url : " + sb.toString());
-            reference.setUrl(sb.toString());
-        }
+        String protocol = getProtocol().split("@")[0];
+		switch (protocol) {
+		case "zookeeper":
+			registry = new RegistryConfig();
+			registry.setProtocol("zookeeper");
+			registry.setAddress(getAddress());
+			reference.setRegistry(registry);
+			break;
+		case "multicast":
+			registry = new RegistryConfig();
+			registry.setProtocol("multicast");
+			registry.setAddress(getAddress());
+			reference.setRegistry(registry);
+			break;
+		case "redis":
+			registry = new RegistryConfig();
+			registry.setProtocol("redis");
+			registry.setAddress(getAddress());
+			reference.setRegistry(registry);
+			break;
+		case "simple":
+			registry = new RegistryConfig();
+			registry.setAddress(getAddress());
+			reference.setRegistry(registry);
+			break;
+		default:
+			// 默认dubbo直连
+			StringBuffer sb = new StringBuffer();
+			sb.append(protocol).append("://").append(getAddress()).append("/")
+					.append(getInterface());
+			log.info("rpc invoker url : " + sb.toString());
+			reference.setUrl(sb.toString());
+		}
+//        if ("zookeeper".equals(protocol)) {
+//            // 连接注册中心配置
+//            registry = new RegistryConfig();
+//            registry.setProtocol("zookeeper");
+//            registry.setAddress(getAddress());
+//            reference.setRegistry(registry); // 多个注册中心可以用setRegistries()
+//        } else {
+//            StringBuffer sb = new StringBuffer();
+//            sb.append(protocol).append("://").append(getAddress()).append("/").append(getInterface());
+//            log.info("rpc invoker url : " + sb.toString());
+//            reference.setUrl(sb.toString());
+//        }
         try {
             Class clazz = Class.forName(getInterface());
             reference.setInterface(clazz);

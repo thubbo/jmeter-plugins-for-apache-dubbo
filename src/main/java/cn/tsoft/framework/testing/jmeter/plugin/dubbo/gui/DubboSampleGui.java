@@ -109,7 +109,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         //Protocol
         JPanel ph = new HorizontalPanel();
         JLabel protocolLable = new JLabel("Protocol:", SwingConstants.RIGHT);
-        protocolText = new JComboBox<String>(new String[]{"zookeeper", "dubbo"});
+        protocolText = new JComboBox<String>(new String[]{"dubbo@直连", "zookeeper@注册中心", "multicast@注册中心", "redis@注册中心", "simple@注册中心"});
         protocolLable.setLabelFor(protocolText);
         ph.add(protocolLable);
         ph.add(protocolText);
