@@ -29,6 +29,7 @@ import cn.tsoft.framework.testing.jmeter.plugin.util.JsonUtils;
 import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
+import com.alibaba.dubbo.config.utils.ReferenceConfigCache;
 import com.alibaba.dubbo.rpc.service.GenericService;
 
 /**
@@ -325,7 +326,10 @@ public class DubboSample extends AbstractSampler {
             reference.setVersion(getVersion());
             reference.setTimeout(Integer.valueOf(getTimeout()));
             reference.setGeneric(true);
-            GenericService genericService = (GenericService) reference.get();
+            //TODO 不同的注册中心地址使用不同的cache对象
+            ReferenceConfigCache cache = ReferenceConfigCache.getCache(getAddress());
+            GenericService genericService = (GenericService) cache.get(reference);
+//            GenericService genericService = (GenericService) reference.get();
             Method method = null;
             String[] parameterTypes = null;
             Object[] parameterValues = null;
@@ -374,10 +378,11 @@ public class DubboSample extends AbstractSampler {
             res.setSuccessful(false);
             return e;
         } finally {
-            if (registry != null) {
-                registry.destroyAll();
-            }
-            reference.destroy();
+        	//TODO 不能在sample结束时destroy
+//            if (registry != null) {
+//                registry.destroyAll();
+//            }
+//            reference.destroy();
         }
     }
     
