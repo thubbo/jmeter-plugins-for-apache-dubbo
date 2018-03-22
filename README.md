@@ -14,6 +14,12 @@ Dubbo Plugin for Apache JMeter是用来在Jmeter里更加方便的测试Dubbo接
 
 # 版本更新
 
+[V1.2.2](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.2)
+
+1. 升级dubbo版本->2.6.1
+2. 使用ReferenceConfigCache缓存ReferenceConfig对象
+3. 增加远程调用方式：Dubbo:FST
+
 [V1.2.1](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.1)
 
 1. 支持注册中心增加：multicast、redis、simple
