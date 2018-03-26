@@ -262,7 +262,7 @@ public class DubboSample extends AbstractSampler {
         return sb.toString();
     }
     
-    @SuppressWarnings({"unchecked", "rawtypes", "static-access"})
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private Object callDubbo(SampleResult res) {
         ApplicationConfig application = new ApplicationConfig();
         application.setName("DubboSample");
@@ -306,18 +306,6 @@ public class DubboSample extends AbstractSampler {
 			log.info("rpc invoker url : " + sb.toString());
 			reference.setUrl(sb.toString());
 		}
-//        if ("zookeeper".equals(protocol)) {
-//            // 连接注册中心配置
-//            registry = new RegistryConfig();
-//            registry.setProtocol("zookeeper");
-//            registry.setAddress(getAddress());
-//            reference.setRegistry(registry); // 多个注册中心可以用setRegistries()
-//        } else {
-//            StringBuffer sb = new StringBuffer();
-//            sb.append(protocol).append("://").append(getAddress()).append("/").append(getInterface());
-//            log.info("rpc invoker url : " + sb.toString());
-//            reference.setUrl(sb.toString());
-//        }
         try {
             Class clazz = Class.forName(getInterface());
             reference.setInterface(clazz);
@@ -346,8 +334,7 @@ public class DubboSample extends AbstractSampler {
 				if (m.getName().equals(getMethod()) && paramTypes.length == args.size()) {
 					//名称与参数数量匹配，进行参数类型转换
 					for (int j = 0; j < paramTypes.length; j++) {
-						paramterTypeList.add(args.get(j).getParamType());
-						ClassUtils.parseParameter(paramTypes[j], parameterValuesList, args.get(j));
+						ClassUtils.parseParameter(paramTypes[j], paramterTypeList, parameterValuesList, args.get(j));
 					}
 					if (parameterValuesList.size() == paramTypes.length) {
 						//没有转换错误，数量应该一致
