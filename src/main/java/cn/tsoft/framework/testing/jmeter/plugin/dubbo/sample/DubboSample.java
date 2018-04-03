@@ -354,14 +354,17 @@ public class DubboSample extends AbstractSampler {
 			try {
 				result = genericService.$invoke(getMethod(), parameterTypes, parameterValues);
 				res.setSuccessful(true);
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				log.error("接口返回异常：", e);
-				res.setSuccessful(false);
+				//TODO
+				//当接口返回异常时，sample标识为successful，通过响应内容做断言来判断是否标识sample错误，因为sample的错误会统计到用例的error百分比内。
+				//比如接口有一些校验性质的异常，不代表这个操作是错误的，这样就可以灵活的判断，不至于正常的校验返回导致测试用例error百分比的不真实
+				res.setSuccessful(true);
 				result = e;
 			}
             return result;
         } catch (Exception e) {
-            log.error("调用dubbo接口出错：", e);
+            log.error("未知异常：", e);
             res.setSuccessful(false);
             return e;
         } finally {
