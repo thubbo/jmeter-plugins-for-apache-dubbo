@@ -14,6 +14,23 @@ Dubbo Plugin for Apache JMeter是用来在Jmeter里更加方便的测试Dubbo接
 
 # 版本更新
 
+[V1.2.4](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.4)
+
+问题：
+由于sample执行错误会统计到用例的Error%内，但是有时我们的接口返回异常并不代表是真正的错误，有可能是正常的校验，因此本次优化了sample的执行状态。
+
+解决：
+当接口返回异常时，sample标识为successful，可以通过响应内容做断言来判断是否需要标识为failure，比如接口有一些校验性质的异常，不代表这个操作是错误的，这样就可以灵活的判断，不至于正常的校验返回导致测试用例Error%的不真实
+
+示例：
+![1](https://user-images.githubusercontent.com/3387548/38234811-8fd16e90-3751-11e8-9823-39407bb004a2.png)
+![2](https://user-images.githubusercontent.com/3387548/38234812-902c7e02-3751-11e8-8edc-039cdae2667b.png)
+![3](https://user-images.githubusercontent.com/3387548/38234813-9070dd68-3751-11e8-958f-44f04a7a93ff.png)
+![4](https://user-images.githubusercontent.com/3387548/38234814-90fad086-3751-11e8-9680-b9a76eff64d6.png)
+![5](https://user-images.githubusercontent.com/3387548/38234816-916f47ae-3751-11e8-9f35-f6be4a39c40d.png)
+![6](https://user-images.githubusercontent.com/3387548/38234817-92255bac-3751-11e8-9ee7-daf4a1a9974a.png)
+![7](https://user-images.githubusercontent.com/3387548/38234820-92c746d8-3751-11e8-8d4d-0f157c3b87a9.png)
+
 [V1.2.3](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.3)
 
 1. bug fix参数类型报错问题
