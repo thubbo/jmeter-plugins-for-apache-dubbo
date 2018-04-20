@@ -135,4 +135,5 @@ log4j-over-slf4j-1.7.5.jar
 6. 接口需要填写类型完全名称，含包名
 7. 参数支持任何类型，包装类直接使用`java.lang`下的包装类，小类型使用：`int、float、shot、double、long、byte、boolean、char`，自定义类使用类完全名称。
 8. 参数值，基础包装类和基础小类型直接使用值，例如：int为1，boolean为true等，自定义类与`List`或者`Map`等使用json格式数据。
-9. 更多dubbo参数查看官方文档：[http://dubbo.io/books/dubbo-user-book/references/xml/dubbo-reference.html](http://dubbo.io/books/dubbo-user-book/references/xml/dubbo-reference.html)
+9. 更多dubbo参数查看官方文档：[http://dubbo.apache.org/books/dubbo-user-book/references/xml/dubbo-reference.html](http://dubbo.apache.org/books/dubbo-user-book/references/xml/dubbo-reference.html)
+
