@@ -14,6 +14,10 @@ Dubbo Plugin for Apache JMeter是用来在Jmeter里更加方便的测试Dubbo接
 
 # 版本更新
 
+[V1.2.5](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.5)
+
+1. 增加group参数支持
+
 [V1.2.4](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.4)
 
 问题：
