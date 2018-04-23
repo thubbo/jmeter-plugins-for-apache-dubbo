@@ -67,6 +67,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
     private JTextField clusterText;
     private JTextField interfaceText;
     private JTextField methodText;
+    private JTextField groupText;
     private DefaultTableModel model;
     private String[] columnNames = {"paramType", "paramValue"};
     private String[] tmpRow = {"", ""};
@@ -155,6 +156,15 @@ public class DubboSampleGui extends AbstractSamplerGui {
         h.add(clusterText);
         serverSettings.add(h);
         
+        JPanel hp1 = new HorizontalPanel();
+        //Group
+        JLabel groupLable = new JLabel("     Group:", SwingConstants.RIGHT);
+        groupText = new JTextField(10);
+        groupLable.setLabelFor(groupText);
+        hp1.add(groupLable);
+        hp1.add(groupText);
+        serverSettings.add(hp1);
+        
         JPanel interfaceSettings = new VerticalPanel();
         interfaceSettings.setBorder(BorderFactory.createTitledBorder("Interface Settings"));
         //Interface
@@ -233,6 +243,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         versionText.setText(sample.getVersion());
         timeoutText.setText(sample.getTimeout());
         retriesText.setText(sample.getRetries());
+        groupText.setText(sample.getGroup());
         clusterText.setText(sample.getCluster());
         interfaceText.setText(sample.getInterface());
         methodText.setText(sample.getMethod());
@@ -277,6 +288,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         sample.setTimeout(timeoutText.getText());
         sample.setVersion(versionText.getText());
         sample.setRetries(retriesText.getText());
+        sample.setGroup(groupText.getText());
         sample.setCluster(clusterText.getText());
         sample.setInterfaceName(interfaceText.getText());
         sample.setMethod(methodText.getText());

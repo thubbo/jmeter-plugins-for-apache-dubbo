@@ -26,6 +26,7 @@ import org.apache.log.Logger;
 import cn.tsoft.framework.testing.jmeter.plugin.util.ClassUtils;
 import cn.tsoft.framework.testing.jmeter.plugin.util.JsonUtils;
 
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
@@ -54,6 +55,7 @@ public class DubboSample extends AbstractSampler {
     public static String FIELD_DUBBO_VERSION = "FIELD_DUBBO_VERSION";
     public static String FIELD_DUBBO_RETRIES = "FIELD_DUBBO_RETRIES";
     public static String FIELD_DUBBO_CLUSTER = "FIELD_DUBBO_CLUSTER";
+    public static String FIELD_DUBBO_GROUP = "FIELD_DUBBO_GROUP";
     public static String FIELD_DUBBO_INTERFACE = "FIELD_DUBBO_INTERFACE";
     public static String FIELD_DUBBO_METHOD = "FIELD_DUBBO_METHOD";
     public static String FIELD_DUBBO_METHOD_ARGS = "FIELD_DUBBO_METHOD_ARGS";
@@ -157,6 +159,22 @@ public class DubboSample extends AbstractSampler {
      */
     public void setCluster(String cluster) {
         this.setProperty(new StringProperty(FIELD_DUBBO_CLUSTER, cluster));
+    }
+    
+    /**
+     * 获取 group
+     * @return the group
+     */
+    public String getGroup() {
+    	return this.getPropertyAsString(FIELD_DUBBO_GROUP, null);
+    }
+    
+    /**
+     * 设置 cluster
+     * @param group the cluster to set
+     */
+    public void setGroup(String group) {
+    	this.setProperty(new StringProperty(FIELD_DUBBO_GROUP, group));
     }
 
     /**
@@ -313,6 +331,8 @@ public class DubboSample extends AbstractSampler {
             reference.setCluster(getCluster());
             reference.setVersion(getVersion());
             reference.setTimeout(Integer.valueOf(getTimeout()));
+            String group = getGroup();
+            reference.setGroup(StringUtils.isBlank(group) ? null : group);
             reference.setGeneric(true);
             //TODO 不同的注册中心地址使用不同的cache对象
             ReferenceConfigCache cache = ReferenceConfigCache.getCache(getAddress());
