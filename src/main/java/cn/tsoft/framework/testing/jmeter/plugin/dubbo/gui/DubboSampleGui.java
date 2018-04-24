@@ -68,9 +68,14 @@ public class DubboSampleGui extends AbstractSamplerGui {
     private JTextField interfaceText;
     private JTextField methodText;
     private JTextField groupText;
+    private JTextField connectionsText;
+    private JComboBox<String> loadbalanceText;
+    private JComboBox<String> asyncText;
     private DefaultTableModel model;
     private String[] columnNames = {"paramType", "paramValue"};
     private String[] tmpRow = {"", ""};
+    private int textColumns = 2;
+    
 
     public DubboSampleGui() {
         super();
@@ -119,7 +124,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         //Address
         JPanel ah = new HorizontalPanel();
         JLabel addressLable = new JLabel("Address:", SwingConstants.RIGHT);
-        addressText = new JTextField(10);
+        addressText = new JTextField(textColumns);
         addressLable.setLabelFor(addressText);
         ah.add(addressLable);
         ah.add(addressText);
@@ -128,41 +133,60 @@ public class DubboSampleGui extends AbstractSamplerGui {
         JPanel h = new HorizontalPanel();
         //Timeout
         JLabel timeoutLable = new JLabel(" Timeout:", SwingConstants.RIGHT);
-        timeoutText = new JTextField(10);
-        timeoutText.setText("1200000");
+        timeoutText = new JTextField(textColumns);
+        timeoutText.setText(DubboSample.DEFAULT_TIMEOUT);
         timeoutLable.setLabelFor(timeoutText);
         h.add(timeoutLable);
         h.add(timeoutText);
         //Version
         JLabel versionLable = new JLabel("Version:", SwingConstants.RIGHT);
-        versionText = new JTextField(10);
-        versionText.setText("1.0.0");
+        versionText = new JTextField(textColumns);
+        versionText.setText(DubboSample.DEFAULT_VERSION);
         versionLable.setLabelFor(versionText);
         h.add(versionLable);
         h.add(versionText);
         //Retries
         JLabel retriesLable = new JLabel("Retries:", SwingConstants.RIGHT);
-        retriesText = new JTextField(10);
-        retriesText.setText("0");
+        retriesText = new JTextField(textColumns);
+        retriesText.setText(DubboSample.DEFAULT_RETRIES);
         retriesLable.setLabelFor(retriesText);
         h.add(retriesLable);
         h.add(retriesText);
         //Cluster
         JLabel clusterLable = new JLabel("Cluster:", SwingConstants.RIGHT);
-        clusterText = new JTextField(10);
-        clusterText.setText("failfast");
+        clusterText = new JTextField(textColumns);
+        clusterText.setText(DubboSample.DEFAULT_CLUSTER);
         clusterLable.setLabelFor(clusterText);
         h.add(clusterLable);
         h.add(clusterText);
+        //Group
+        JLabel groupLable = new JLabel("Group:", SwingConstants.RIGHT);
+        groupText = new JTextField(textColumns);
+        groupLable.setLabelFor(groupText);
+        h.add(groupLable);
+        h.add(groupText);
+        //Connections
+        JLabel connectionsLable = new JLabel("Connections:", SwingConstants.RIGHT);
+        connectionsText = new JTextField(textColumns);
+        connectionsText.setText(DubboSample.DEFAULT_CONNECTIONS);
+        connectionsLable.setLabelFor(connectionsText);
+        h.add(connectionsLable);
+        h.add(connectionsText);
         serverSettings.add(h);
         
         JPanel hp1 = new HorizontalPanel();
-        //Group
-        JLabel groupLable = new JLabel("     Group:", SwingConstants.RIGHT);
-        groupText = new JTextField(10);
-        groupLable.setLabelFor(groupText);
-        hp1.add(groupLable);
-        hp1.add(groupText);
+        //Async
+        JLabel asyncLable = new JLabel("     Async:", SwingConstants.RIGHT);
+        asyncText = new JComboBox<String>(new String[]{"sync@同步", "async@异步"});
+        asyncLable.setLabelFor(asyncText);
+        hp1.add(asyncLable);
+        hp1.add(asyncText);
+        //Loadbalance
+        JLabel loadbalanceLable = new JLabel("Loadbalance:", SwingConstants.RIGHT);
+        loadbalanceText = new JComboBox<String>(new String[]{"random@随机", "roundrobin@轮播", "leastactive@最少活跃"});
+        loadbalanceLable.setLabelFor(loadbalanceText);
+        hp1.add(loadbalanceLable);
+        hp1.add(loadbalanceText);
         serverSettings.add(hp1);
         
         JPanel interfaceSettings = new VerticalPanel();
@@ -170,7 +194,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         //Interface
         JPanel ih = new HorizontalPanel();
         JLabel interfaceLable = new JLabel("Interface:", SwingConstants.RIGHT);
-        interfaceText = new JTextField(10);
+        interfaceText = new JTextField(textColumns);
         interfaceLable.setLabelFor(interfaceText);
         ih.add(interfaceLable);
         ih.add(interfaceText);
@@ -178,7 +202,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         //Method
         JPanel mh = new HorizontalPanel();
         JLabel methodLable = new JLabel("   Method:", SwingConstants.RIGHT);
-        methodText = new JTextField(10);
+        methodText = new JTextField(textColumns);
         methodLable.setLabelFor(methodText);
         mh.add(methodLable);
         mh.add(methodText);
@@ -244,6 +268,9 @@ public class DubboSampleGui extends AbstractSamplerGui {
         timeoutText.setText(sample.getTimeout());
         retriesText.setText(sample.getRetries());
         groupText.setText(sample.getGroup());
+        connectionsText.setText(sample.getConnections());
+        loadbalanceText.setSelectedItem(sample.getLoadbalance());
+        asyncText.setSelectedItem(sample.getAsync());
         clusterText.setText(sample.getCluster());
         interfaceText.setText(sample.getInterface());
         methodText.setText(sample.getMethod());
@@ -289,6 +316,9 @@ public class DubboSampleGui extends AbstractSamplerGui {
         sample.setVersion(versionText.getText());
         sample.setRetries(retriesText.getText());
         sample.setGroup(groupText.getText());
+        sample.setConnections(connectionsText.getText());
+        sample.setLoadbalance(loadbalanceText.getSelectedItem().toString());
+        sample.setAsync(asyncText.getSelectedItem().toString());
         sample.setCluster(clusterText.getText());
         sample.setInterfaceName(interfaceText.getText());
         sample.setMethod(methodText.getText());
@@ -338,11 +368,16 @@ public class DubboSampleGui extends AbstractSamplerGui {
         super.clearGui();
         protocolText.setSelectedIndex(0);
         addressText.setText("");
-        timeoutText.setText("1200000");
-        versionText.setText("1.0.0");
+        timeoutText.setText(DubboSample.DEFAULT_TIMEOUT);
+        versionText.setText(DubboSample.DEFAULT_VERSION);
+        retriesText.setText(DubboSample.DEFAULT_RETRIES);
+        clusterText.setText(DubboSample.DEFAULT_CLUSTER);
+        groupText.setText("");
+        connectionsText.setText(DubboSample.DEFAULT_CONNECTIONS);
+        loadbalanceText.setSelectedIndex(0);
+        asyncText.setSelectedIndex(0);
         interfaceText.setText("");
         methodText.setText("");
-//        model.setDataVector(new String[][]{{"", ""}}, columnNames);
         model.setDataVector(null, columnNames);
     }
 

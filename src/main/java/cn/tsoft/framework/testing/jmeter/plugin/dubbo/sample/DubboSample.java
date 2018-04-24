@@ -31,6 +31,7 @@ import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.dubbo.config.utils.ReferenceConfigCache;
+import com.alibaba.dubbo.config.utils.ReferenceConfigCache.KeyGenerator;
 import com.alibaba.dubbo.rpc.service.GenericService;
 
 /**
@@ -56,14 +57,18 @@ public class DubboSample extends AbstractSampler {
     public static String FIELD_DUBBO_RETRIES = "FIELD_DUBBO_RETRIES";
     public static String FIELD_DUBBO_CLUSTER = "FIELD_DUBBO_CLUSTER";
     public static String FIELD_DUBBO_GROUP = "FIELD_DUBBO_GROUP";
+    public static String FIELD_DUBBO_CONNECTIONS = "FIELD_DUBBO_CONNECTIONS";
+    public static String FIELD_DUBBO_LOADBALANCE = "FIELD_DUBBO_LOADBALANCE";
+    public static String FIELD_DUBBO_ASYNC = "FIELD_DUBBO_ASYNC";
     public static String FIELD_DUBBO_INTERFACE = "FIELD_DUBBO_INTERFACE";
     public static String FIELD_DUBBO_METHOD = "FIELD_DUBBO_METHOD";
     public static String FIELD_DUBBO_METHOD_ARGS = "FIELD_DUBBO_METHOD_ARGS";
     public static String FIELD_DUBBO_METHOD_ARGS_SIZE = "FIELD_DUBBO_METHOD_ARGS_SIZE";
-    public static String DEFAULT_TIMEOUT = "1200000";
+    public static String DEFAULT_TIMEOUT = "1000";
     public static String DEFAULT_VERSION = "1.0.0";
     public static String DEFAULT_RETRIES = "0";
     public static String DEFAULT_CLUSTER = "failfast";
+    public static String DEFAULT_CONNECTIONS = "100";
 
     /**
      * 获取 protocol
@@ -170,11 +175,59 @@ public class DubboSample extends AbstractSampler {
     }
     
     /**
-     * 设置 cluster
-     * @param group the cluster to set
+     * 设置 group
+     * @param group the group to set
      */
     public void setGroup(String group) {
     	this.setProperty(new StringProperty(FIELD_DUBBO_GROUP, group));
+    }
+    
+    /**
+     * 获取 connections
+     * @return the group
+     */
+    public String getConnections() {
+    	return this.getPropertyAsString(FIELD_DUBBO_CONNECTIONS, DEFAULT_CONNECTIONS);
+    }
+    
+    /**
+     * 设置 connections
+     * @param connections the connections to set
+     */
+    public void setConnections(String connections) {
+    	this.setProperty(new StringProperty(FIELD_DUBBO_CONNECTIONS, connections));
+    }
+    
+    /**
+     * 获取 loadbalance
+     * @return the loadbalance
+     */
+    public String getLoadbalance() {
+    	return this.getPropertyAsString(FIELD_DUBBO_LOADBALANCE);
+    }
+    
+    /**
+     * 设置 loadbalance
+     * @param loadbalance the loadbalance to set
+     */
+    public void setLoadbalance(String loadbalance) {
+    	this.setProperty(new StringProperty(FIELD_DUBBO_LOADBALANCE, loadbalance));
+    }
+    
+    /**
+     * 获取 async
+     * @return the async
+     */
+    public String getAsync() {
+    	return this.getPropertyAsString(FIELD_DUBBO_ASYNC);
+    }
+    
+    /**
+     * 设置 async
+     * @param async the async to set
+     */
+    public void setAsync(String async) {
+    	this.setProperty(new StringProperty(FIELD_DUBBO_ASYNC, async));
     }
 
     /**
@@ -274,6 +327,10 @@ public class DubboSample extends AbstractSampler {
         sb.append("Version: ").append(getVersion()).append("\n");
         sb.append("Retries: ").append(getRetries()).append("\n");
         sb.append("Cluster: ").append(getCluster()).append("\n");
+        sb.append("Group: ").append(getGroup()).append("\n");
+        sb.append("Connections: ").append(getConnections()).append("\n");
+        sb.append("Loadbalance: ").append(getLoadbalance()).append("\n");
+        sb.append("Async: ").append(getAsync()).append("\n");
         sb.append("Interface: ").append(getInterface()).append("\n");
         sb.append("Method: ").append(getMethod()).append("\n");
         sb.append("Method Args: ").append(getMethodArgs().toString());
@@ -333,9 +390,18 @@ public class DubboSample extends AbstractSampler {
             reference.setTimeout(Integer.valueOf(getTimeout()));
             String group = getGroup();
             reference.setGroup(StringUtils.isBlank(group) ? null : group);
+            reference.setConnections(Integer.valueOf(getConnections()));
+            String loadbalance = getLoadbalance().split("@")[0];
+            reference.setLoadbalance(loadbalance);
+            String async = getAsync().split("@")[0];
+            reference.setAsync("async".equals(async) ? true : false);
             reference.setGeneric(true);
             //TODO 不同的注册中心地址使用不同的cache对象
-            ReferenceConfigCache cache = ReferenceConfigCache.getCache(getAddress());
+            ReferenceConfigCache cache = ReferenceConfigCache.getCache(getAddress(), new KeyGenerator() {
+				public String generateKey(ReferenceConfig<?> referenceConfig) {
+					return referenceConfig.toString();
+				}
+			});
             GenericService genericService = (GenericService) cache.get(reference);
 //            GenericService genericService = (GenericService) reference.get();
             Method method = null;
