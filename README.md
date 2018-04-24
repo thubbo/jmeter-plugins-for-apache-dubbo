@@ -14,67 +14,11 @@ Dubbo Plugin for Apache JMeter是用来在Jmeter里更加方便的测试Dubbo接
 
 # 版本更新
 
-[V1.2.5](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.5)
+[查看changelog](https://github.com/ningyu1/jmeter-plugins-dubbo/wiki/changelog)
 
-1. 增加group参数支持
-
-[V1.2.4](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.4)
-
-问题：
-由于sample执行错误会统计到用例的Error%内，但是有时我们的接口返回异常并不代表是真正的错误，有可能是正常的校验，因此本次优化了sample的执行状态。
-
-解决：
-当接口返回异常时，sample标识为successful，可以通过响应内容做断言来判断是否需要标识为failure，比如接口有一些校验性质的异常，不代表这个操作是错误的，这样就可以灵活的判断，不至于正常的校验返回导致测试用例Error%的不真实
-
-示例：
-![1](https://user-images.githubusercontent.com/3387548/38234811-8fd16e90-3751-11e8-9823-39407bb004a2.png)
-![2](https://user-images.githubusercontent.com/3387548/38234812-902c7e02-3751-11e8-8edc-039cdae2667b.png)
-![3](https://user-images.githubusercontent.com/3387548/38234813-9070dd68-3751-11e8-958f-44f04a7a93ff.png)
-![4](https://user-images.githubusercontent.com/3387548/38234814-90fad086-3751-11e8-9680-b9a76eff64d6.png)
-![5](https://user-images.githubusercontent.com/3387548/38234816-916f47ae-3751-11e8-9f35-f6be4a39c40d.png)
-![6](https://user-images.githubusercontent.com/3387548/38234817-92255bac-3751-11e8-9ee7-daf4a1a9974a.png)
-![7](https://user-images.githubusercontent.com/3387548/38234820-92c746d8-3751-11e8-8d4d-0f157c3b87a9.png)
-
-[V1.2.3](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.3)
-
-1. bug fix参数类型报错问题
-
-[V1.2.2](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.2)
-
-1. 升级dubbo版本->2.6.1
-2. 使用ReferenceConfigCache缓存ReferenceConfig对象
-3. 增加远程调用方式：Dubbo:FST
-
-[V1.2.1](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.1)
-
-1. 支持注册中心增加：multicast、redis、simple
-2. 修改GUI中Protocol值显示方式，增加了描述，例如：dubbo修改为dubbo@直连、zookeeper修改为zookeeper@注册中心
-![image](https://user-images.githubusercontent.com/3387548/37705925-8fcc0b58-2d38-11e8-8095-656687f13951.png)
-
-[V1.2.0](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.2.0)
-1. 使用gson进行json序列化、反序列化
-2. 使用dubbo泛化调用方式重构反射调用方式
-3. 支持复杂类型、支持泛型，例如："java.lang.List<ResourceVo>,Map<String,ResourceVo> map,List<Map<String, ResourceVo>> list"
-
-本次版本主要对反射参数类型进行了增强，支持复杂类型、支持参数泛型，可以参考如下的参数对照表：
+# 参数类型对照表
 
 ![image](https://user-images.githubusercontent.com/3387548/37324055-495fbb50-26c2-11e8-9bfa-3fb0739a5cf6.png)
-
-[V1.1.0](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.1.0)
-1. 工具界面输入信息均支持使用jmeter变量${var}，函数${__RandomString(5,12345,ids)}进行参数化。
-2. 接口参数类型与值支持使用jmeter变量${var}，函数${__RandomString(5,12345,ids)}进行参数化
-
-ps.很遗憾的是升级插件后以前的jmx文件无法打开需要重新创建jmx脚本
-
-下面是测试截图 
-![1](https://user-images.githubusercontent.com/3387548/37082704-310fa8ce-2228-11e8-88ff-f278ce1a0009.png)
-![2](https://user-images.githubusercontent.com/3387548/37082705-315581b4-2228-11e8-930a-e246f18dc371.png)
-![3](https://user-images.githubusercontent.com/3387548/37082707-319ca698-2228-11e8-8b20-47cf315ee267.png)
-
-[V1.0.0](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.0.0)
-1. 增加了DubboSample，协议支持：zookeeper、dubbo
-2. 增加调用接口与方法以及参数支持
-3. 主要用于Dubbo RPC接口测试
 
 # DubboSample使用
 
