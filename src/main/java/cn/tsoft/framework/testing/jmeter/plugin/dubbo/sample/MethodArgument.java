@@ -2,6 +2,8 @@ package cn.tsoft.framework.testing.jmeter.plugin.dubbo.sample;
 
 import java.io.Serializable;
 
+import org.springframework.util.StringUtils;
+
 import cn.tsoft.framework.testing.jmeter.plugin.util.JsonUtils;
 
 public class MethodArgument implements Serializable {
@@ -11,8 +13,8 @@ public class MethodArgument implements Serializable {
 	private String paramValue;
 
 	public MethodArgument(String paramType, String paramValue) {
-		this.paramType = paramType;
-		this.paramValue = paramValue;
+		setParamType(paramType);
+		setParamValue(paramValue);
 	}
 
 	public String getParamType() {
@@ -20,7 +22,7 @@ public class MethodArgument implements Serializable {
 	}
 
 	public void setParamType(String paramType) {
-		this.paramType = paramType;
+		this.paramType = (paramType == null ? null : StringUtils.trimAllWhitespace(paramType));
 	}
 
 	public String getParamValue() {
@@ -28,12 +30,43 @@ public class MethodArgument implements Serializable {
 	}
 
 	public void setParamValue(String paramValue) {
-		this.paramValue = paramValue;
+		this.paramValue = (paramValue == null ? null : StringUtils.trimWhitespace(paramValue));
 	}
 
 	@Override
 	public String toString() {
 		return JsonUtils.toJson(this);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((paramType == null) ? 0 : paramType.hashCode());
+		result = prime * result + ((paramValue == null) ? 0 : paramValue.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MethodArgument other = (MethodArgument) obj;
+		if (paramType == null) {
+			if (other.paramType != null)
+				return false;
+		} else if (!paramType.equals(other.paramType))
+			return false;
+		if (paramValue == null) {
+			if (other.paramValue != null)
+				return false;
+		} else if (!paramValue.equals(other.paramValue))
+			return false;
+		return true;
 	}
 
 }

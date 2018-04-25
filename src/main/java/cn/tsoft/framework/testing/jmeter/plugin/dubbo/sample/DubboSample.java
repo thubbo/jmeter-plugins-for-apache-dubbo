@@ -378,7 +378,7 @@ public class DubboSample extends AbstractSampler {
 			StringBuffer sb = new StringBuffer();
 			sb.append(protocol).append("://").append(getAddress()).append("/")
 					.append(getInterface());
-			log.info("rpc invoker url : " + sb.toString());
+			log.debug("rpc invoker url : " + sb.toString());
 			reference.setUrl(sb.toString());
 		}
         try {
@@ -416,7 +416,7 @@ public class DubboSample extends AbstractSampler {
 				Type[] paramTypes = m.getGenericParameterTypes();
 				paramterTypeList = new ArrayList<String>();
 				parameterValuesList = new ArrayList<Object>();
-				log.info("paramTypes.length="+paramTypes.length+"|args.size()="+args.size());
+				log.debug("paramTypes.length="+paramTypes.length+"|args.size()="+args.size());
 				if (m.getName().equals(getMethod()) && paramTypes.length == args.size()) {
 					//名称与参数数量匹配，进行参数类型转换
 					for (int j = 0; j < paramTypes.length; j++) {
@@ -474,7 +474,7 @@ public class DubboSample extends AbstractSampler {
 //        
 //        StringBuffer sb = new StringBuffer();
 //        sb.append("dubbo").append("://").append("192.168.6.47:20835").append("/").append("com.jiuyescm.tenant.api.IMenuResourceService");
-//        log.info("rpc invoker url : " + sb.toString());
+//        log.debug("rpc invoker url : " + sb.toString());
 //        reference.setUrl(sb.toString());
 //        Class clazz = Class.forName("com.jiuyescm.tenant.api.IMenuResourceService");
 //        reference.setInterface(clazz);
