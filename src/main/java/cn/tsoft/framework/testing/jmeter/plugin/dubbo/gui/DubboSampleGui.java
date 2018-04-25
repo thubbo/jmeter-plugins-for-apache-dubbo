@@ -217,12 +217,13 @@ public class DubboSampleGui extends AbstractSamplerGui {
         model.setDataVector(null, columnNames);
         final JTable table = new JTable(model);
         table.setRowHeight(40);
+        //失去光标退出编辑
+        table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         //添加按钮
         JButton addBtn = new JButton("增加");
         addBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
                 model.addRow(tmpRow);
             }
         });
@@ -230,10 +231,10 @@ public class DubboSampleGui extends AbstractSamplerGui {
         delBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
                 int rowIndex = table.getSelectedRow();
-                if(rowIndex != -1)
-                    model.removeRow(rowIndex);
+                if(rowIndex != -1) {
+                	model.removeRow(rowIndex);
+                }
             }
         });
         //表格滚动条
@@ -255,7 +256,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
     }
 
     /**
-     * 这个方法将Smapler的数据设置到gui中
+     * 这个方法将Sample的数据设置到gui中
      */
     @Override
     public void configure(TestElement element) {
@@ -285,7 +286,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
      */
     @Override
     public TestElement createTestElement() {
-        log.info("创建sample对象");
+        log.debug("创建sample对象");
         //创建sample对象
         DubboSample sample = new DubboSample();
         modifyTestElement(sample);
@@ -364,7 +365,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
      */
     @Override
     public void clearGui() {
-        log.info("清空gui数据");
+        log.debug("清空gui数据");
         super.clearGui();
         protocolText.setSelectedIndex(0);
         addressText.setText("");
