@@ -24,7 +24,7 @@ Dubbo Plugin for Apache JMeter是用来在Jmeter里更加方便的测试Dubbo接
 
 ## 支持Jmeter版本
 
-Jmeter版本：3.0
+Jmeter版本：3.0+
 
 ## 插件安装
 
