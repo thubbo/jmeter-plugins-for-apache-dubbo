@@ -261,7 +261,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
     @Override
     public void configure(TestElement element) {
         super.configure(element);
-        log.info("sample赋值给gui");
+        log.debug("sample赋值给gui");
         DubboSample sample = (DubboSample) element;
         protocolText.setSelectedItem(sample.getProtocol());
         addressText.setText(sample.getAddress());

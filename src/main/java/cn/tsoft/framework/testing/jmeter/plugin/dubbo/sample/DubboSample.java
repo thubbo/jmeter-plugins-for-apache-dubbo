@@ -10,8 +10,6 @@
  */
 package cn.tsoft.framework.testing.jmeter.plugin.dubbo.sample;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -382,8 +380,9 @@ public class DubboSample extends AbstractSampler {
 			reference.setUrl(sb.toString());
 		}
         try {
-            Class clazz = Class.forName(getInterface());
-            reference.setInterface(clazz);
+//            Class clazz = Class.forName();
+//            reference.setInterface(clazz);
+            reference.setInterface(getInterface());
             reference.setRetries(Integer.valueOf(getRetries()));
             reference.setCluster(getCluster());
             reference.setVersion(getVersion());
@@ -404,35 +403,38 @@ public class DubboSample extends AbstractSampler {
 			});
             GenericService genericService = (GenericService) cache.get(reference);
 //            GenericService genericService = (GenericService) reference.get();
-            Method method = null;
+//            Method method = null;
             String[] parameterTypes = null;
             Object[] parameterValues = null;
             List<MethodArgument> args = getMethodArgs();
-            List<String> paramterTypeList = null;
-            List<Object> parameterValuesList = null;
-            Method[] methods = clazz.getMethods();
-			for (int i = 0; i < methods.length; i++) {
-				Method m = methods[i];
-				Type[] paramTypes = m.getGenericParameterTypes();
-				paramterTypeList = new ArrayList<String>();
-				parameterValuesList = new ArrayList<Object>();
-				log.debug("paramTypes.length="+paramTypes.length+"|args.size()="+args.size());
-				if (m.getName().equals(getMethod()) && paramTypes.length == args.size()) {
-					//名称与参数数量匹配，进行参数类型转换
-					for (int j = 0; j < paramTypes.length; j++) {
-						ClassUtils.parseParameter(paramTypes[j], paramterTypeList, parameterValuesList, args.get(j));
-					}
-					if (parameterValuesList.size() == paramTypes.length) {
-						//没有转换错误，数量应该一致
-						method = m;
-						break;
-					}
-				}
-			}
-            if (method == null) {
-                res.setSuccessful(false);
-                return "Method["+getMethod()+"] Not found!";
+            List<String> paramterTypeList =  new ArrayList<String>();;
+            List<Object> parameterValuesList = new ArrayList<Object>();;
+            for(MethodArgument arg : args) {
+            	ClassUtils.parseParameter(paramterTypeList, parameterValuesList, arg);
             }
+//            Method[] methods = clazz.getMethods();
+//			for (int i = 0; i < methods.length; i++) {
+//				Method m = methods[i];
+//				Type[] paramTypes = m.getGenericParameterTypes();
+//				paramterTypeList = new ArrayList<String>();
+//				parameterValuesList = new ArrayList<Object>();
+//				log.debug("paramTypes.length="+paramTypes.length+"|args.size()="+args.size());
+//				if (m.getName().equals(getMethod()) && paramTypes.length == args.size()) {
+//					//名称与参数数量匹配，进行参数类型转换
+//					for (int j = 0; j < paramTypes.length; j++) {
+//						ClassUtils.parseParameter(paramTypes[j], paramterTypeList, parameterValuesList, args.get(j));
+//					}
+//					if (parameterValuesList.size() == paramTypes.length) {
+//						//没有转换错误，数量应该一致
+//						method = m;
+//						break;
+//					}
+//				}
+//			}
+//            if (method == null) {
+//                res.setSuccessful(false);
+//                return "Method["+getMethod()+"] Not found!";
+//            }
             //发起调用
             parameterTypes = paramterTypeList.toArray(new String[paramterTypeList.size()]);
             parameterValues = parameterValuesList.toArray(new Object[parameterValuesList.size()]);
