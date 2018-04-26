@@ -61,7 +61,15 @@ log4j-over-slf4j-1.7.5.jar
 
 根据上图提示传入值即可。
 
-接口以及接口依赖包请添加到`classpath`下，可以放在`apache-jmeter-3.0\lib\ext`下，也可以通过下图方式添加：
+## 接口包依赖添加方式
+
+### 1.3.x版本
+
+不需要再添加接口包（api-jar）到`classpath`下。具体可以查看[1.3.0版本说明](https://github.com/ningyu1/jmeter-plugins-dubbo/releases/tag/V1.3.0)
+
+### 1.2.x版本
+
+接口包及接口包依赖的其他jar包请添加到`classpath`下或放在`apache-jmeter-3.0\lib\ext`下，也可以通过下图方式添加：
 
 ![](https://ningyu1.github.io/site/img/jmeter-plugins-dubbo/3.png)
 
