@@ -49,18 +49,6 @@ slf4j-api-1.7.5.jar
 log4j-over-slf4j-1.7.5.jar
 ```
 
-## 插件使用
-
-启动`Jmeter`添加`DubboSample`如下图：
-
-![](https://ningyu1.github.io/site/img/jmeter-plugins-dubbo/1.png)
-
-添加后能看到`DubboSample`的具体操作页面，如下图：
-
-![](https://ningyu1.github.io/site/img/jmeter-plugins-dubbo/2.png)
-
-根据上图提示传入值即可。
-
 ## 接口包依赖添加方式
 
 ### 1.3.x版本
@@ -72,6 +60,18 @@ log4j-over-slf4j-1.7.5.jar
 接口包及接口包依赖的其他jar包请添加到`classpath`下或放在`apache-jmeter-3.0\lib\ext`下，也可以通过下图方式添加：
 
 ![](https://ningyu1.github.io/site/img/jmeter-plugins-dubbo/3.png)
+
+## 插件使用
+
+启动`Jmeter`添加`DubboSample`如下图：
+
+![](https://ningyu1.github.io/site/img/jmeter-plugins-dubbo/1.png)
+
+添加后能看到`DubboSample`的具体操作页面，如下图：
+
+![](https://ningyu1.github.io/site/img/jmeter-plugins-dubbo/2.png)
+
+根据上图提示传入值即可。
 
 ## 运行结果
 
