@@ -48,7 +48,8 @@ public class DubboSample extends AbstractSampler {
      */
     private static final long serialVersionUID = -6794913295411458705L;
     
-    public static String FIELD_DUBBO_PROTOCOL = "FIELD_DUBBO_PROTOCOL";
+    public static String FIELD_DUBBO_REGISTRY_PROTOCOL = "FIELD_DUBBO_REGISTRY_PROTOCOL";
+    public static String FIELD_DUBBO_RPC_PROTOCOL = "FIELD_DUBBO_RPC_PROTOCOL";
     public static String FIELD_DUBBO_ADDRESS = "FIELD_DUBBO_ADDRESS";
     public static String FIELD_DUBBO_TIMEOUT = "FIELD_DUBBO_TIMEOUT";
     public static String FIELD_DUBBO_VERSION = "FIELD_DUBBO_VERSION";
@@ -69,19 +70,35 @@ public class DubboSample extends AbstractSampler {
     public static String DEFAULT_CONNECTIONS = "100";
 
     /**
-     * 获取 protocol
+     * 获取 Registry Protocol
      * @return the protocol
      */
-    public String getProtocol() {
-        return this.getPropertyAsString(FIELD_DUBBO_PROTOCOL);
+    public String getRegistryProtocol() {
+        return this.getPropertyAsString(FIELD_DUBBO_REGISTRY_PROTOCOL);
     }
 
     /**
-     * 设置 protocol
-     * @param protocol the protocol to set
+     * 设置 Registry Protocol
+     * @param registryProtocol the protocol to set
      */
-    public void setProtocol(String protocol) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_PROTOCOL, protocol));
+    public void setRegistryProtocol(String registryProtocol) {
+        this.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_PROTOCOL, registryProtocol));
+    }
+    
+    /**
+     * 获取 RPC protocol
+     * @return the RPC protocol
+     */
+    public String getRpcProtocol() {
+        return this.getPropertyAsString(FIELD_DUBBO_RPC_PROTOCOL);
+    }
+
+    /**
+     * 设置 RPC protocol
+     * @param RPC protocol the protocol to set
+     */
+    public void setRpcProtocol(String rpcProtocol) {
+        this.setProperty(new StringProperty(FIELD_DUBBO_RPC_PROTOCOL, rpcProtocol));
     }
 
     /**
@@ -319,8 +336,9 @@ public class DubboSample extends AbstractSampler {
      */
     private String getSampleData() {
     	StringBuilder sb = new StringBuilder();
-        sb.append("Protocol: ").append(getProtocol()).append("\n");
+        sb.append("Registry Protocol: ").append(getRegistryProtocol()).append("\n");
         sb.append("Address: ").append(getAddress()).append("\n");
+        sb.append("RPC Protocol: ").append(getRpcProtocol()).append("\n");
         sb.append("Timeout: ").append(getTimeout()).append("\n");
         sb.append("Version: ").append(getVersion()).append("\n");
         sb.append("Retries: ").append(getRetries()).append("\n");
@@ -346,36 +364,39 @@ public class DubboSample extends AbstractSampler {
         reference.setApplication(application);
         RegistryConfig registry = null;
         
-        String protocol = getProtocol().split("@")[0];
+        String protocol = getRegistryProtocol().split("@")[0];
 		switch (protocol) {
 		case "zookeeper":
 			registry = new RegistryConfig();
 			registry.setProtocol("zookeeper");
 			registry.setAddress(getAddress());
 			reference.setRegistry(registry);
+			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
 			break;
 		case "multicast":
 			registry = new RegistryConfig();
 			registry.setProtocol("multicast");
 			registry.setAddress(getAddress());
 			reference.setRegistry(registry);
+			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
 			break;
 		case "redis":
 			registry = new RegistryConfig();
 			registry.setProtocol("redis");
 			registry.setAddress(getAddress());
 			reference.setRegistry(registry);
+			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
 			break;
 		case "simple":
 			registry = new RegistryConfig();
 			registry.setAddress(getAddress());
 			reference.setRegistry(registry);
+			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
 			break;
 		default:
-			// 默认dubbo直连
+			// 直连方式
 			StringBuffer sb = new StringBuffer();
-			sb.append(protocol).append("://").append(getAddress()).append("/")
-					.append(getInterface());
+			sb.append(getRpcProtocol()).append(getAddress()).append("/").append(getInterface());
 			log.debug("rpc invoker url : " + sb.toString());
 			reference.setUrl(sb.toString());
 		}

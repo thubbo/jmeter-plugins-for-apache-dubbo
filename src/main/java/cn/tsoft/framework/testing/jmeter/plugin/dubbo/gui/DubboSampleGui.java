@@ -59,7 +59,8 @@ public class DubboSampleGui extends AbstractSamplerGui {
      */
     private static final long serialVersionUID = -3248204995359935007L;
     
-    private JComboBox<String> protocolText;
+    private JComboBox<String> registryProtocolText;
+    private JComboBox<String> rpcProtocolText;
     private JTextField addressText;
     private JTextField timeoutText;
     private JTextField versionText;
@@ -109,27 +110,45 @@ public class DubboSampleGui extends AbstractSamplerGui {
         container.add(linklabel);
         settingPanel.add(container);
         
-        JPanel serverSettings = new VerticalPanel();
-        serverSettings.setBorder(BorderFactory.createTitledBorder("Server Settings"));
-        
+        //Registry Settings
+        JPanel registrySettings = new VerticalPanel();
+        registrySettings.setBorder(BorderFactory.createTitledBorder("Registry Settings"));
         //Protocol
         JPanel ph = new HorizontalPanel();
         JLabel protocolLable = new JLabel("Protocol:", SwingConstants.RIGHT);
-        protocolText = new JComboBox<String>(new String[]{"dubbo@直连", "zookeeper@注册中心", "multicast@注册中心", "redis@注册中心", "simple@注册中心"});
-        protocolLable.setLabelFor(protocolText);
+        registryProtocolText = new JComboBox<String>(new String[]{"none@直连", "zookeeper@注册中心", "multicast@注册中心", "redis@注册中心", "simple@注册中心"});
+        protocolLable.setLabelFor(registryProtocolText);
         ph.add(protocolLable);
-        ph.add(protocolText);
-        serverSettings.add(ph);
-        
+        ph.add(registryProtocolText);
+        registrySettings.add(ph);
         //Address
         JPanel ah = new HorizontalPanel();
         JLabel addressLable = new JLabel("Address:", SwingConstants.RIGHT);
         addressText = new JTextField(textColumns);
         addressLable.setLabelFor(addressText);
+        JLabel addressHelpLable = new JLabel();
+        addressHelpLable.setIcon(new ImageIcon(getClass().getResource("/images/help.png")));
+        addressHelpLable.setToolTipText("Use the registry to allow multiple addresses, Use direct connection to allow only one address! Multiple address format: ip1:port1,ip2:port2 . Direct address format: ip:port . ");
         ah.add(addressLable);
         ah.add(addressText);
-        serverSettings.add(ah);
+        ah.add(addressHelpLable);
+        registrySettings.add(ah);
         
+        //RPC Protocol Settings
+        JPanel protocolSettings = new VerticalPanel();
+        protocolSettings.setBorder(BorderFactory.createTitledBorder("RPC Protocol Settings"));
+        //RPC Protocol
+        JPanel rpcPh = new HorizontalPanel();
+        JLabel rpcProtocolLable = new JLabel("Protocol:", SwingConstants.RIGHT);
+        rpcProtocolText = new JComboBox<String>(new String[]{"dubbo://", "rmi://", "hessian://", "webservice://", "memcached://", "redis://"});
+        rpcProtocolLable.setLabelFor(rpcProtocolText);
+        rpcPh.add(rpcProtocolLable);
+        rpcPh.add(rpcProtocolText);
+        protocolSettings.add(rpcPh);
+        
+        //Consumer Settings
+        JPanel consumerSettings = new VerticalPanel();
+        consumerSettings.setBorder(BorderFactory.createTitledBorder("Consumer Settings"));
         JPanel h = new HorizontalPanel();
         //Timeout
         JLabel timeoutLable = new JLabel(" Timeout:", SwingConstants.RIGHT);
@@ -172,7 +191,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         connectionsLable.setLabelFor(connectionsText);
         h.add(connectionsLable);
         h.add(connectionsText);
-        serverSettings.add(h);
+        consumerSettings.add(h);
         
         JPanel hp1 = new HorizontalPanel();
         //Async
@@ -187,8 +206,9 @@ public class DubboSampleGui extends AbstractSamplerGui {
         loadbalanceLable.setLabelFor(loadbalanceText);
         hp1.add(loadbalanceLable);
         hp1.add(loadbalanceText);
-        serverSettings.add(hp1);
+        consumerSettings.add(hp1);
         
+        //Interface Settings
         JPanel interfaceSettings = new VerticalPanel();
         interfaceSettings.setBorder(BorderFactory.createTitledBorder("Interface Settings"));
         //Interface
@@ -246,7 +266,9 @@ public class DubboSampleGui extends AbstractSamplerGui {
         interfaceSettings.add(tablePanel);
         
         //所有设置panel
-        settingPanel.add(serverSettings);
+        settingPanel.add(registrySettings);
+        settingPanel.add(protocolSettings);
+        settingPanel.add(consumerSettings);
         settingPanel.add(interfaceSettings);
         
         //全局布局设置
@@ -263,7 +285,8 @@ public class DubboSampleGui extends AbstractSamplerGui {
         super.configure(element);
         log.debug("sample赋值给gui");
         DubboSample sample = (DubboSample) element;
-        protocolText.setSelectedItem(sample.getProtocol());
+        registryProtocolText.setSelectedItem(sample.getRegistryProtocol());
+        rpcProtocolText.setSelectedItem(sample.getRpcProtocol());
         addressText.setText(sample.getAddress());
         versionText.setText(sample.getVersion());
         timeoutText.setText(sample.getTimeout());
@@ -311,7 +334,8 @@ public class DubboSampleGui extends AbstractSamplerGui {
         //给sample赋值
         super.configureTestElement(element);
         DubboSample sample = (DubboSample) element;
-        sample.setProtocol(protocolText.getSelectedItem().toString());
+        sample.setRegistryProtocol(registryProtocolText.getSelectedItem().toString());
+        sample.setRpcProtocol(rpcProtocolText.getSelectedItem().toString());
         sample.setAddress(addressText.getText());
         sample.setTimeout(timeoutText.getText());
         sample.setVersion(versionText.getText());
@@ -367,7 +391,8 @@ public class DubboSampleGui extends AbstractSamplerGui {
     public void clearGui() {
         log.debug("清空gui数据");
         super.clearGui();
-        protocolText.setSelectedIndex(0);
+        registryProtocolText.setSelectedIndex(0);
+        rpcProtocolText.setSelectedIndex(0);
         addressText.setText("");
         timeoutText.setText(DubboSample.DEFAULT_TIMEOUT);
         versionText.setText(DubboSample.DEFAULT_VERSION);
