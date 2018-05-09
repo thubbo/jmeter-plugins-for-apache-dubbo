@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Tsoft and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018 Yu Ning
  * FileName: DubboSample.java
  * Author:   ningyu
  * Date:     2018年2月8日
@@ -22,6 +22,7 @@ import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
 import cn.tsoft.framework.testing.jmeter.plugin.util.ClassUtils;
+import cn.tsoft.framework.testing.jmeter.plugin.util.Constants;
 import cn.tsoft.framework.testing.jmeter.plugin.util.JsonUtils;
 
 import com.alibaba.dubbo.common.utils.StringUtils;
@@ -364,30 +365,30 @@ public class DubboSample extends AbstractSampler {
         reference.setApplication(application);
         RegistryConfig registry = null;
         
-        String protocol = getRegistryProtocol().split("@")[0];
+        String protocol = getRegistryProtocol();
 		switch (protocol) {
-		case "zookeeper":
+		case Constants.REGISTRY_ZOOKEEPER:
 			registry = new RegistryConfig();
-			registry.setProtocol("zookeeper");
+			registry.setProtocol(Constants.REGISTRY_ZOOKEEPER);
 			registry.setAddress(getAddress());
 			reference.setRegistry(registry);
 			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
 			break;
-		case "multicast":
+		case Constants.REGISTRY_MULTICAST:
 			registry = new RegistryConfig();
-			registry.setProtocol("multicast");
+			registry.setProtocol(Constants.REGISTRY_MULTICAST);
 			registry.setAddress(getAddress());
 			reference.setRegistry(registry);
 			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
 			break;
-		case "redis":
+		case Constants.REGISTRY_REDIS:
 			registry = new RegistryConfig();
-			registry.setProtocol("redis");
+			registry.setProtocol(Constants.REGISTRY_REDIS);
 			registry.setAddress(getAddress());
 			reference.setRegistry(registry);
 			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
 			break;
-		case "simple":
+		case Constants.REGISTRY_SIMPLE:
 			registry = new RegistryConfig();
 			registry.setAddress(getAddress());
 			reference.setRegistry(registry);
@@ -411,10 +412,8 @@ public class DubboSample extends AbstractSampler {
             String group = getGroup();
             reference.setGroup(StringUtils.isBlank(group) ? null : group);
             reference.setConnections(Integer.valueOf(getConnections()));
-            String loadbalance = getLoadbalance().split("@")[0];
-            reference.setLoadbalance(loadbalance);
-            String async = getAsync().split("@")[0];
-            reference.setAsync("async".equals(async) ? true : false);
+            reference.setLoadbalance(getLoadbalance());
+            reference.setAsync(Constants.ASYNC.equals(getAsync()) ? true : false);
             reference.setGeneric(true);
             //TODO 不同的注册中心地址使用不同的cache对象
             ReferenceConfigCache cache = ReferenceConfigCache.getCache(getAddress(), new KeyGenerator() {

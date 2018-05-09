@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2018 Yu Ning
+ * FileName: Constants.java
+ * Author:   ningyu
+ * Date:     2018年2月8日
+ * Description: //模块目的、功能描述      
+ * History: //修改记录
+ * <author>      <time>      <version>    <desc>
+ * 修改人姓名             修改时间            版本号                  描述
+ */
 package cn.tsoft.framework.testing.jmeter.plugin.util;
 
 public class Constants {
@@ -18,6 +28,11 @@ public class Constants {
 	public static final String RPC_PROTOCOL_THRIFT = "thrift";
 	public static final String RPC_PROTOCOL_MEMCACHED = "memcached";
 	public static final String RPC_PROTOCOL_REDIS = "redis";
+	
+	public static final String ASYNC = "async";
+	public static final String SYMBOL = "://";
+	
+	
 	
 	
 

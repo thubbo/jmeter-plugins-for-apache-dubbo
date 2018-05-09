@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Tsoft and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018 Yu Ning
  * FileName: DubboSampleGui.java
  * Author:   ningyu
  * Date:     2018年2月8日
@@ -116,7 +116,8 @@ public class DubboSampleGui extends AbstractSamplerGui {
         //Protocol
         JPanel ph = new HorizontalPanel();
         JLabel protocolLable = new JLabel("Protocol:", SwingConstants.RIGHT);
-        registryProtocolText = new JComboBox<String>(new String[]{"none@直连", "zookeeper@注册中心", "multicast@注册中心", "redis@注册中心", "simple@注册中心"});
+        registryProtocolText = new JComboBox<String>(new String[]{"none", "zookeeper", "multicast", "redis", "simple"});
+        registryProtocolText.setToolTipText("\"none\" is direct connection");
         protocolLable.setLabelFor(registryProtocolText);
         ph.add(protocolLable);
         ph.add(registryProtocolText);
@@ -196,13 +197,13 @@ public class DubboSampleGui extends AbstractSamplerGui {
         JPanel hp1 = new HorizontalPanel();
         //Async
         JLabel asyncLable = new JLabel("     Async:", SwingConstants.RIGHT);
-        asyncText = new JComboBox<String>(new String[]{"sync@同步", "async@异步"});
+        asyncText = new JComboBox<String>(new String[]{"sync", "async"});
         asyncLable.setLabelFor(asyncText);
         hp1.add(asyncLable);
         hp1.add(asyncText);
         //Loadbalance
         JLabel loadbalanceLable = new JLabel("Loadbalance:", SwingConstants.RIGHT);
-        loadbalanceText = new JComboBox<String>(new String[]{"random@随机", "roundrobin@轮播", "leastactive@最少活跃"});
+        loadbalanceText = new JComboBox<String>(new String[]{"random", "roundrobin", "leastactive", "consistenthash"});
         loadbalanceLable.setLabelFor(loadbalanceText);
         hp1.add(loadbalanceLable);
         hp1.add(loadbalanceText);
@@ -330,7 +331,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
     @SuppressWarnings("unchecked")
     @Override
     public void modifyTestElement(TestElement element) {
-        log.info("gui数据赋值给sample");
+        log.debug("gui数据赋值给sample");
         //给sample赋值
         super.configureTestElement(element);
         DubboSample sample = (DubboSample) element;
