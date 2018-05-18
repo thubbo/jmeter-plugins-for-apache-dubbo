@@ -4,12 +4,6 @@
 
 Dubbo Plugin for Apache JMeter, It is a plug-in developed for testing Dubbo interface in Jmeter.
 
-# 项目地址
-
-[项目地址:jmeter-plugins-dubbo](https://github.com/dubbo/jmeter-plugins-dubbo) 
-
-<a href="https://github.com/dubbo/jmeter-plugins-dubbo/releases"><img src="https://img.shields.io/github/release/dubbo/jmeter-plugins-dubbo.svg?style=social&amp;label=Release"></a>&nbsp;<a href="https://github.com/dubbo/jmeter-plugins-dubbo/stargazers"><img src="https://img.shields.io/github/stars/dubbo/jmeter-plugins-dubbo.svg?style=social&amp;label=Star"></a>&nbsp;<a href="https://github.com/dubbo/jmeter-plugins-dubbo/fork"><img src="https://img.shields.io/github/forks/dubbo/jmeter-plugins-dubbo.svg?style=social&amp;label=Fork"></a>&nbsp;<a href="https://github.com/dubbo/jmeter-plugins-dubbo/watchers"><img src="https://img.shields.io/github/watchers/dubbo/jmeter-plugins-dubbo.svg?style=social&amp;label=Watch"></a> <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/Apache-2.0-blue.svg"></a>
-
 # 版本更新
 
 [查看changelog](https://github.com/dubbo/jmeter-plugins-dubbo/wiki/changelog)
