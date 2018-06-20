@@ -67,11 +67,11 @@ public class DubboSample extends AbstractSampler {
     public static String FIELD_DUBBO_METHOD = "FIELD_DUBBO_METHOD";
     public static String FIELD_DUBBO_METHOD_ARGS = "FIELD_DUBBO_METHOD_ARGS";
     public static String FIELD_DUBBO_METHOD_ARGS_SIZE = "FIELD_DUBBO_METHOD_ARGS_SIZE";
-    public static String DEFAULT_TIMEOUT = "1000";
+    public static String DEFAULT_TIMEOUT = "3000";
     public static String DEFAULT_VERSION = "1.0.0";
     public static String DEFAULT_RETRIES = "0";
     public static String DEFAULT_CLUSTER = "failfast";
-    public static String DEFAULT_CONNECTIONS = "100";
+    public static String DEFAULT_CONNECTIONS = "1";
 
     /**
      * get Registry Protocol
@@ -364,11 +364,13 @@ public class DubboSample extends AbstractSampler {
         RegistryConfig registry = null;
         
         String protocol = getRegistryProtocol();
+        String group = getGroup();
 		switch (protocol) {
 		case Constants.REGISTRY_ZOOKEEPER:
 			registry = new RegistryConfig();
 			registry.setProtocol(Constants.REGISTRY_ZOOKEEPER);
 			registry.setAddress(getAddress());
+			registry.setGroup(StringUtils.isBlank(group) ? null : group);
 			reference.setRegistry(registry);
 			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
 			break;
@@ -376,6 +378,7 @@ public class DubboSample extends AbstractSampler {
 			registry = new RegistryConfig();
 			registry.setProtocol(Constants.REGISTRY_MULTICAST);
 			registry.setAddress(getAddress());
+            registry.setGroup(StringUtils.isBlank(group) ? null : group);
 			reference.setRegistry(registry);
 			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
 			break;
@@ -383,12 +386,14 @@ public class DubboSample extends AbstractSampler {
 			registry = new RegistryConfig();
 			registry.setProtocol(Constants.REGISTRY_REDIS);
 			registry.setAddress(getAddress());
+            registry.setGroup(StringUtils.isBlank(group) ? null : group);
 			reference.setRegistry(registry);
 			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
 			break;
 		case Constants.REGISTRY_SIMPLE:
 			registry = new RegistryConfig();
 			registry.setAddress(getAddress());
+            registry.setGroup(StringUtils.isBlank(group) ? null : group);
 			reference.setRegistry(registry);
 			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
 			break;
@@ -405,8 +410,6 @@ public class DubboSample extends AbstractSampler {
             reference.setCluster(getCluster());
             reference.setVersion(getVersion());
             reference.setTimeout(Integer.valueOf(getTimeout()));
-            String group = getGroup();
-            reference.setGroup(StringUtils.isBlank(group) ? null : group);
             reference.setConnections(Integer.valueOf(getConnections()));
             reference.setLoadbalance(getLoadbalance());
             reference.setAsync(Constants.ASYNC.equals(getAsync()) ? true : false);

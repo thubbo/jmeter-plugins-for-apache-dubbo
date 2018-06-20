@@ -8,3 +8,5 @@
 /target/
 
 .settings/*
+*.iml
+*.idea
