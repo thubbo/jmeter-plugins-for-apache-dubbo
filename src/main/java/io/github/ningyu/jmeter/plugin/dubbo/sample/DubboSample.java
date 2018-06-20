@@ -72,7 +72,7 @@ public class DubboSample extends AbstractSampler {
     public static String DEFAULT_TIMEOUT = "3000";
     public static String DEFAULT_VERSION = "1.0.0";
     public static String DEFAULT_RETRIES = "0";
-    public static String DEFAULT_CLUSTER = "failfast";
+    public static String DEFAULT_CLUSTER = "failover";
     public static String DEFAULT_CONNECTIONS = "1";
     public static String DEFAULT_ENCODING = "UTF-8";
 
