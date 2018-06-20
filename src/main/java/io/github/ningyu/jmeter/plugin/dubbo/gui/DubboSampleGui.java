@@ -70,6 +70,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
     private JTextField methodText;
     private JTextField groupText;
     private JTextField connectionsText;
+    private JTextField responseEncodingText;
     private JComboBox<String> loadbalanceText;
     private JComboBox<String> asyncText;
     private DefaultTableModel model;
@@ -175,6 +176,13 @@ public class DubboSampleGui extends AbstractSamplerGui {
         connectionsLable.setLabelFor(connectionsText);
         h.add(connectionsLable);
         h.add(connectionsText);
+
+        JLabel respEncodingLabel = new JLabel("RespEncoding:", SwingConstants.RIGHT);
+        responseEncodingText = new JTextField(textColumns);
+        responseEncodingText.setText(DubboSample.DEFAULT_ENCODING);
+        respEncodingLabel.setLabelFor(responseEncodingText);
+        h.add(respEncodingLabel);
+        h.add(responseEncodingText);
         consumerSettings.add(h);
         
         JPanel hp1 = new HorizontalPanel();
@@ -280,6 +288,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         loadbalanceText.setSelectedItem(sample.getLoadbalance());
         asyncText.setSelectedItem(sample.getAsync());
         clusterText.setText(sample.getCluster());
+        responseEncodingText.setText(sample.getEncoding());
         interfaceText.setText(sample.getInterface());
         methodText.setText(sample.getMethod());
         Vector<String> columnNames = new Vector<String>();
@@ -326,6 +335,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         sample.setRetries(retriesText.getText());
         sample.setGroup(groupText.getText());
         sample.setConnections(connectionsText.getText());
+        sample.setEncoding(responseEncodingText.getText());
         sample.setLoadbalance(loadbalanceText.getSelectedItem().toString());
         sample.setAsync(asyncText.getSelectedItem().toString());
         sample.setCluster(clusterText.getText());

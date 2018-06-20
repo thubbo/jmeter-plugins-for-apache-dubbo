@@ -16,6 +16,7 @@
  */
 package io.github.ningyu.jmeter.plugin.dubbo.sample;
 
+import com.alibaba.fastjson.JSON;
 import io.github.ningyu.jmeter.plugin.util.ClassUtils;
 import io.github.ningyu.jmeter.plugin.util.Constants;
 import io.github.ningyu.jmeter.plugin.util.JsonUtils;
@@ -60,6 +61,7 @@ public class DubboSample extends AbstractSampler {
     public static String FIELD_DUBBO_RETRIES = "FIELD_DUBBO_RETRIES";
     public static String FIELD_DUBBO_CLUSTER = "FIELD_DUBBO_CLUSTER";
     public static String FIELD_DUBBO_GROUP = "FIELD_DUBBO_GROUP";
+    public static String FIELD_DUBBO_RESP_ENCODING = "FIELD_DUBBO_RESP_ENCODING";
     public static String FIELD_DUBBO_CONNECTIONS = "FIELD_DUBBO_CONNECTIONS";
     public static String FIELD_DUBBO_LOADBALANCE = "FIELD_DUBBO_LOADBALANCE";
     public static String FIELD_DUBBO_ASYNC = "FIELD_DUBBO_ASYNC";
@@ -72,6 +74,8 @@ public class DubboSample extends AbstractSampler {
     public static String DEFAULT_RETRIES = "0";
     public static String DEFAULT_CLUSTER = "failfast";
     public static String DEFAULT_CONNECTIONS = "1";
+    public static String DEFAULT_ENCODING = "UTF-8";
+
 
     /**
      * get Registry Protocol
@@ -216,7 +220,15 @@ public class DubboSample extends AbstractSampler {
     public void setConnections(String connections) {
     	this.setProperty(new StringProperty(FIELD_DUBBO_CONNECTIONS, connections));
     }
-    
+
+    public void setEncoding(String encoding) {
+        this.setProperty(new StringProperty(FIELD_DUBBO_RESP_ENCODING, encoding));
+    }
+
+    public String getEncoding() {
+        return this.getPropertyAsString(FIELD_DUBBO_RESP_ENCODING, DEFAULT_ENCODING);
+    }
+
     /**
      * get loadbalance
      * @return the loadbalance
@@ -321,7 +333,8 @@ public class DubboSample extends AbstractSampler {
         //构造请求数据
         res.setSamplerData(getSampleData());
         //调用dubbo
-        res.setResponseData(JsonUtils.toJson(callDubbo(res)));
+        res.setResponseData(JSON.toJSONString(callDubbo(res)),getEncoding());
+//        res.setResponseData(JsonUtils.toJson(callDubbo(res)));
         //构造响应数据
         res.setDataType(SampleResult.TEXT);
         res.setResponseCodeOK();
@@ -362,7 +375,7 @@ public class DubboSample extends AbstractSampler {
         // 引用远程服务
         reference.setApplication(application);
         RegistryConfig registry = null;
-        
+
         String protocol = getRegistryProtocol();
         String group = getGroup();
 		switch (protocol) {
