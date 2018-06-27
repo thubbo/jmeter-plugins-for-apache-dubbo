@@ -41,8 +41,21 @@ public class Constants {
 	public static final String ASYNC = "async";
 	public static final String SYMBOL = "://";
 	
-	
-	
-	
+	public static final int INT_DEFAULT = 0;
+	public static final double DOUBLE_DEFAULT = 0.0d;
+	public static final boolean BOOLEAN_DEFAULT = false;
+	public static final char CHAR_DEFAULT = '\u0000';
+	public static final float FLOAT_DEFAULT = 0.0f;
+	public static final byte BYTE_DEFAULT = 0;
+	public static final long LONG_DEFAULT = 0l;
+	public static final short SHORT_DEFAULT = 0;
+	public static final int[] INT_ARRAY_DEFAULT = null;
+	public static final double[] DOUBLE_ARRAY_DEFAULT = null;
+	public static final boolean[] BOOLEAN_ARRAY_DEFAULT = null;
+	public static final char[] CHAT_ARRAY_DEFAULT = null;
+	public static final float[] FLOAT_ARRAY_DEFAULT = null;
+	public static final byte[] BYTE_ARRAY_DEFAULT = null;
+	public static final long[] LONG_ARRAY_DEFAULT = null;
+	public static final short[] SHORT_ARRAY_DEFAULT = null;
 
 }
