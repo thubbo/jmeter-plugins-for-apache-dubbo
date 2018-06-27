@@ -19,90 +19,92 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.ningyu</groupId>
 	<artifactId>jmeter-plugins-dubbo</artifactId>
-	<version>1.3.4</version>
+	<version>1.3.5</version>
 	
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<maven.compiler.compilerVersion>1.7</maven.compiler.compilerVersion>
+		<dubbo_version>2.6.2</dubbo_version>
+		<gson_version>2.8.2</gson_version>
+		<zookeeper_version>3.4.9</zookeeper_version>
+		<zkclient_version>0.2</zkclient_version>
+		<curator_version>2.12.0</curator_version>
+		<fst_version>2.48-jdk-6</fst_version>
+		<slf4j_version>1.7.25</slf4j_version>
+		<jorphan_version>3.0</jorphan_version>
+		<avalon_framework_version>4.1.4</avalon_framework_version>
+		<jmeter_core_version>3.0</jmeter_core_version>
+		<avalon_logkit_version>2.0</avalon_logkit_version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>avalon-framework</groupId>
 			<artifactId>avalon-framework</artifactId>
-			<version>4.1.4</version>
+			<version>${avalon_framework_version}</version>
 			<scope>provided</scope>
-<!-- 			<systemPath>E:\user\desktop\ningyu\Desktop\avalon-framework-4.2.0\avalon-framework\jars\avalon-framework-4.2.0.jar</systemPath> -->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jmeter</groupId>
 			<artifactId>ApacheJMeter_core</artifactId>
-			<version>3.0</version>
+			<version>${jmeter_core_version}</version>
 			<scope>provided</scope>
-<!-- 			<systemPath>D:\javatools\apache-jmeter-3.0\lib\ext\ApacheJMeter_core.jar</systemPath> -->
 		</dependency>
 		<dependency>
 			<groupId>avalon-logkit</groupId>
 			<artifactId>avalon-logkit</artifactId>
-			<version>2.0</version>
+			<version>${avalon_logkit_version}</version>
 			<scope>provided</scope>
-<!-- 			<systemPath>D:\javatools\apache-jmeter-3.0\lib\logkit-2.0.jar</systemPath> -->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jmeter</groupId>
 			<artifactId>jorphan</artifactId>
-			<version>3.0</version>
+			<version>${jorphan_version}</version>
 			<scope>provided</scope>
-<!-- 			<systemPath>D:\javatools\apache-jmeter-3.0\lib\jorphan.jar</systemPath> -->
 		</dependency>
 		<!-- Dubbo -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>dubbo</artifactId>
-			<version>2.6.1</version>
+			<version>${dubbo_version}</version>
 		</dependency>
 		<!-- Zookeeper -->
 		<dependency>
 			<groupId>org.apache.zookeeper</groupId>
 			<artifactId>zookeeper</artifactId>
-			<version>3.4.6</version>
+			<version>${zookeeper_version}</version>
 		</dependency>
 		<dependency>
             <groupId>com.101tec</groupId>
             <artifactId>zkclient</artifactId>
-            <version>0.2</version>
+            <version>${zkclient_version}</version>
         </dependency>
 		<dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
-            <version>2.12.0</version>
+            <version>${curator_version}</version>
         </dependency>
         <dependency>
             <groupId>de.ruedigermoeller</groupId>
             <artifactId>fst</artifactId>
-            <version>2.48-jdk-6</version>
+            <version>${fst_version}</version>
         </dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.github.sgroschupf</groupId> -->
-<!-- 			<artifactId>zkclient</artifactId> -->
-<!-- 			<version>0.1</version> -->
-<!-- 		</dependency> -->
 		<!-- slf4j -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.5</version>
+			<version>${slf4j_version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>log4j-over-slf4j</artifactId>
-			<version>1.7.5</version>
+			<version>${slf4j_version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.8.2</version>
+			<version>${gson_version}</version>
 		</dependency>
 	</dependencies>
 	<build>
