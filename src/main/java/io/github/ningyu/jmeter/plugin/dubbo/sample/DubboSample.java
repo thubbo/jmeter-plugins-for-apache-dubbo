@@ -18,8 +18,10 @@ package io.github.ningyu.jmeter.plugin.dubbo.sample;
 
 import io.github.ningyu.jmeter.plugin.util.ClassUtils;
 import io.github.ningyu.jmeter.plugin.util.Constants;
+import io.github.ningyu.jmeter.plugin.util.ErrorCode;
 import io.github.ningyu.jmeter.plugin.util.JsonUtils;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +70,7 @@ public class DubboSample extends AbstractSampler {
     public static String FIELD_DUBBO_METHOD_ARGS = "FIELD_DUBBO_METHOD_ARGS";
     public static String FIELD_DUBBO_METHOD_ARGS_SIZE = "FIELD_DUBBO_METHOD_ARGS_SIZE";
     public static String DEFAULT_TIMEOUT = "1000";
-    public static String DEFAULT_VERSION = "1.0.0";
+    public static String DEFAULT_VERSION = "1.0";
     public static String DEFAULT_RETRIES = "0";
     public static String DEFAULT_CLUSTER = "failfast";
     public static String DEFAULT_CONNECTIONS = "100";
@@ -86,7 +88,7 @@ public class DubboSample extends AbstractSampler {
      * @param registryProtocol the protocol to set
      */
     public void setRegistryProtocol(String registryProtocol) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_PROTOCOL, registryProtocol));
+        this.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_PROTOCOL, org.springframework.util.StringUtils.trimAllWhitespace(registryProtocol)));
     }
     
     /**
@@ -99,10 +101,10 @@ public class DubboSample extends AbstractSampler {
 
     /**
      * set RPC protocol
-     * @param RPC protocol the protocol to set
+     * @param rpcProtocol the protocol to set
      */
     public void setRpcProtocol(String rpcProtocol) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_RPC_PROTOCOL, rpcProtocol));
+        this.setProperty(new StringProperty(FIELD_DUBBO_RPC_PROTOCOL, org.springframework.util.StringUtils.trimAllWhitespace(rpcProtocol)));
     }
 
     /**
@@ -118,7 +120,7 @@ public class DubboSample extends AbstractSampler {
      * @param address the address to set
      */
     public void setAddress(String address) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_ADDRESS, address));
+        this.setProperty(new StringProperty(FIELD_DUBBO_ADDRESS, org.springframework.util.StringUtils.trimAllWhitespace(address)));
     }
 
     /**
@@ -134,7 +136,7 @@ public class DubboSample extends AbstractSampler {
      * @param timeout the timeout to set
      */
     public void setTimeout(String timeout) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_TIMEOUT, timeout));
+        this.setProperty(new StringProperty(FIELD_DUBBO_TIMEOUT, org.springframework.util.StringUtils.trimAllWhitespace(timeout)));
     }
 
     /**
@@ -150,7 +152,7 @@ public class DubboSample extends AbstractSampler {
      * @param version the version to set
      */
     public void setVersion(String version) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_VERSION, version));
+        this.setProperty(new StringProperty(FIELD_DUBBO_VERSION, org.springframework.util.StringUtils.trimAllWhitespace(version)));
     }
     
     /**
@@ -166,7 +168,7 @@ public class DubboSample extends AbstractSampler {
      * @param retries the retries to set
      */
     public void setRetries(String retries) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_RETRIES, retries));
+        this.setProperty(new StringProperty(FIELD_DUBBO_RETRIES, org.springframework.util.StringUtils.trimAllWhitespace(retries)));
     }
     
     /**
@@ -182,7 +184,7 @@ public class DubboSample extends AbstractSampler {
      * @param cluster the cluster to set
      */
     public void setCluster(String cluster) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_CLUSTER, cluster));
+        this.setProperty(new StringProperty(FIELD_DUBBO_CLUSTER, org.springframework.util.StringUtils.trimAllWhitespace(cluster)));
     }
     
     /**
@@ -198,7 +200,7 @@ public class DubboSample extends AbstractSampler {
      * @param group the group to set
      */
     public void setGroup(String group) {
-    	this.setProperty(new StringProperty(FIELD_DUBBO_GROUP, group));
+    	this.setProperty(new StringProperty(FIELD_DUBBO_GROUP, org.springframework.util.StringUtils.trimAllWhitespace(group)));
     }
     
     /**
@@ -214,7 +216,7 @@ public class DubboSample extends AbstractSampler {
      * @param connections the connections to set
      */
     public void setConnections(String connections) {
-    	this.setProperty(new StringProperty(FIELD_DUBBO_CONNECTIONS, connections));
+    	this.setProperty(new StringProperty(FIELD_DUBBO_CONNECTIONS, org.springframework.util.StringUtils.trimAllWhitespace(connections)));
     }
     
     /**
@@ -230,7 +232,7 @@ public class DubboSample extends AbstractSampler {
      * @param loadbalance the loadbalance to set
      */
     public void setLoadbalance(String loadbalance) {
-    	this.setProperty(new StringProperty(FIELD_DUBBO_LOADBALANCE, loadbalance));
+    	this.setProperty(new StringProperty(FIELD_DUBBO_LOADBALANCE, org.springframework.util.StringUtils.trimAllWhitespace(loadbalance)));
     }
     
     /**
@@ -246,7 +248,7 @@ public class DubboSample extends AbstractSampler {
      * @param async the async to set
      */
     public void setAsync(String async) {
-    	this.setProperty(new StringProperty(FIELD_DUBBO_ASYNC, async));
+    	this.setProperty(new StringProperty(FIELD_DUBBO_ASYNC, org.springframework.util.StringUtils.trimAllWhitespace(async)));
     }
 
     /**
@@ -262,7 +264,7 @@ public class DubboSample extends AbstractSampler {
      * @param interfaceName the interfaceName to set
      */
     public void setInterfaceName(String interfaceName) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_INTERFACE, interfaceName));
+        this.setProperty(new StringProperty(FIELD_DUBBO_INTERFACE, org.springframework.util.StringUtils.trimAllWhitespace(interfaceName)));
     }
 
     /**
@@ -278,7 +280,7 @@ public class DubboSample extends AbstractSampler {
      * @param method the method to set
      */
     public void setMethod(String method) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_METHOD, method));
+        this.setProperty(new StringProperty(FIELD_DUBBO_METHOD, org.springframework.util.StringUtils.trimAllWhitespace(method)));
     }
 
     /**
@@ -344,7 +346,7 @@ public class DubboSample extends AbstractSampler {
         sb.append("Cluster: ").append(getCluster()).append("\n");
         sb.append("Group: ").append(getGroup()).append("\n");
         sb.append("Connections: ").append(getConnections()).append("\n");
-        sb.append("Loadbalance: ").append(getLoadbalance()).append("\n");
+        sb.append("LoadBalance: ").append(getLoadbalance()).append("\n");
         sb.append("Async: ").append(getAsync()).append("\n");
         sb.append("Interface: ").append(getInterface()).append("\n");
         sb.append("Method: ").append(getMethod()).append("\n");
@@ -359,38 +361,46 @@ public class DubboSample extends AbstractSampler {
         
         // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏
         ReferenceConfig reference = new ReferenceConfig();
-        // 引用远程服务
+        // set application
         reference.setApplication(application);
         RegistryConfig registry = null;
-        
+        // check address
+        String address = getAddress();
+        if (StringUtils.isBlank(address)) {
+            res.setSuccessful(false);
+            return ErrorCode.MISS_ADDRESS.getMessage();
+        }
+        // get rpc protocol
+        String rpcProtocol = getRpcProtocol().replaceAll("://", "");
+        // get registry protocol
         String protocol = getRegistryProtocol();
 		switch (protocol) {
 		case Constants.REGISTRY_ZOOKEEPER:
 			registry = new RegistryConfig();
 			registry.setProtocol(Constants.REGISTRY_ZOOKEEPER);
-			registry.setAddress(getAddress());
+			registry.setAddress(address);
 			reference.setRegistry(registry);
-			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
+			reference.setProtocol(rpcProtocol);
 			break;
 		case Constants.REGISTRY_MULTICAST:
 			registry = new RegistryConfig();
 			registry.setProtocol(Constants.REGISTRY_MULTICAST);
-			registry.setAddress(getAddress());
+			registry.setAddress(address);
 			reference.setRegistry(registry);
-			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
+			reference.setProtocol(rpcProtocol);
 			break;
 		case Constants.REGISTRY_REDIS:
 			registry = new RegistryConfig();
 			registry.setProtocol(Constants.REGISTRY_REDIS);
-			registry.setAddress(getAddress());
+			registry.setAddress(address);
 			reference.setRegistry(registry);
-			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
+			reference.setProtocol(rpcProtocol);
 			break;
 		case Constants.REGISTRY_SIMPLE:
 			registry = new RegistryConfig();
-			registry.setAddress(getAddress());
+			registry.setAddress(address);
 			reference.setRegistry(registry);
-			reference.setProtocol(getRpcProtocol().replaceAll("://", ""));
+			reference.setProtocol(rpcProtocol);
 			break;
 		default:
 			// 直连方式
@@ -400,24 +410,105 @@ public class DubboSample extends AbstractSampler {
 			reference.setUrl(sb.toString());
 		}
         try {
-            reference.setInterface(getInterface());
-            reference.setRetries(Integer.valueOf(getRetries()));
-            reference.setCluster(getCluster());
-            reference.setVersion(getVersion());
-            reference.setTimeout(Integer.valueOf(getTimeout()));
+		    // set interface
+		    String interfaceName = getInterface();
+		    if (StringUtils.isBlank(interfaceName)) {
+                res.setSuccessful(false);
+                return ErrorCode.MISS_INTERFACE.getMessage();
+            }
+            reference.setInterface(interfaceName);
+
+		    // set retries
+            Integer retries = null;
+            try {
+                if (!StringUtils.isBlank(getRetries())) {
+                    retries = Integer.valueOf(getRetries());
+                }
+            } catch (NumberFormatException e) {
+                res.setSuccessful(false);
+                return ErrorCode.RETRIES_ERROR.getMessage();
+            }
+            if (retries != null) {
+                reference.setRetries(retries);
+            }
+
+            // set cluster
+            String cluster = getCluster();
+            if (!StringUtils.isBlank(cluster)) {
+                reference.setCluster(getCluster());
+            }
+
+            // set version
+            String version = getVersion();
+            if (!StringUtils.isBlank(version)) {
+                reference.setVersion(version);
+            }
+
+            // set timeout
+            Integer timeout = null;
+            try {
+                if (!StringUtils.isBlank(getTimeout())) {
+                    timeout = Integer.valueOf(getTimeout());
+                }
+            } catch (NumberFormatException e) {
+                res.setSuccessful(false);
+                return ErrorCode.TIMEOUT_ERROR.getMessage();
+            }
+            if (timeout != null) {
+                reference.setTimeout(timeout);
+            }
+
+            // set group
             String group = getGroup();
-            reference.setGroup(StringUtils.isBlank(group) ? null : group);
-            reference.setConnections(Integer.valueOf(getConnections()));
-            reference.setLoadbalance(getLoadbalance());
-            reference.setAsync(Constants.ASYNC.equals(getAsync()) ? true : false);
+            if (!StringUtils.isBlank(group)) {
+                reference.setGroup(group);
+            }
+
+            // set connections
+            Integer connections = null;
+            try {
+                if (!StringUtils.isBlank(getConnections())) {
+                    connections = Integer.valueOf(getConnections());
+                }
+            } catch (NumberFormatException e) {
+                res.setSuccessful(false);
+                return ErrorCode.CONNECTIONS_ERROR.getMessage();
+            }
+            if (connections != null) {
+                reference.setConnections(connections);
+            }
+
+            // set loadBalance
+            String loadBalance = getLoadbalance();
+            if (!StringUtils.isBlank(loadBalance)) {
+                reference.setLoadbalance(loadBalance);
+            }
+
+            // set async
+            String async = getAsync();
+            if (!StringUtils.isBlank(async)) {
+                reference.setAsync(Constants.ASYNC.equals(async) ? true : false);
+            }
+
+            // set generic
             reference.setGeneric(true);
-            //TODO 不同的注册中心地址使用不同的cache对象
+
+            String methodName = getMethod();
+            if (StringUtils.isBlank(methodName)) {
+                res.setSuccessful(false);
+                return ErrorCode.MISS_METHOD.getMessage();
+            }
+            // 不同的注册中心地址使用不同的cache对象
             ReferenceConfigCache cache = ReferenceConfigCache.getCache(getAddress(), new KeyGenerator() {
 				public String generateKey(ReferenceConfig<?> referenceConfig) {
 					return referenceConfig.toString();
 				}
 			});
             GenericService genericService = (GenericService) cache.get(reference);
+            if (genericService == null) {
+                res.setSuccessful(false);
+                return MessageFormat.format(ErrorCode.GENERIC_SERVICE_IS_NULL.getMessage(), interfaceName);
+            }
             String[] parameterTypes = null;
             Object[] parameterValues = null;
             List<MethodArgument> args = getMethodArgs();
@@ -431,10 +522,10 @@ public class DubboSample extends AbstractSampler {
             parameterValues = parameterValuesList.toArray(new Object[parameterValuesList.size()]);
             Object result = null;
 			try {
-				result = genericService.$invoke(getMethod(), parameterTypes, parameterValues);
+				result = genericService.$invoke(methodName, parameterTypes, parameterValues);
 				res.setSuccessful(true);
 			} catch (Exception e) {
-				log.error("接口返回异常：", e);
+				log.error("RpcException：", e);
 				//TODO
 				//当接口返回异常时，sample标识为successful，通过响应内容做断言来判断是否标识sample错误，因为sample的错误会统计到用例的error百分比内。
 				//比如接口有一些校验性质的异常，不代表这个操作是错误的，这样就可以灵活的判断，不至于正常的校验返回导致测试用例error百分比的不真实
@@ -443,7 +534,7 @@ public class DubboSample extends AbstractSampler {
 			}
             return result;
         } catch (Exception e) {
-            log.error("未知异常：", e);
+            log.error("UnknownException：", e);
             res.setSuccessful(false);
             return e;
         } finally {
