@@ -214,12 +214,12 @@ public class ClassUtils {
 					} catch (ClassNotFoundException e) {
 						//不是jdk或者lib下的类，使用通用map格式反序列化值
 						paramterTypeList.add(arg.getParamType());
-						parameterValuesList.add(JsonUtils.formJson(arg.getParamValue(), new TypeToken<HashMap<String,Object>>() {}.getType()));
+						parameterValuesList.add(isBlank(arg.getParamValue()) ? null : JsonUtils.formJson(arg.getParamValue(), new TypeToken<HashMap<String,Object>>() {}.getType()));
 					}
 				}
 			}
 		} catch (Exception e) {
-			throw new IllegalArgumentException("无效参数 => [ParamType="+arg.getParamType()+",ParamValue="+arg.getParamValue()+"]", e);
+			throw new IllegalArgumentException("Invalid parameter => [ParamType="+arg.getParamType()+",ParamValue="+arg.getParamValue()+"]", e);
 		}
 	}
 }

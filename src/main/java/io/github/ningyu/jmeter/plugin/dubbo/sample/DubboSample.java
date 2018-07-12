@@ -359,7 +359,8 @@ public class DubboSample extends AbstractSampler {
         ApplicationConfig application = new ApplicationConfig();
         application.setName("DubboSample");
         
-        // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏
+        // This instance is heavy, encapsulating the connection to the registry and the connection to the provider, 
+        // so please cache yourself, otherwise memory and connection leaks may occur.
         ReferenceConfig reference = new ReferenceConfig();
         // set application
         reference.setApplication(application);
@@ -403,7 +404,7 @@ public class DubboSample extends AbstractSampler {
 			reference.setProtocol(rpcProtocol);
 			break;
 		default:
-			// 直连方式
+			// direct invoke provider
 			StringBuffer sb = new StringBuffer();
 			sb.append(getRpcProtocol()).append(getAddress()).append("/").append(getInterface());
 			log.debug("rpc invoker url : " + sb.toString());
@@ -498,7 +499,8 @@ public class DubboSample extends AbstractSampler {
                 res.setSuccessful(false);
                 return ErrorCode.MISS_METHOD.getMessage();
             }
-            // 不同的注册中心地址使用不同的cache对象
+            
+            // The registry's address is to generate the ReferenceConfigCache key
             ReferenceConfigCache cache = ReferenceConfigCache.getCache(getAddress(), new KeyGenerator() {
 				public String generateKey(ReferenceConfig<?> referenceConfig) {
 					return referenceConfig.toString();
@@ -517,7 +519,6 @@ public class DubboSample extends AbstractSampler {
             for(MethodArgument arg : args) {
             	ClassUtils.parseParameter(paramterTypeList, parameterValuesList, arg);
             }
-            //发起调用
             parameterTypes = paramterTypeList.toArray(new String[paramterTypeList.size()]);
             parameterValues = parameterValuesList.toArray(new Object[parameterValuesList.size()]);
             Object result = null;
@@ -545,57 +546,4 @@ public class DubboSample extends AbstractSampler {
 //            reference.destroy();
         }
     }
-    
-    public static void main(String[] args) throws Exception {
-//    	  ApplicationConfig application = new ApplicationConfig();
-//        application.setName("DubboSample");
-//        
-//        // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏
-//        ReferenceConfig reference = new ReferenceConfig();
-//        // 引用远程服务
-//        reference.setApplication(application);
-//        RegistryConfig registry = null;
-//        
-//        StringBuffer sb = new StringBuffer();
-//        sb.append("dubbo").append("://").append("192.168.6.47:20835").append("/").append("com.jiuyescm.tenant.api.IMenuResourceService");
-//        log.debug("rpc invoker url : " + sb.toString());
-//        reference.setUrl(sb.toString());
-//        Class clazz = Class.forName("com.jiuyescm.tenant.api.IMenuResourceService");
-//        reference.setInterface(clazz);
-//        reference.setRetries(Integer.valueOf("0"));
-//        reference.setCluster("failfast");
-//        reference.setVersion("1.0.0");
-//        reference.setTimeout(Integer.valueOf("1200000"));
-//        Object target = reference.get();
-//        Method method = null;
-//        Object[] parameterValues = null;
-//        Method[] methods = target.getClass().getMethods();
-//    	String methodName = "createMenuResourceMapping";
-//    	List<MethodArgument> list = new ArrayList<MethodArgument>();
-//    	list.add(new MethodArgument("java.util.List", "[{\"menuId\":30002,\"appId\":8,\"resourceId\":40052},{\"menuId\":30003,\"appId\":8,\"resourceId\":40052}]"));
-//    	Class clazz = Class.forName("com.jiuyescm.tenant.api.IResourceService");
-//    	String methodName = "query";
-//    	List<MethodArgument> list = new ArrayList<MethodArgument>();
-//    	list.add(new MethodArgument("com.jiuyescm.tenant.vo.ResourceVo", "{\"menuId\":30002,\"appId\":8,\"resourceId\":40052}"));
-//    	list.add(new MethodArgument("java.lang.Integer", "1"));
-//    	list.add(new MethodArgument("java.lang.Integer", "10"));
-//    	List<Object> parameterValuesList = null;
-//    	Class clazz = Class.forName("com.jiuyescm.tenant.api.IResourceService");
-//    	String methodName = "testMethod";
-//    	List<MethodArgument> list = new ArrayList<MethodArgument>();
-//    	list.add(new MethodArgument("java.util.Map", "{\"name\":\"name\",\"value\":{\"service\":\"test1\",\"url\":\"test\",\"action\":\"GET\",\"enabled\":true,\"isPublic\":false,\"appId\":8,\"menuId\":30001}}"));
-//    	list.add(new MethodArgument("java.util.List", "[{\"name\":1,\"value\":{\"service\":\"test1\",\"url\":\"test\",\"action\":\"GET\",\"enabled\":true,\"isPublic\":false,\"appId\":8,\"menuId\":30001}},{\"name\":2,\"value\":{\"service\":\"test1\",\"url\":\"test\",\"action\":\"GET\",\"enabled\":true,\"isPublic\":false,\"appId\":8,\"menuId\":30001}}]"));
-//    	Method[] methods = clazz.getMethods();
-//    	parameterValuesList = new ArrayList<Object>();
-//    	for (Method m : methods) {
-//    		if (m.getName().equals(methodName)) {
-//    			Type[] paramTypes = m.getGenericParameterTypes();
-//				for (int j = 0; j < paramTypes.length; j++) {
-//					ClassUtils.parseParameter(paramTypes[j], parameterValuesList, list.get(j));
-//				}
-//    		}
-//    	}
-//		System.out.println(int.class.getName());
-	}
-
 }
