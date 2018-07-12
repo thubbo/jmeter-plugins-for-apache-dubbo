@@ -16,16 +16,14 @@
  */
 package io.github.ningyu.jmeter.plugin.util;
 
+import com.google.common.reflect.TypeToken;
 import io.github.ningyu.jmeter.plugin.dubbo.sample.MethodArgument;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.reflect.TypeToken;
 
 /**
  * ClassUtils
@@ -216,7 +214,7 @@ public class ClassUtils {
 					} catch (ClassNotFoundException e) {
 						//不是jdk或者lib下的类，使用通用map格式反序列化值
 						paramterTypeList.add(arg.getParamType());
-						parameterValuesList.add(JsonUtils.formJson(arg.getParamValue(), new TypeToken<Map<String,Object>>() {}.getType()));
+						parameterValuesList.add(JsonUtils.formJson(arg.getParamValue(), new TypeToken<HashMap<String,Object>>() {}.getType()));
 					}
 				}
 			}
