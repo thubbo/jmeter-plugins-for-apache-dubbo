@@ -16,36 +16,33 @@
  */
 package io.github.ningyu.jmeter.plugin.dubbo.gui;
 
+import com.alibaba.dubbo.common.URL;
+
 import io.github.ningyu.jmeter.plugin.dubbo.sample.DubboSample;
 import io.github.ningyu.jmeter.plugin.dubbo.sample.MethodArgument;
-
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
-
+import io.github.ningyu.jmeter.plugin.dubbo.sample.ProviderService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.gui.util.VerticalPanel;
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * DubboSampleGui </br>
@@ -58,7 +55,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
     /**
      */
     private static final long serialVersionUID = -3248204995359935007L;
-    
+
     private JComboBox<String> registryProtocolText;
     private JComboBox<String> rpcProtocolText;
     private JTextField addressText;
@@ -76,7 +73,8 @@ public class DubboSampleGui extends AbstractSamplerGui {
     private String[] columnNames = {"paramType", "paramValue"};
     private String[] tmpRow = {"", ""};
     private int textColumns = 2;
-    
+    private JAutoCompleteComboBox<String> interfaceList;
+    private JAutoCompleteComboBox<String> methodList;
 
     public DubboSampleGui() {
         super();
@@ -117,7 +115,51 @@ public class DubboSampleGui extends AbstractSamplerGui {
         ah.add(addressText);
         ah.add(addressHelpLable);
         registrySettings.add(ah);
-        
+        //Selection Interface
+        JPanel sh = new HorizontalPanel();
+        JButton jButton = new JButton("Get Provider List");
+        interfaceList = new JAutoCompleteComboBox<String>(new DefaultComboBoxModel<String>(new String[]{}), new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    doChange(e.getItem().toString());
+                }
+            }
+        });
+        interfaceList.addPropertyChangeListener("model", new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                doChange(interfaceList.getSelectedItem().toString());
+            }
+        });
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                doConfirm(e, interfaceList);
+            }
+        });
+        sh.add(jButton);
+        sh.add(new JLabel("Interfaces:", SwingConstants.RIGHT));
+        sh.add(interfaceList);
+        sh.add(new JLabel("Methods:", SwingConstants.RIGHT));
+        methodList = new JAutoCompleteComboBox<String>(new DefaultComboBoxModel<String>(new String[]{}), new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    methodText.setText(e.getItem().toString());
+                }
+            }
+        });
+        methodList.addPropertyChangeListener("model", new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                methodText.setText(methodList.getSelectedItem().toString());
+            }
+        });
+        sh.add(methodList);
+        registrySettings.add(sh);
+
+
         //RPC Protocol Settings
         JPanel protocolSettings = new VerticalPanel();
         protocolSettings.setBorder(BorderFactory.createTitledBorder("RPC Protocol Settings"));
@@ -389,6 +431,50 @@ public class DubboSampleGui extends AbstractSamplerGui {
         interfaceText.setText("");
         methodText.setText("");
         model.setDataVector(null, columnNames);
+    }
+
+    private void doChange(String key) {
+        ProviderService providerService = ProviderService.get(addressText.getText());
+        Map<String, URL> provider = providerService.findByService(key);
+        if (provider != null && !provider.isEmpty()) {
+            URL url = new ArrayList<URL>(provider.values()).get(0);
+            String group = url.getParameter(com.alibaba.dubbo.common.Constants.GROUP_KEY);
+            String version = url.getParameter(com.alibaba.dubbo.common.Constants.VERSION_KEY);
+            String timeout = url.getParameter(com.alibaba.dubbo.common.Constants.TIMEOUT_KEY);
+            String protocol = url.getProtocol() + "://";
+            String interfaceName = url.getServiceInterface();
+            String method = url.getParameter(com.alibaba.dubbo.common.Constants.METHODS_KEY);
+            groupText.setText(group);
+            versionText.setText(version);
+            timeoutText.setText(timeout);
+            rpcProtocolText.setSelectedItem(protocol);
+            interfaceText.setText(interfaceName);
+            //set method
+            String[] items = method.split(",");
+            methodList.setModel(new DefaultComboBoxModel<String>(items));
+        }
+    }
+
+    private void doConfirm(ActionEvent event, JAutoCompleteComboBox<String> interfaceList) {
+        String protocol = registryProtocolText.getSelectedItem().toString();
+        String address = addressText.getText();
+        if (StringUtils.isBlank(address)) {
+            JOptionPane.showMessageDialog(this.getParent(), "Address can't be empty!", "error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int result = JOptionPane.showConfirmDialog(this.getParent(), "Obtaining all the providers lists may cause jmeter to stop responding for a few seconds. Do you want to continue?", "warn", JOptionPane.YES_NO_CANCEL_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            List<String> list = new ArrayList<String>();
+            try {
+                list = ProviderService.get(address).getProviders(protocol, address);
+                JOptionPane.showMessageDialog(this.getParent(), "Get provider list to finish! Check if the log has errors.", "info", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this.getParent(), e.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            String[] items = list.toArray(new String[]{});
+            interfaceList.setModel(new DefaultComboBoxModel<String>(items));
+        }
     }
 
 }

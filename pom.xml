@@ -19,13 +19,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.ningyu</groupId>
 	<artifactId>jmeter-plugins-dubbo</artifactId>
-	<version>1.3.6</version>
+	<version>1.3.7</version>
 	
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<maven.compiler.compilerVersion>1.7</maven.compiler.compilerVersion>
-		<dubbo_version>2.6.2</dubbo_version>
+		<dubbo_version>2.6.4</dubbo_version>
 		<gson_version>2.8.2</gson_version>
 		<zookeeper_version>3.4.9</zookeeper_version>
 		<zkclient_version>0.2</zkclient_version>
