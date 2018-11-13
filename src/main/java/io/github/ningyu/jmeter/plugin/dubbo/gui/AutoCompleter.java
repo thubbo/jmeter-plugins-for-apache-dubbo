@@ -25,10 +25,7 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * <功能描述>
- *
- * @author ningyu
- * @date 2018/11/9 14:59
+ * AutoCompleter
  */
 public class AutoCompleter implements KeyListener {
 
