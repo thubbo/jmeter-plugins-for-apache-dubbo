@@ -41,6 +41,8 @@ import com.alibaba.dubbo.config.utils.ReferenceConfigCache;
 import com.alibaba.dubbo.config.utils.ReferenceConfigCache.KeyGenerator;
 import com.alibaba.dubbo.rpc.service.GenericService;
 
+import javax.swing.*;
+
 /**
  * DubboSample
  */
@@ -74,6 +76,7 @@ public class DubboSample extends AbstractSampler {
     public static String DEFAULT_RETRIES = "0";
     public static String DEFAULT_CLUSTER = "failfast";
     public static String DEFAULT_CONNECTIONS = "100";
+    public static ApplicationConfig application = new ApplicationConfig("DubboSample");
 
     /**
      * get Registry Protocol
@@ -356,10 +359,7 @@ public class DubboSample extends AbstractSampler {
     
     @SuppressWarnings({"unchecked", "rawtypes"})
     private Object callDubbo(SampleResult res) {
-        ApplicationConfig application = new ApplicationConfig();
-        application.setName("DubboSample");
-        
-        // This instance is heavy, encapsulating the connection to the registry and the connection to the provider, 
+        // This instance is heavy, encapsulating the connection to the registry and the connection to the provider,
         // so please cache yourself, otherwise memory and connection leaks may occur.
         ReferenceConfig reference = new ReferenceConfig();
         // set application
