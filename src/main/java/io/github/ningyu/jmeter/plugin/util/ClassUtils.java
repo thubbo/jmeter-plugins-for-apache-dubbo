@@ -1,24 +1,13 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) 2018, Jiuye SCM and/or its affiliates. All rights reserved.
  */
 package io.github.ningyu.jmeter.plugin.util;
 
 import com.google.common.reflect.TypeToken;
 import io.github.ningyu.jmeter.plugin.dubbo.sample.MethodArgument;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jorphan.logging.LoggingManager;
+import org.apache.log.Logger;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -29,6 +18,8 @@ import java.util.List;
  * ClassUtils
  */
 public class ClassUtils {
+
+	private static final Logger log = LoggingManager.getLoggerForClass();
 
 	private static final String TYPE_NAME_PREFIX = "class ";
 
@@ -214,7 +205,16 @@ public class ClassUtils {
 					} catch (ClassNotFoundException e) {
 						//不是jdk或者lib下的类，使用通用map格式反序列化值
 						paramterTypeList.add(arg.getParamType());
-						parameterValuesList.add(isBlank(arg.getParamValue()) ? null : JsonUtils.formJson(arg.getParamValue(), new TypeToken<HashMap<String,Object>>() {}.getType()));
+						Object obj = null;
+						if (!isBlank(arg.getParamValue())) {
+							//使用通用map格式反序列化值
+							obj = JsonUtils.formJson(arg.getParamValue(), new TypeToken<HashMap<String, Object>>() {}.getType());
+							if (obj == null) {
+								//枚举类型的类走字符串序列化
+								obj = JsonUtils.formJson(arg.getParamValue(), String.class);
+							}
+						}
+						parameterValuesList.add(obj);
 					}
 				}
 			}
