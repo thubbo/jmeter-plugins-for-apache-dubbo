@@ -57,6 +57,7 @@ public class DubboSample extends AbstractSampler {
     private static final long serialVersionUID = -6794913295411458705L;
     
     public static String FIELD_DUBBO_REGISTRY_PROTOCOL = "FIELD_DUBBO_REGISTRY_PROTOCOL";
+    public static String FIELD_DUBBO_REGISTRY_GROUP = "FIELD_DUBBO_REGISTRY_GROUP";
     public static String FIELD_DUBBO_RPC_PROTOCOL = "FIELD_DUBBO_RPC_PROTOCOL";
     public static String FIELD_DUBBO_ADDRESS = "FIELD_DUBBO_ADDRESS";
     public static String FIELD_DUBBO_TIMEOUT = "FIELD_DUBBO_TIMEOUT";
@@ -92,6 +93,22 @@ public class DubboSample extends AbstractSampler {
      */
     public void setRegistryProtocol(String registryProtocol) {
         this.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_PROTOCOL, org.springframework.util.StringUtils.trimAllWhitespace(registryProtocol)));
+    }
+
+    /**
+     * get Registry Group
+     * @return the group
+     */
+    public String getRegistryGroup() {
+        return this.getPropertyAsString(FIELD_DUBBO_REGISTRY_GROUP);
+    }
+
+    /**
+     * set Registry Group
+     * @param registryGroup the group to set
+     */
+    public void setRegistryGroup(String registryGroup) {
+        this.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_GROUP, org.springframework.util.StringUtils.trimAllWhitespace(registryGroup)));
     }
     
     /**
@@ -375,10 +392,13 @@ public class DubboSample extends AbstractSampler {
         String rpcProtocol = getRpcProtocol().replaceAll("://", "");
         // get registry protocol
         String protocol = getRegistryProtocol();
+        // get registry group
+        String registryGroup = getRegistryGroup();
 		switch (protocol) {
 		case Constants.REGISTRY_ZOOKEEPER:
 			registry = new RegistryConfig();
 			registry.setProtocol(Constants.REGISTRY_ZOOKEEPER);
+            registry.setGroup(registryGroup);
 			registry.setAddress(address);
 			reference.setRegistry(registry);
 			reference.setProtocol(rpcProtocol);
@@ -386,6 +406,7 @@ public class DubboSample extends AbstractSampler {
 		case Constants.REGISTRY_MULTICAST:
 			registry = new RegistryConfig();
 			registry.setProtocol(Constants.REGISTRY_MULTICAST);
+            registry.setGroup(registryGroup);
 			registry.setAddress(address);
 			reference.setRegistry(registry);
 			reference.setProtocol(rpcProtocol);
@@ -393,6 +414,7 @@ public class DubboSample extends AbstractSampler {
 		case Constants.REGISTRY_REDIS:
 			registry = new RegistryConfig();
 			registry.setProtocol(Constants.REGISTRY_REDIS);
+            registry.setGroup(registryGroup);
 			registry.setAddress(address);
 			reference.setRegistry(registry);
 			reference.setProtocol(rpcProtocol);

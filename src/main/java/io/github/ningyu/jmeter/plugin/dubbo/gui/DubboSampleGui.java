@@ -59,6 +59,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
     private JComboBox<String> registryProtocolText;
     private JComboBox<String> rpcProtocolText;
     private JTextField addressText;
+    private JTextField registryGroupText;
     private JTextField timeoutText;
     private JTextField versionText;
     private JTextField retriesText;
@@ -102,18 +103,23 @@ public class DubboSampleGui extends AbstractSamplerGui {
         protocolLable.setLabelFor(registryProtocolText);
         ph.add(protocolLable);
         ph.add(registryProtocolText);
+        ph.add(makeHelper("Registry center address protocol, The 'none' is direct connection. "));
         registrySettings.add(ph);
         //Address
         JPanel ah = new HorizontalPanel();
         JLabel addressLable = new JLabel("Address:", SwingConstants.RIGHT);
         addressText = new JTextField(textColumns);
         addressLable.setLabelFor(addressText);
-        JLabel addressHelpLable = new JLabel();
-        addressHelpLable.setIcon(new ImageIcon(getClass().getResource("/images/help.png")));
-        addressHelpLable.setToolTipText("Use the registry to allow multiple addresses, Use direct connection to allow only one address! Multiple address format: ip1:port1,ip2:port2 . Direct address format: ip:port . ");
         ah.add(addressLable);
         ah.add(addressText);
-        ah.add(addressHelpLable);
+        ah.add(makeHelper("Use the registry to allow multiple addresses, Use direct connection to allow only one address! Multiple address format: ip1:port1,ip2:port2 . Direct address format: ip:port . "));
+        JLabel registryGroupLable = new JLabel("Group:", SwingConstants.RIGHT);
+        registryGroupText = new JTextField();
+        registryGroupLable.setLabelFor(registryGroupText);
+        ah.add(registryGroupLable);
+        ah.add(registryGroupText);
+        ah.add(makeHelper("Service registration grouping, cross-group services will not affect each other, and can not be called each other, suitable for environmental isolation."));
+
         registrySettings.add(ah);
         //Selection Interface
         JPanel sh = new HorizontalPanel();
@@ -129,7 +135,11 @@ public class DubboSampleGui extends AbstractSamplerGui {
         interfaceList.addPropertyChangeListener("model", new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                doChange(interfaceList.getSelectedItem().toString());
+                if (interfaceList.getSelectedItem() != null) {
+                    doChange(interfaceList.getSelectedItem().toString());
+                } else {
+                    methodList.setModel(new DefaultComboBoxModel<String>(new String[]{}));
+                }
             }
         });
         jButton.addActionListener(new ActionListener() {
@@ -153,7 +163,9 @@ public class DubboSampleGui extends AbstractSamplerGui {
         methodList.addPropertyChangeListener("model", new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                methodText.setText(methodList.getSelectedItem().toString());
+                if (methodList.getSelectedItem() != null) {
+                    methodText.setText(methodList.getSelectedItem().toString());
+                }
             }
         });
         sh.add(methodList);
@@ -170,11 +182,12 @@ public class DubboSampleGui extends AbstractSamplerGui {
         rpcProtocolLable.setLabelFor(rpcProtocolText);
         rpcPh.add(rpcProtocolLable);
         rpcPh.add(rpcProtocolText);
+        rpcPh.add(makeHelper("RPC protocol name."));
         protocolSettings.add(rpcPh);
         
         //Consumer Settings
         JPanel consumerSettings = new VerticalPanel();
-        consumerSettings.setBorder(BorderFactory.createTitledBorder("Consumer Settings"));
+        consumerSettings.setBorder(BorderFactory.createTitledBorder("Consumer&Service Settings"));
         JPanel h = new HorizontalPanel();
         //Timeout
         JLabel timeoutLable = new JLabel(" Timeout:", SwingConstants.RIGHT);
@@ -183,6 +196,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         timeoutLable.setLabelFor(timeoutText);
         h.add(timeoutLable);
         h.add(timeoutText);
+        h.add(makeHelper("Invoking timeout(ms)"));
         //Version
         JLabel versionLable = new JLabel("Version:", SwingConstants.RIGHT);
         versionText = new JTextField(textColumns);
@@ -190,6 +204,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         versionLable.setLabelFor(versionText);
         h.add(versionLable);
         h.add(versionText);
+        h.add(makeHelper("Service version."));
         //Retries
         JLabel retriesLable = new JLabel("Retries:", SwingConstants.RIGHT);
         retriesText = new JTextField(textColumns);
@@ -197,6 +212,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         retriesLable.setLabelFor(retriesText);
         h.add(retriesLable);
         h.add(retriesText);
+        h.add(makeHelper("The retry count for RPC, not including the first invoke. Please set it to 0 if don't need to retry."));
         //Cluster
         JLabel clusterLable = new JLabel("Cluster:", SwingConstants.RIGHT);
         clusterText = new JTextField(textColumns);
@@ -204,12 +220,14 @@ public class DubboSampleGui extends AbstractSamplerGui {
         clusterLable.setLabelFor(clusterText);
         h.add(clusterLable);
         h.add(clusterText);
+        h.add(makeHelper("failover/failfast/failsafe/failback/forking are available."));
         //Group
         JLabel groupLable = new JLabel("Group:", SwingConstants.RIGHT);
         groupText = new JTextField(textColumns);
         groupLable.setLabelFor(groupText);
         h.add(groupLable);
         h.add(groupText);
+        h.add(makeHelper("The group of the service providers. It can distinguish services when it has multiple implements."));
         //Connections
         JLabel connectionsLable = new JLabel("Connections:", SwingConstants.RIGHT);
         connectionsText = new JTextField(textColumns);
@@ -217,6 +235,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         connectionsLable.setLabelFor(connectionsText);
         h.add(connectionsLable);
         h.add(connectionsText);
+        h.add(makeHelper("The maximum connections of every provider. For short connection such as rmi, http and hessian, it's connection limit, but for long connection such as dubbo, it's connection count."));
         consumerSettings.add(h);
         
         JPanel hp1 = new HorizontalPanel();
@@ -226,12 +245,14 @@ public class DubboSampleGui extends AbstractSamplerGui {
         asyncLable.setLabelFor(asyncText);
         hp1.add(asyncLable);
         hp1.add(asyncText);
+        hp1.add(makeHelper("Asynchronous execution, not reliable. It does not block the execution thread just only ignores the return value."));
         //Loadbalance
         JLabel loadbalanceLable = new JLabel("Loadbalance:", SwingConstants.RIGHT);
         loadbalanceText = new JComboBox<String>(new String[]{"random", "roundrobin", "leastactive", "consistenthash"});
         loadbalanceLable.setLabelFor(loadbalanceText);
         hp1.add(loadbalanceLable);
         hp1.add(loadbalanceText);
+        hp1.add(makeHelper("Strategy of load balance, random, roundrobin and leastactive are available."));
         consumerSettings.add(hp1);
         
         //Interface Settings
@@ -244,6 +265,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         interfaceLable.setLabelFor(interfaceText);
         ih.add(interfaceLable);
         ih.add(interfaceText);
+        ih.add(makeHelper("The service interface name."));
         interfaceSettings.add(ih);
         //Method
         JPanel mh = new HorizontalPanel();
@@ -252,6 +274,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         methodLable.setLabelFor(methodText);
         mh.add(methodLable);
         mh.add(methodText);
+        mh.add(makeHelper("The service method name"));
         interfaceSettings.add(mh);
         
         //表格panel
@@ -303,6 +326,13 @@ public class DubboSampleGui extends AbstractSamplerGui {
         add(settingPanel,BorderLayout.CENTER);
     }
 
+    public JLabel makeHelper(String tooltip) {
+        JLabel helpLable = new JLabel();
+        helpLable.setIcon(new ImageIcon(getClass().getResource("/images/help.png")));
+        helpLable.setToolTipText(tooltip);
+        return helpLable;
+    }
+
     /**
      * this method sets the Sample's data into the gui
      */
@@ -312,6 +342,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         log.debug("sample赋值给gui");
         DubboSample sample = (DubboSample) element;
         registryProtocolText.setSelectedItem(sample.getRegistryProtocol());
+        registryGroupText.setText(sample.getRegistryGroup());
         rpcProtocolText.setSelectedItem(sample.getRpcProtocol());
         addressText.setText(sample.getAddress());
         versionText.setText(sample.getVersion());
@@ -361,6 +392,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         super.configureTestElement(element);
         DubboSample sample = (DubboSample) element;
         sample.setRegistryProtocol(registryProtocolText.getSelectedItem().toString());
+        sample.setRegistryGroup(registryGroupText.getText());
         sample.setRpcProtocol(rpcProtocolText.getSelectedItem().toString());
         sample.setAddress(addressText.getText());
         sample.setTimeout(timeoutText.getText());
@@ -418,6 +450,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         log.debug("清空gui数据");
         super.clearGui();
         registryProtocolText.setSelectedIndex(0);
+        registryGroupText.setText("");
         rpcProtocolText.setSelectedIndex(0);
         addressText.setText("");
         timeoutText.setText(DubboSample.DEFAULT_TIMEOUT);
@@ -452,12 +485,15 @@ public class DubboSampleGui extends AbstractSamplerGui {
             //set method
             String[] items = method.split(",");
             methodList.setModel(new DefaultComboBoxModel<String>(items));
+        } else {
+            methodList.setModel(new DefaultComboBoxModel<String>(new String[]{}));
         }
     }
 
     private void doConfirm(ActionEvent event, JAutoCompleteComboBox<String> interfaceList) {
         String protocol = registryProtocolText.getSelectedItem().toString();
         String address = addressText.getText();
+        String group = registryGroupText.getText();
         if (StringUtils.isBlank(address)) {
             JOptionPane.showMessageDialog(this.getParent(), "Address can't be empty!", "error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -466,7 +502,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         if (result == JOptionPane.YES_OPTION) {
             List<String> list = new ArrayList<String>();
             try {
-                list = ProviderService.get(address).getProviders(protocol, address);
+                list = ProviderService.get(address).getProviders(protocol, address, group);
                 JOptionPane.showMessageDialog(this.getParent(), "Get provider list to finish! Check if the log has errors.", "info", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this.getParent(), e.getMessage(), "error", JOptionPane.ERROR_MESSAGE);

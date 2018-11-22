@@ -59,13 +59,13 @@ public class ProviderService implements Serializable {
         return providerUrls == null ? null : providerUrls.get(serviceName);
     }
 
-    public List<String> getProviders(String protocol, String address) throws RuntimeException {
-        if (protocol.equals("zookeeper")){
-            return executeRegistry(protocol, address);
+    public List<String> getProviders(String protocol, String address, String group) throws RuntimeException {
+        if (protocol.equals("zookeeper") || protocol.equals("redis")){
+            return executeRegistry(protocol, address, group);
 //        } else if (protocol.equals("none")) {
 //            return executeTelnet();
         } else {
-            throw new RuntimeException("Registry Protocol please use zookeeper!");
+            throw new RuntimeException("Registry Protocol please use zookeeper or redis!");
         }
     }
 
@@ -73,7 +73,7 @@ public class ProviderService implements Serializable {
         throw new RuntimeException();
     }
 
-    private List<String> executeRegistry(String protocol, String address) throws RuntimeException {
+    private List<String> executeRegistry(String protocol, String address, String group) throws RuntimeException {
         ReferenceConfig reference = new ReferenceConfig();
         // set application
         reference.setApplication(DubboSample.application);
@@ -82,30 +82,21 @@ public class ProviderService implements Serializable {
             case Constants.REGISTRY_ZOOKEEPER:
                 registry = new RegistryConfig();
                 registry.setProtocol(Constants.REGISTRY_ZOOKEEPER);
-                registry.setAddress(address);
-                reference.setRegistry(registry);
-                break;
-            case Constants.REGISTRY_MULTICAST:
-                registry = new RegistryConfig();
-                registry.setProtocol(Constants.REGISTRY_MULTICAST);
+                registry.setGroup(group);
                 registry.setAddress(address);
                 reference.setRegistry(registry);
                 break;
             case Constants.REGISTRY_REDIS:
                 registry = new RegistryConfig();
                 registry.setProtocol(Constants.REGISTRY_REDIS);
-                registry.setAddress(address);
-                reference.setRegistry(registry);
-                break;
-            case Constants.REGISTRY_SIMPLE:
-                registry = new RegistryConfig();
+                registry.setGroup(group);
                 registry.setAddress(address);
                 reference.setRegistry(registry);
                 break;
         }
         reference.setInterface("com.alibaba.dubbo.registry.RegistryService");
         try {
-            ReferenceConfigCache cache = ReferenceConfigCache.getCache(address, new ReferenceConfigCache.KeyGenerator() {
+            ReferenceConfigCache cache = ReferenceConfigCache.getCache(address + "_" + group, new ReferenceConfigCache.KeyGenerator() {
                 public String generateKey(ReferenceConfig<?> referenceConfig) {
                     return referenceConfig.toString();
                 }
@@ -114,7 +105,7 @@ public class ProviderService implements Serializable {
             if (registryService == null) {
                 throw new RuntimeException("Can't get the interface list, please check if the address is wrong!");
             }
-            RegistryServerSync registryServerSync = RegistryServerSync.get(address);
+            RegistryServerSync registryServerSync = RegistryServerSync.get(address + "_" + group);
             registryService.subscribe(RegistryServerSync.SUBSCRIBE, registryServerSync);
             List<String> ret = new ArrayList<String>();
             providerUrls = registryServerSync.getRegistryCache().get(com.alibaba.dubbo.common.Constants.PROVIDERS_CATEGORY);
