@@ -19,6 +19,8 @@ package io.github.ningyu.jmeter.plugin.util;
 import com.google.common.reflect.TypeToken;
 import io.github.ningyu.jmeter.plugin.dubbo.sample.MethodArgument;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jorphan.logging.LoggingManager;
+import org.apache.log.Logger;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -29,6 +31,8 @@ import java.util.List;
  * ClassUtils
  */
 public class ClassUtils {
+
+	private static final Logger log = LoggingManager.getLoggerForClass();
 
 	private static final String TYPE_NAME_PREFIX = "class ";
 
@@ -214,7 +218,16 @@ public class ClassUtils {
 					} catch (ClassNotFoundException e) {
 						//不是jdk或者lib下的类，使用通用map格式反序列化值
 						paramterTypeList.add(arg.getParamType());
-						parameterValuesList.add(isBlank(arg.getParamValue()) ? null : JsonUtils.formJson(arg.getParamValue(), new TypeToken<HashMap<String,Object>>() {}.getType()));
+						Object obj = null;
+						if (!isBlank(arg.getParamValue())) {
+							//使用通用map格式反序列化值
+							obj = JsonUtils.formJson(arg.getParamValue(), new TypeToken<HashMap<String, Object>>() {}.getType());
+							if (obj == null) {
+								//枚举类型的类走字符串序列化
+								obj = JsonUtils.formJson(arg.getParamValue(), String.class);
+							}
+						}
+						parameterValuesList.add(obj);
 					}
 				}
 			}
