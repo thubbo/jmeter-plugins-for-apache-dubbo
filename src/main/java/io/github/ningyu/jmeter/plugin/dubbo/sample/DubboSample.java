@@ -20,11 +20,12 @@ import io.github.ningyu.jmeter.plugin.util.ClassUtils;
 import io.github.ningyu.jmeter.plugin.util.Constants;
 import io.github.ningyu.jmeter.plugin.util.ErrorCode;
 import io.github.ningyu.jmeter.plugin.util.JsonUtils;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.dubbo.common.utils.StringUtils;
+import org.apache.dubbo.config.ApplicationConfig;
+import org.apache.dubbo.config.ReferenceConfig;
+import org.apache.dubbo.config.RegistryConfig;
+import org.apache.dubbo.config.utils.ReferenceConfigCache;
+import org.apache.dubbo.rpc.service.GenericService;
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
@@ -33,15 +34,9 @@ import org.apache.jmeter.testelement.property.StringProperty;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
-import com.alibaba.dubbo.common.utils.StringUtils;
-import com.alibaba.dubbo.config.ApplicationConfig;
-import com.alibaba.dubbo.config.ReferenceConfig;
-import com.alibaba.dubbo.config.RegistryConfig;
-import com.alibaba.dubbo.config.utils.ReferenceConfigCache;
-import com.alibaba.dubbo.config.utils.ReferenceConfigCache.KeyGenerator;
-import com.alibaba.dubbo.rpc.service.GenericService;
-
-import javax.swing.*;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DubboSample
@@ -523,10 +518,11 @@ public class DubboSample extends AbstractSampler {
             }
             
             // The registry's address is to generate the ReferenceConfigCache key
-            ReferenceConfigCache cache = ReferenceConfigCache.getCache(getAddress(), new KeyGenerator() {
-				public String generateKey(ReferenceConfig<?> referenceConfig) {
-					return referenceConfig.toString();
-				}
+            ReferenceConfigCache cache = ReferenceConfigCache.getCache(getAddress(), new ReferenceConfigCache.KeyGenerator() {
+                @Override
+                public String generateKey(org.apache.dubbo.config.ReferenceConfig<?> referenceConfig) {
+                    return referenceConfig.toString();
+                }
 			});
             GenericService genericService = (GenericService) cache.get(reference);
             if (genericService == null) {

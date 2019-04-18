@@ -17,13 +17,12 @@
 
 package io.github.ningyu.jmeter.plugin.dubbo.sample;
 
-import com.alibaba.dubbo.common.URL;
-import com.alibaba.dubbo.config.ReferenceConfig;
-import com.alibaba.dubbo.config.RegistryConfig;
-import com.alibaba.dubbo.config.utils.ReferenceConfigCache;
-import com.alibaba.dubbo.registry.RegistryService;
-
 import io.github.ningyu.jmeter.plugin.util.Constants;
+import org.apache.dubbo.common.URL;
+import org.apache.dubbo.config.ReferenceConfig;
+import org.apache.dubbo.config.RegistryConfig;
+import org.apache.dubbo.config.utils.ReferenceConfigCache;
+import org.apache.dubbo.registry.RegistryService;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
@@ -94,9 +93,10 @@ public class ProviderService implements Serializable {
                 reference.setRegistry(registry);
                 break;
         }
-        reference.setInterface("com.alibaba.dubbo.registry.RegistryService");
+        reference.setInterface("org.apache.dubbo.registry.RegistryService");
         try {
             ReferenceConfigCache cache = ReferenceConfigCache.getCache(address + "_" + group, new ReferenceConfigCache.KeyGenerator() {
+                @Override
                 public String generateKey(ReferenceConfig<?> referenceConfig) {
                     return referenceConfig.toString();
                 }
@@ -108,7 +108,7 @@ public class ProviderService implements Serializable {
             RegistryServerSync registryServerSync = RegistryServerSync.get(address + "_" + group);
             registryService.subscribe(RegistryServerSync.SUBSCRIBE, registryServerSync);
             List<String> ret = new ArrayList<String>();
-            providerUrls = registryServerSync.getRegistryCache().get(com.alibaba.dubbo.common.Constants.PROVIDERS_CATEGORY);
+            providerUrls = registryServerSync.getRegistryCache().get(org.apache.dubbo.common.Constants.PROVIDERS_CATEGORY);
             if (providerUrls != null) ret.addAll(providerUrls.keySet());
             return ret;
         } catch (Exception e) {
