@@ -16,7 +16,7 @@
  */
 package io.github.ningyu.jmeter.plugin.dubbo.gui;
 
-import com.alibaba.dubbo.common.URL;
+import org.apache.dubbo.common.URL;
 
 import io.github.ningyu.jmeter.plugin.dubbo.sample.DubboSample;
 import io.github.ningyu.jmeter.plugin.dubbo.sample.MethodArgument;
@@ -471,12 +471,12 @@ public class DubboSampleGui extends AbstractSamplerGui {
         Map<String, URL> provider = providerService.findByService(key);
         if (provider != null && !provider.isEmpty()) {
             URL url = new ArrayList<URL>(provider.values()).get(0);
-            String group = url.getParameter(com.alibaba.dubbo.common.Constants.GROUP_KEY);
-            String version = url.getParameter(com.alibaba.dubbo.common.Constants.VERSION_KEY);
-            String timeout = url.getParameter(com.alibaba.dubbo.common.Constants.TIMEOUT_KEY);
+            String group = url.getParameter(org.apache.dubbo.common.Constants.GROUP_KEY);
+            String version = url.getParameter(org.apache.dubbo.common.Constants.VERSION_KEY);
+            String timeout = url.getParameter(org.apache.dubbo.common.Constants.TIMEOUT_KEY);
             String protocol = url.getProtocol() + "://";
             String interfaceName = url.getServiceInterface();
-            String method = url.getParameter(com.alibaba.dubbo.common.Constants.METHODS_KEY);
+            String method = url.getParameter(org.apache.dubbo.common.Constants.METHODS_KEY);
             groupText.setText(group);
             versionText.setText(version);
             timeoutText.setText(timeout);
