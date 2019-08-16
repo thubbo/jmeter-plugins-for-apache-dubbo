@@ -108,7 +108,7 @@ public class ProviderService implements Serializable {
             RegistryServerSync registryServerSync = RegistryServerSync.get(address + "_" + group);
             registryService.subscribe(RegistryServerSync.SUBSCRIBE, registryServerSync);
             List<String> ret = new ArrayList<String>();
-            providerUrls = registryServerSync.getRegistryCache().get(org.apache.dubbo.common.Constants.PROVIDERS_CATEGORY);
+            providerUrls = registryServerSync.getRegistryCache().get(com.alibaba.dubbo.common.Constants.PROVIDERS_CATEGORY);
             if (providerUrls != null) ret.addAll(providerUrls.keySet());
             return ret;
         } catch (Exception e) {

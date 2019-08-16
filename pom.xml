@@ -22,7 +22,7 @@
 	<version>${revision}</version>
 	
 	<properties>
-		<revision>2.7.1</revision>
+		<revision>2.7.3</revision>
 		<java.version>1.8</java.version>
 		<java.source.version>1.8</java.source.version>
 		<java.target.version>1.8</java.target.version>
@@ -32,6 +32,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <dubbo.version>${revision}</dubbo.version>
+        <!--<dubbo.version>2.7.2</dubbo.version>-->
 		<jorphan.version>3.0</jorphan.version>
 		<avalon.framework.version>4.1.4</avalon.framework.version>
 		<jmeter.core.version>3.0</jmeter.core.version>

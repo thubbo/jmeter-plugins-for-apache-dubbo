@@ -16,9 +16,10 @@
  */
 package io.github.ningyu.jmeter.plugin.dubbo.gui;
 
-import io.github.ningyu.jmeter.plugin.dubbo.sample.DubboSample;
+import io.github.ningyu.jmeter.plugin.util.Constants;
+import org.apache.jmeter.config.ConfigTestElement;
+import org.apache.jmeter.config.gui.AbstractConfigGui;
 import org.apache.jmeter.gui.util.VerticalPanel;
-import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
@@ -27,24 +28,21 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * DubboSampleGui </br>
+ * DubboDefaultConfigGui </br>
  * invoke sequence**clearGui()->createTestElement()->modifyTestElement()->configure()**
  */
-public class DubboSampleGui extends AbstractSamplerGui {
-    
-    private static final Logger log = LoggingManager.getLoggerForClass();
-    private static final long serialVersionUID = -3248204995359935007L;
-    private final DubboPanel panel;
+public class DubboDefaultConfigGui extends AbstractConfigGui {
 
-    public DubboSampleGui() {
+    private static final Logger log = LoggingManager.getLoggerForClass();
+    private static final long serialVersionUID = -4454521491983368380L;
+    private final DubboDefaultPanel panel;
+
+    public DubboDefaultConfigGui() {
         super();
-        panel = new DubboPanel();
+        panel = new DubboDefaultPanel();
         init();
     }
-    
-    /**
-     * Initialize the interface layout and elements
-     */
+
     private void init() {
         //所有设置panel，垂直布局
         JPanel settingPanel = new VerticalPanel(5, 0);
@@ -59,41 +57,29 @@ public class DubboSampleGui extends AbstractSamplerGui {
         add(settingPanel,BorderLayout.CENTER);
     }
 
-    /**
-     * component title/name
-     */
     @Override
     public String getLabelResource() {
         return this.getClass().getSimpleName();
     }
 
-    /**
-     * this method sets the Sample's data into the gui
-     */
     @Override
     public void configure(TestElement element) {
         super.configure(element);
-        log.debug("sample赋值给gui");
+        log.debug("sample赋值给config gui");
         panel.configure(element);
         panel.bundleElement(element);
+        Constants.redundancy(element);
     }
 
-    /**
-     * Create a new sampler. And pass it to the modifyTestElement(TestElement) method.
-     */
     @Override
     public TestElement createTestElement() {
         log.debug("创建sample对象");
         //创建sample对象
-        DubboSample sample = new DubboSample();
-        modifyTestElement(sample);
-        return sample;
+        ConfigTestElement config = new ConfigTestElement();
+        modifyTestElement(config);
+        return config;
     }
 
-    /**
-     * this method sets the Gui's data into the sample
-     */
-    @SuppressWarnings("unchecked")
     @Override
     public void modifyTestElement(TestElement element) {
         log.debug("gui数据赋值给sample");
@@ -101,19 +87,14 @@ public class DubboSampleGui extends AbstractSamplerGui {
         super.configureTestElement(element);
         panel.modifyTestElement(element);
         panel.bundleElement(element);
+        Constants.redundancy(element);
     }
 
-    /**
-     * sample's name
-     */
     @Override
     public String getStaticLabel() {
-        return "Dubbo Sample";
+        return "Dubbo Defaults";
     }
 
-    /**
-     * clear gui's data
-     */
     @Override
     public void clearGui() {
         log.debug("清空gui数据");
@@ -122,5 +103,3 @@ public class DubboSampleGui extends AbstractSamplerGui {
     }
 
 }
-
-

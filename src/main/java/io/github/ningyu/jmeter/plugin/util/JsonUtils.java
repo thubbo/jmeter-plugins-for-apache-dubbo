@@ -32,7 +32,12 @@ public class JsonUtils {
 
 	private static final Logger logger = LoggingManager.getLoggerForClass();
 
-	private static final Gson gson = new GsonBuilder().serializeNulls().create();
+	private static final Gson gson = new GsonBuilder()
+			.setDateFormat("yyyy-MM-dd HH:mm:ss")
+			.setPrettyPrinting()
+			.disableHtmlEscaping()
+			.serializeNulls()
+			.create();
 
 	public static String toJson(Object obj) {
 		return gson.toJson(obj);
