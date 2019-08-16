@@ -19,7 +19,7 @@ package io.github.ningyu.jmeter.plugin.dubbo.gui;
 import io.github.ningyu.jmeter.plugin.dubbo.sample.MethodArgument;
 import io.github.ningyu.jmeter.plugin.dubbo.sample.ProviderService;
 import io.github.ningyu.jmeter.plugin.util.Constants;
-import org.apache.commons.lang3.StringUtils;
+import io.github.ningyu.jmeter.plugin.util.StringUtils;
 import org.apache.dubbo.common.URL;
 import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.gui.util.VerticalPanel;

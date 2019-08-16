@@ -112,7 +112,7 @@ public class Constants {
      * @param registryProtocol the protocol to set
      */
     public static final void setRegistryProtocol(String registryProtocol, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_PROTOCOL, org.springframework.util.StringUtils.trimAllWhitespace(registryProtocol)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_PROTOCOL, StringUtils.trimAllWhitespace(registryProtocol)));
     }
 
     /**
@@ -128,7 +128,7 @@ public class Constants {
      * @param registryGroup the group to set
      */
     public static final void setRegistryGroup(String registryGroup, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_GROUP, org.springframework.util.StringUtils.trimAllWhitespace(registryGroup)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_GROUP, StringUtils.trimAllWhitespace(registryGroup)));
     }
 
     /**
@@ -144,7 +144,7 @@ public class Constants {
      * @param rpcProtocol the protocol to set
      */
     public static final void setRpcProtocol(String rpcProtocol, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_RPC_PROTOCOL, org.springframework.util.StringUtils.trimAllWhitespace(rpcProtocol)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_RPC_PROTOCOL, StringUtils.trimAllWhitespace(rpcProtocol)));
     }
 
     /**
@@ -160,7 +160,7 @@ public class Constants {
      * @param address the address to set
      */
     public static final void setAddress(String address, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_ADDRESS, org.springframework.util.StringUtils.trimAllWhitespace(address)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_ADDRESS, StringUtils.trimAllWhitespace(address)));
     }
 
     /**
@@ -176,7 +176,7 @@ public class Constants {
      * @param timeout the timeout to set
      */
     public static final void setTimeout(String timeout, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_TIMEOUT, org.springframework.util.StringUtils.trimAllWhitespace(timeout)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_TIMEOUT, StringUtils.trimAllWhitespace(timeout)));
     }
 
     /**
@@ -192,7 +192,7 @@ public class Constants {
      * @param version the version to set
      */
     public static final void setVersion(String version, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_VERSION, org.springframework.util.StringUtils.trimAllWhitespace(version)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_VERSION, StringUtils.trimAllWhitespace(version)));
     }
 
     /**
@@ -208,7 +208,7 @@ public class Constants {
      * @param retries the retries to set
      */
     public static final void setRetries(String retries, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_RETRIES, org.springframework.util.StringUtils.trimAllWhitespace(retries)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_RETRIES, StringUtils.trimAllWhitespace(retries)));
     }
 
     /**
@@ -224,7 +224,7 @@ public class Constants {
      * @param cluster the cluster to set
      */
     public static final void setCluster(String cluster, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_CLUSTER, org.springframework.util.StringUtils.trimAllWhitespace(cluster)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_CLUSTER, StringUtils.trimAllWhitespace(cluster)));
     }
 
     /**
@@ -240,7 +240,7 @@ public class Constants {
      * @param group the group to set
      */
     public static final void setGroup(String group, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_GROUP, org.springframework.util.StringUtils.trimAllWhitespace(group)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_GROUP, StringUtils.trimAllWhitespace(group)));
     }
 
     /**
@@ -256,7 +256,7 @@ public class Constants {
      * @param connections the connections to set
      */
     public static final void setConnections(String connections, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_CONNECTIONS, org.springframework.util.StringUtils.trimAllWhitespace(connections)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_CONNECTIONS, StringUtils.trimAllWhitespace(connections)));
     }
 
     /**
@@ -272,7 +272,7 @@ public class Constants {
      * @param loadbalance the loadbalance to set
      */
     public static final void setLoadbalance(String loadbalance, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_LOADBALANCE, org.springframework.util.StringUtils.trimAllWhitespace(loadbalance)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_LOADBALANCE, StringUtils.trimAllWhitespace(loadbalance)));
     }
 
     /**
@@ -288,7 +288,7 @@ public class Constants {
      * @param async the async to set
      */
     public static final void setAsync(String async, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_ASYNC, org.springframework.util.StringUtils.trimAllWhitespace(async)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_ASYNC, StringUtils.trimAllWhitespace(async)));
     }
 
     /**
@@ -304,7 +304,7 @@ public class Constants {
      * @param interfaceName the interfaceName to set
      */
     public static final void setInterfaceName(String interfaceName, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_INTERFACE, org.springframework.util.StringUtils.trimAllWhitespace(interfaceName)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_INTERFACE, StringUtils.trimAllWhitespace(interfaceName)));
     }
 
     /**
@@ -320,7 +320,7 @@ public class Constants {
      * @param method the method to set
      */
     public static final void setMethod(String method, TestElement element) {
-        element.setProperty(new StringProperty(FIELD_DUBBO_METHOD, org.springframework.util.StringUtils.trimAllWhitespace(method)));
+        element.setProperty(new StringProperty(FIELD_DUBBO_METHOD, StringUtils.trimAllWhitespace(method)));
     }
 
     /**

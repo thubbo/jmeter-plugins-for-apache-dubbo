@@ -92,7 +92,7 @@ public class DubboDefaultConfigGui extends AbstractConfigGui {
 
     @Override
     public String getStaticLabel() {
-        return "Dubbo Defaults";
+        return "Dubbo Config";
     }
 
     @Override

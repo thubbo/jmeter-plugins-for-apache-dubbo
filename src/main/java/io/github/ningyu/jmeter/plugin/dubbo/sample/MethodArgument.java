@@ -17,10 +17,10 @@
 package io.github.ningyu.jmeter.plugin.dubbo.sample;
 
 import io.github.ningyu.jmeter.plugin.util.JsonUtils;
+import io.github.ningyu.jmeter.plugin.util.StringUtils;
 
 import java.io.Serializable;
 
-import org.springframework.util.StringUtils;
 
 /**
  * MethodArgument
