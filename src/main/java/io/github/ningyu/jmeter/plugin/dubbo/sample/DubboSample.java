@@ -28,12 +28,12 @@ import org.apache.dubbo.config.utils.ReferenceConfigCache;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
+import org.apache.jmeter.samplers.Interruptible;
 import org.apache.jmeter.samplers.SampleResult;
-import org.apache.jmeter.testelement.property.IntegerProperty;
-import org.apache.jmeter.testelement.property.StringProperty;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,304 +41,25 @@ import java.util.List;
 /**
  * DubboSample
  */
-public class DubboSample extends AbstractSampler {
+public class DubboSample extends AbstractSampler implements Interruptible {
     
     private static final Logger log = LoggingManager.getLoggerForClass();
-
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = -6794913295411458705L;
     
-    public static String FIELD_DUBBO_REGISTRY_PROTOCOL = "FIELD_DUBBO_REGISTRY_PROTOCOL";
-    public static String FIELD_DUBBO_REGISTRY_GROUP = "FIELD_DUBBO_REGISTRY_GROUP";
-    public static String FIELD_DUBBO_RPC_PROTOCOL = "FIELD_DUBBO_RPC_PROTOCOL";
-    public static String FIELD_DUBBO_ADDRESS = "FIELD_DUBBO_ADDRESS";
-    public static String FIELD_DUBBO_TIMEOUT = "FIELD_DUBBO_TIMEOUT";
-    public static String FIELD_DUBBO_VERSION = "FIELD_DUBBO_VERSION";
-    public static String FIELD_DUBBO_RETRIES = "FIELD_DUBBO_RETRIES";
-    public static String FIELD_DUBBO_CLUSTER = "FIELD_DUBBO_CLUSTER";
-    public static String FIELD_DUBBO_GROUP = "FIELD_DUBBO_GROUP";
-    public static String FIELD_DUBBO_CONNECTIONS = "FIELD_DUBBO_CONNECTIONS";
-    public static String FIELD_DUBBO_LOADBALANCE = "FIELD_DUBBO_LOADBALANCE";
-    public static String FIELD_DUBBO_ASYNC = "FIELD_DUBBO_ASYNC";
-    public static String FIELD_DUBBO_INTERFACE = "FIELD_DUBBO_INTERFACE";
-    public static String FIELD_DUBBO_METHOD = "FIELD_DUBBO_METHOD";
-    public static String FIELD_DUBBO_METHOD_ARGS = "FIELD_DUBBO_METHOD_ARGS";
-    public static String FIELD_DUBBO_METHOD_ARGS_SIZE = "FIELD_DUBBO_METHOD_ARGS_SIZE";
-    public static String DEFAULT_TIMEOUT = "1000";
-    public static String DEFAULT_VERSION = "1.0";
-    public static String DEFAULT_RETRIES = "0";
-    public static String DEFAULT_CLUSTER = "failfast";
-    public static String DEFAULT_CONNECTIONS = "100";
+
     public static ApplicationConfig application = new ApplicationConfig("DubboSample");
 
-    /**
-     * get Registry Protocol
-     * @return the protocol
-     */
-    public String getRegistryProtocol() {
-        return this.getPropertyAsString(FIELD_DUBBO_REGISTRY_PROTOCOL);
-    }
 
-    /**
-     * set Registry Protocol
-     * @param registryProtocol the protocol to set
-     */
-    public void setRegistryProtocol(String registryProtocol) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_PROTOCOL, org.springframework.util.StringUtils.trimAllWhitespace(registryProtocol)));
-    }
-
-    /**
-     * get Registry Group
-     * @return the group
-     */
-    public String getRegistryGroup() {
-        return this.getPropertyAsString(FIELD_DUBBO_REGISTRY_GROUP);
-    }
-
-    /**
-     * set Registry Group
-     * @param registryGroup the group to set
-     */
-    public void setRegistryGroup(String registryGroup) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_GROUP, org.springframework.util.StringUtils.trimAllWhitespace(registryGroup)));
-    }
-    
-    /**
-     * get RPC protocol
-     * @return the RPC protocol
-     */
-    public String getRpcProtocol() {
-        return this.getPropertyAsString(FIELD_DUBBO_RPC_PROTOCOL);
-    }
-
-    /**
-     * set RPC protocol
-     * @param rpcProtocol the protocol to set
-     */
-    public void setRpcProtocol(String rpcProtocol) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_RPC_PROTOCOL, org.springframework.util.StringUtils.trimAllWhitespace(rpcProtocol)));
-    }
-
-    /**
-     * get address
-     * @return the address
-     */
-    public String getAddress() {
-        return this.getPropertyAsString(FIELD_DUBBO_ADDRESS);
-    }
-
-    /**
-     * set address
-     * @param address the address to set
-     */
-    public void setAddress(String address) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_ADDRESS, org.springframework.util.StringUtils.trimAllWhitespace(address)));
-    }
-
-    /**
-     * get timeout
-     * @return the timeout
-     */
-    public String getTimeout() {
-        return this.getPropertyAsString(FIELD_DUBBO_TIMEOUT, DEFAULT_TIMEOUT);
-    }
-
-    /**
-     * set timeout
-     * @param timeout the timeout to set
-     */
-    public void setTimeout(String timeout) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_TIMEOUT, org.springframework.util.StringUtils.trimAllWhitespace(timeout)));
-    }
-
-    /**
-     * get version
-     * @return the version
-     */
-    public String getVersion() {
-        return this.getPropertyAsString(FIELD_DUBBO_VERSION, DEFAULT_VERSION);
-    }
-
-    /**
-     * set version
-     * @param version the version to set
-     */
-    public void setVersion(String version) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_VERSION, org.springframework.util.StringUtils.trimAllWhitespace(version)));
-    }
-    
-    /**
-     * get retries
-     * @return the retries
-     */
-    public String getRetries() {
-        return this.getPropertyAsString(FIELD_DUBBO_RETRIES, DEFAULT_RETRIES);
-    }
-
-    /**
-     * set retries
-     * @param retries the retries to set
-     */
-    public void setRetries(String retries) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_RETRIES, org.springframework.util.StringUtils.trimAllWhitespace(retries)));
-    }
-    
-    /**
-     * get cluster
-     * @return the cluster
-     */
-    public String getCluster() {
-        return this.getPropertyAsString(FIELD_DUBBO_CLUSTER, DEFAULT_CLUSTER);
-    }
-
-    /**
-     * set cluster
-     * @param cluster the cluster to set
-     */
-    public void setCluster(String cluster) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_CLUSTER, org.springframework.util.StringUtils.trimAllWhitespace(cluster)));
-    }
-    
-    /**
-     * get group
-     * @return the group
-     */
-    public String getGroup() {
-    	return this.getPropertyAsString(FIELD_DUBBO_GROUP, null);
-    }
-    
-    /**
-     * set group
-     * @param group the group to set
-     */
-    public void setGroup(String group) {
-    	this.setProperty(new StringProperty(FIELD_DUBBO_GROUP, org.springframework.util.StringUtils.trimAllWhitespace(group)));
-    }
-    
-    /**
-     * get connections
-     * @return the group
-     */
-    public String getConnections() {
-    	return this.getPropertyAsString(FIELD_DUBBO_CONNECTIONS, DEFAULT_CONNECTIONS);
-    }
-    
-    /**
-     * set connections
-     * @param connections the connections to set
-     */
-    public void setConnections(String connections) {
-    	this.setProperty(new StringProperty(FIELD_DUBBO_CONNECTIONS, org.springframework.util.StringUtils.trimAllWhitespace(connections)));
-    }
-    
-    /**
-     * get loadbalance
-     * @return the loadbalance
-     */
-    public String getLoadbalance() {
-    	return this.getPropertyAsString(FIELD_DUBBO_LOADBALANCE);
-    }
-    
-    /**
-     * set loadbalance
-     * @param loadbalance the loadbalance to set
-     */
-    public void setLoadbalance(String loadbalance) {
-    	this.setProperty(new StringProperty(FIELD_DUBBO_LOADBALANCE, org.springframework.util.StringUtils.trimAllWhitespace(loadbalance)));
-    }
-    
-    /**
-     * get async
-     * @return the async
-     */
-    public String getAsync() {
-    	return this.getPropertyAsString(FIELD_DUBBO_ASYNC);
-    }
-    
-    /**
-     * set async
-     * @param async the async to set
-     */
-    public void setAsync(String async) {
-    	this.setProperty(new StringProperty(FIELD_DUBBO_ASYNC, org.springframework.util.StringUtils.trimAllWhitespace(async)));
-    }
-
-    /**
-     * get interfaceName
-     * @return the interfaceName
-     */
-    public String getInterface() {
-        return this.getPropertyAsString(FIELD_DUBBO_INTERFACE);
-    }
-
-    /**
-     * set interfaceName
-     * @param interfaceName the interfaceName to set
-     */
-    public void setInterfaceName(String interfaceName) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_INTERFACE, org.springframework.util.StringUtils.trimAllWhitespace(interfaceName)));
-    }
-
-    /**
-     * get method
-     * @return the method
-     */
-    public String getMethod() {
-        return this.getPropertyAsString(FIELD_DUBBO_METHOD);
-    }
-
-    /**
-     * set method
-     * @param method the method to set
-     */
-    public void setMethod(String method) {
-        this.setProperty(new StringProperty(FIELD_DUBBO_METHOD, org.springframework.util.StringUtils.trimAllWhitespace(method)));
-    }
-
-    /**
-     * get methodArgs
-     * @return the methodArgs
-     */
-    public List<MethodArgument> getMethodArgs() {
-    	int paramsSize = this.getPropertyAsInt(FIELD_DUBBO_METHOD_ARGS_SIZE, 0);
-    	List<MethodArgument> list = new ArrayList<MethodArgument>();
-		for (int i = 1; i <= paramsSize; i++) {
-			String paramType = this.getPropertyAsString(FIELD_DUBBO_METHOD_ARGS + "_PARAM_TYPE" + i);
-			String paramValue = this.getPropertyAsString(FIELD_DUBBO_METHOD_ARGS + "_PARAM_VALUE" + i);
-			MethodArgument args = new MethodArgument(paramType, paramValue);
-			list.add(args);
-		}
-    	return list;
-    }
-
-    /**
-     * set methodArgs
-     * @param methodArgs the methodArgs to set
-     */
-    public void setMethodArgs(List<MethodArgument> methodArgs) {
-    	int size = methodArgs == null ? 0 : methodArgs.size();
-    	this.setProperty(new IntegerProperty(FIELD_DUBBO_METHOD_ARGS_SIZE, size));
-    	if (size > 0) {
-    		for (int i = 1; i <= methodArgs.size(); i++) {
-    			this.setProperty(new StringProperty(FIELD_DUBBO_METHOD_ARGS + "_PARAM_TYPE" + i, methodArgs.get(i-1).getParamType()));
-    			this.setProperty(new StringProperty(FIELD_DUBBO_METHOD_ARGS + "_PARAM_VALUE" + i, methodArgs.get(i-1).getParamValue()));
-    		}
-    	}
-    }
 
     @SuppressWarnings("deprecation")
 	@Override
     public SampleResult sample(Entry entry) {
         SampleResult res = new SampleResult();
         res.setSampleLabel(getName());
-        res.sampleStart();
         //构造请求数据
         res.setSamplerData(getSampleData());
         //调用dubbo
-        res.setResponseData(JsonUtils.toJson(callDubbo(res)));
+        res.setResponseData(JsonUtils.toJson(callDubbo(res)), StandardCharsets.UTF_8.name());
         //构造响应数据
         res.setDataType(SampleResult.TEXT);
         res.setResponseCodeOK();
@@ -351,21 +72,22 @@ public class DubboSample extends AbstractSampler {
      * Construct request data
      */
     private String getSampleData() {
+        log.info("sample中的实例id"+this.toString()+",element名称"+this.getName());
     	StringBuilder sb = new StringBuilder();
-        sb.append("Registry Protocol: ").append(getRegistryProtocol()).append("\n");
-        sb.append("Address: ").append(getAddress()).append("\n");
-        sb.append("RPC Protocol: ").append(getRpcProtocol()).append("\n");
-        sb.append("Timeout: ").append(getTimeout()).append("\n");
-        sb.append("Version: ").append(getVersion()).append("\n");
-        sb.append("Retries: ").append(getRetries()).append("\n");
-        sb.append("Cluster: ").append(getCluster()).append("\n");
-        sb.append("Group: ").append(getGroup()).append("\n");
-        sb.append("Connections: ").append(getConnections()).append("\n");
-        sb.append("LoadBalance: ").append(getLoadbalance()).append("\n");
-        sb.append("Async: ").append(getAsync()).append("\n");
-        sb.append("Interface: ").append(getInterface()).append("\n");
-        sb.append("Method: ").append(getMethod()).append("\n");
-        sb.append("Method Args: ").append(getMethodArgs().toString());
+        sb.append("Registry Protocol: ").append(Constants.getRegistryProtocol(this)).append("\n");
+        sb.append("Address: ").append(Constants.getAddress(this)).append("\n");
+        sb.append("RPC Protocol: ").append(Constants.getRpcProtocol(this)).append("\n");
+        sb.append("Timeout: ").append(Constants.getTimeout(this)).append("\n");
+        sb.append("Version: ").append(Constants.getVersion(this)).append("\n");
+        sb.append("Retries: ").append(Constants.getRetries(this)).append("\n");
+        sb.append("Cluster: ").append(Constants.getCluster(this)).append("\n");
+        sb.append("Group: ").append(Constants.getGroup(this)).append("\n");
+        sb.append("Connections: ").append(Constants.getConnections(this)).append("\n");
+        sb.append("LoadBalance: ").append(Constants.getLoadbalance(this)).append("\n");
+        sb.append("Async: ").append(Constants.getAsync(this)).append("\n");
+        sb.append("Interface: ").append(Constants.getInterface(this)).append("\n");
+        sb.append("Method: ").append(Constants.getMethod(this)).append("\n");
+        sb.append("Method Args: ").append(Constants.getMethodArgs(this).toString());
         return sb.toString();
     }
     
@@ -378,17 +100,17 @@ public class DubboSample extends AbstractSampler {
         reference.setApplication(application);
         RegistryConfig registry = null;
         // check address
-        String address = getAddress();
+        String address = Constants.getAddress(this);
         if (StringUtils.isBlank(address)) {
             res.setSuccessful(false);
             return ErrorCode.MISS_ADDRESS.getMessage();
         }
         // get rpc protocol
-        String rpcProtocol = getRpcProtocol().replaceAll("://", "");
+        String rpcProtocol = Constants.getRpcProtocol(this).replaceAll("://", "");
         // get registry protocol
-        String protocol = getRegistryProtocol();
+        String protocol = Constants.getRegistryProtocol(this);
         // get registry group
-        String registryGroup = getRegistryGroup();
+        String registryGroup = Constants.getRegistryGroup(this);
 		switch (protocol) {
 		case Constants.REGISTRY_ZOOKEEPER:
 			registry = new RegistryConfig();
@@ -423,13 +145,13 @@ public class DubboSample extends AbstractSampler {
 		default:
 			// direct invoke provider
 			StringBuffer sb = new StringBuffer();
-			sb.append(getRpcProtocol()).append(getAddress()).append("/").append(getInterface());
+			sb.append(Constants.getRpcProtocol(this)).append(Constants.getAddress(this)).append("/").append(Constants.getInterface(this));
 			log.debug("rpc invoker url : " + sb.toString());
 			reference.setUrl(sb.toString());
 		}
         try {
 		    // set interface
-		    String interfaceName = getInterface();
+		    String interfaceName = Constants.getInterface(this);
 		    if (StringUtils.isBlank(interfaceName)) {
                 res.setSuccessful(false);
                 return ErrorCode.MISS_INTERFACE.getMessage();
@@ -439,8 +161,8 @@ public class DubboSample extends AbstractSampler {
 		    // set retries
             Integer retries = null;
             try {
-                if (!StringUtils.isBlank(getRetries())) {
-                    retries = Integer.valueOf(getRetries());
+                if (!StringUtils.isBlank(Constants.getRetries(this))) {
+                    retries = Integer.valueOf(Constants.getRetries(this));
                 }
             } catch (NumberFormatException e) {
                 res.setSuccessful(false);
@@ -451,13 +173,13 @@ public class DubboSample extends AbstractSampler {
             }
 
             // set cluster
-            String cluster = getCluster();
+            String cluster = Constants.getCluster(this);
             if (!StringUtils.isBlank(cluster)) {
-                reference.setCluster(getCluster());
+                reference.setCluster(Constants.getCluster(this));
             }
 
             // set version
-            String version = getVersion();
+            String version = Constants.getVersion(this);
             if (!StringUtils.isBlank(version)) {
                 reference.setVersion(version);
             }
@@ -465,8 +187,8 @@ public class DubboSample extends AbstractSampler {
             // set timeout
             Integer timeout = null;
             try {
-                if (!StringUtils.isBlank(getTimeout())) {
-                    timeout = Integer.valueOf(getTimeout());
+                if (!StringUtils.isBlank(Constants.getTimeout(this))) {
+                    timeout = Integer.valueOf(Constants.getTimeout(this));
                 }
             } catch (NumberFormatException e) {
                 res.setSuccessful(false);
@@ -477,7 +199,7 @@ public class DubboSample extends AbstractSampler {
             }
 
             // set group
-            String group = getGroup();
+            String group = Constants.getGroup(this);
             if (!StringUtils.isBlank(group)) {
                 reference.setGroup(group);
             }
@@ -485,8 +207,8 @@ public class DubboSample extends AbstractSampler {
             // set connections
             Integer connections = null;
             try {
-                if (!StringUtils.isBlank(getConnections())) {
-                    connections = Integer.valueOf(getConnections());
+                if (!StringUtils.isBlank(Constants.getConnections(this))) {
+                    connections = Integer.valueOf(Constants.getConnections(this));
                 }
             } catch (NumberFormatException e) {
                 res.setSuccessful(false);
@@ -497,13 +219,13 @@ public class DubboSample extends AbstractSampler {
             }
 
             // set loadBalance
-            String loadBalance = getLoadbalance();
+            String loadBalance = Constants.getLoadbalance(this);
             if (!StringUtils.isBlank(loadBalance)) {
                 reference.setLoadbalance(loadBalance);
             }
 
             // set async
-            String async = getAsync();
+            String async = Constants.getAsync(this);
             if (!StringUtils.isBlank(async)) {
                 reference.setAsync(Constants.ASYNC.equals(async) ? true : false);
             }
@@ -511,14 +233,14 @@ public class DubboSample extends AbstractSampler {
             // set generic
             reference.setGeneric(true);
 
-            String methodName = getMethod();
+            String methodName = Constants.getMethod(this);
             if (StringUtils.isBlank(methodName)) {
                 res.setSuccessful(false);
                 return ErrorCode.MISS_METHOD.getMessage();
             }
             
             // The registry's address is to generate the ReferenceConfigCache key
-            ReferenceConfigCache cache = ReferenceConfigCache.getCache(getAddress(), new ReferenceConfigCache.KeyGenerator() {
+            ReferenceConfigCache cache = ReferenceConfigCache.getCache(Constants.getAddress(this), new ReferenceConfigCache.KeyGenerator() {
                 @Override
                 public String generateKey(org.apache.dubbo.config.ReferenceConfig<?> referenceConfig) {
                     return referenceConfig.toString();
@@ -531,7 +253,7 @@ public class DubboSample extends AbstractSampler {
             }
             String[] parameterTypes = null;
             Object[] parameterValues = null;
-            List<MethodArgument> args = getMethodArgs();
+            List<MethodArgument> args = Constants.getMethodArgs(this);
             List<String> paramterTypeList =  new ArrayList<String>();;
             List<Object> parameterValuesList = new ArrayList<Object>();;
             for(MethodArgument arg : args) {
@@ -539,6 +261,8 @@ public class DubboSample extends AbstractSampler {
             }
             parameterTypes = paramterTypeList.toArray(new String[paramterTypeList.size()]);
             parameterValues = parameterValuesList.toArray(new Object[parameterValuesList.size()]);
+
+            res.sampleStart();
             Object result = null;
 			try {
 				result = genericService.$invoke(methodName, parameterTypes, parameterValues);
@@ -563,5 +287,11 @@ public class DubboSample extends AbstractSampler {
 //            }
 //            reference.destroy();
         }
+    }
+
+    @Override
+    public boolean interrupt() {
+        Thread.currentThread().interrupt();
+        return true;
     }
 }
