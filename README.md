@@ -4,15 +4,22 @@
 
 Dubbo Plugin for Apache JMeter, Its main purpose is to perform stress testing on the Dubbo interface visually in Jmeter. It is easy to use.
 
+# Plugin Version Support
+
+* [1.x,1.3.x]: requires Java 1.7
+* 2.7.x: requires Java 1.8
+
 # JMeter Version Support
 
 * [3.0,3.2): requires Java 1.7
-* [3.2,3.3]: requires Java 1.8
+* [3.2,4.x,5.x]: requires Java 1.8
+
+ps. [3.x,4,x,5.x] Tested for normal use
 
 # Dubbo Version Support
 
-* 2.5.x: requires Java [1.6,1.7]
-* 2.6.x: requires Java [1.6,1.7]
+* 2.5.x: requires Java 1.7
+* 2.6.x: requires Java 1.7
 * 2.7.x: requires Java 1.8
 
 # User Guide
