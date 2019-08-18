@@ -34,6 +34,7 @@ import org.apache.jmeter.testelement.property.StringProperty;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -338,7 +339,7 @@ public class DubboSample extends AbstractSampler {
         //构造请求数据
         res.setSamplerData(getSampleData());
         //调用dubbo
-        res.setResponseData(JsonUtils.toJson(callDubbo(res)));
+        res.setResponseData(JsonUtils.toJson(callDubbo(res)), StandardCharsets.UTF_8.name());
         //构造响应数据
         res.setDataType(SampleResult.TEXT);
         res.setResponseCodeOK();
