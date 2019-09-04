@@ -25,6 +25,7 @@ import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.utils.ReferenceConfigCache;
+import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
@@ -37,6 +38,8 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * DubboSample
@@ -88,6 +91,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
         sb.append("Interface: ").append(Constants.getInterface(this)).append("\n");
         sb.append("Method: ").append(Constants.getMethod(this)).append("\n");
         sb.append("Method Args: ").append(Constants.getMethodArgs(this).toString());
+        sb.append("Attachment Args: ").append(Constants.getAttachmentArgs(this).toString());
         return sb.toString();
     }
     
@@ -145,7 +149,14 @@ public class DubboSample extends AbstractSampler implements Interruptible {
 		default:
 			// direct invoke provider
 			StringBuffer sb = new StringBuffer();
-			sb.append(Constants.getRpcProtocol(this)).append(Constants.getAddress(this)).append("/").append(Constants.getInterface(this));
+			sb.append(Constants.getRpcProtocol(this))
+                    .append(Constants.getAddress(this))
+                    .append("/").append(Constants.getInterface(this));
+			//# fix dubbo 2.7.3 Generic bug https://github.com/apache/dubbo/pull/4787
+            String version = Constants.getVersion(this);
+            if (!StringUtils.isBlank(version)) {
+                sb.append(":").append(version);
+            }
 			log.debug("rpc invoker url : " + sb.toString());
 			reference.setUrl(sb.toString());
 		}
@@ -261,6 +272,11 @@ public class DubboSample extends AbstractSampler implements Interruptible {
             }
             parameterTypes = paramterTypeList.toArray(new String[paramterTypeList.size()]);
             parameterValues = parameterValuesList.toArray(new Object[parameterValuesList.size()]);
+
+            List<MethodArgument> attachmentArgs = Constants.getAttachmentArgs(this);
+            if (attachmentArgs != null && !attachmentArgs.isEmpty()) {
+                RpcContext.getContext().setAttachments(attachmentArgs.stream().collect(Collectors.toMap(MethodArgument::getParamType, MethodArgument::getParamValue)));
+            }
 
             res.sampleStart();
             Object result = null;

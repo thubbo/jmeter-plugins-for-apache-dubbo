@@ -57,9 +57,13 @@ public class DubboCommonPanel {
     private JTextField connectionsText;
     private JComboBox<String> loadbalanceText;
     private JComboBox<String> asyncText;
+    //参数表格
     private DefaultTableModel model;
     private String[] columnNames = {"paramType", "paramValue"};
     private String[] tmpRow = {"", ""};
+    //隐式参数表格
+    private DefaultTableModel modelAttachment;
+    private String[] columnNamesAttachment = {"key", "value"};
     private int textColumns = 2;
     private JAutoCompleteComboBox<String> interfaceList;
     private JAutoCompleteComboBox<String> methodList;
@@ -262,12 +266,11 @@ public class DubboCommonPanel {
         mh.add(makeHelper("The service method name"));
         interfaceSettings.add(mh);
 
-        //表格panel
+        //选项卡
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        //接口参数表格
         JPanel tablePanel = new HorizontalPanel();
-        //Args
-        JLabel argsLable = new JLabel("        Args:", SwingConstants.RIGHT);
         model = new DefaultTableModel();
-//        model.setDataVector(new String[][]{{"", ""}}, columnNames);
         model.setDataVector(null, columnNames);
         final JTable table = new JTable(model);
         table.setRowHeight(40);
@@ -293,11 +296,45 @@ public class DubboCommonPanel {
         });
         //表格滚动条
         JScrollPane scrollpane = new JScrollPane(table);
-        tablePanel.add(argsLable);
         tablePanel.add(scrollpane);
         tablePanel.add(addBtn);
         tablePanel.add(delBtn);
-        interfaceSettings.add(tablePanel);
+        tabbedPane.add("Args",tablePanel);
+
+        //隐式参数表格
+        JPanel tablePanelAttachment = new HorizontalPanel();
+        modelAttachment = new DefaultTableModel();
+        modelAttachment.setDataVector(null, columnNamesAttachment);
+        final JTable tableAttachment = new JTable(modelAttachment);
+        tableAttachment.setRowHeight(40);
+        //失去光标退出编辑
+        tableAttachment.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        //添加按钮
+        JButton addBtnAttachment = new JButton("增加");
+        addBtnAttachment.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                modelAttachment.addRow(tmpRow);
+            }
+        });
+        JButton delBtnAttachment = new JButton("删除");
+        delBtnAttachment.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int rowIndex = tableAttachment.getSelectedRow();
+                if(rowIndex != -1) {
+                    modelAttachment.removeRow(rowIndex);
+                }
+            }
+        });
+        //表格滚动条
+        JScrollPane scrollpaneAttachment = new JScrollPane(tableAttachment);
+        tablePanelAttachment.add(scrollpaneAttachment);
+        tablePanelAttachment.add(addBtnAttachment);
+        tablePanelAttachment.add(delBtnAttachment);
+        tabbedPane.add("Attachment Args",tablePanelAttachment);
+
+        interfaceSettings.add(tabbedPane);
         return interfaceSettings;
     }
 
@@ -329,6 +366,10 @@ public class DubboCommonPanel {
         columnNames.add("paramType");
         columnNames.add("paramValue");
         model.setDataVector(paserMethodArgsData(Constants.getMethodArgs(element)), columnNames);
+        Vector<String> columnNamesAttachment = new Vector<String>();
+        columnNamesAttachment.add("key");
+        columnNamesAttachment.add("value");
+        modelAttachment.setDataVector(paserMethodArgsData(Constants.getAttachmentArgs(element)), columnNamesAttachment);
     }
 
     public void modifyRegistry(TestElement element) {
@@ -353,6 +394,7 @@ public class DubboCommonPanel {
         Constants.setInterfaceName(interfaceText.getText(), element);
         Constants.setMethod(methodText.getText(), element);
         Constants.setMethodArgs(getMethodArgsData(model.getDataVector()), element);
+        Constants.setAttachmentArgs(getMethodArgsData(modelAttachment.getDataVector()), element);
     }
     public void clearRegistry() {
         registryProtocolText.setSelectedIndex(0);
@@ -376,6 +418,7 @@ public class DubboCommonPanel {
         interfaceText.setText("");
         methodText.setText("");
         model.setDataVector(null, columnNames);
+        modelAttachment.setDataVector(null, columnNamesAttachment);
     }
 
     private List<MethodArgument> getMethodArgsData(Vector<Vector<String>> data) {
