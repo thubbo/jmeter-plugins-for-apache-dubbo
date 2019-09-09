@@ -49,9 +49,9 @@ import java.util.Vector;
  * invoke sequence**clearGui()->createTestElement()->modifyTestElement()->configure()**
  */
 public class DubboSampleGui extends AbstractSamplerGui {
-    
+
     private static final Logger log = LoggingManager.getLoggerForClass();
-    
+
     /**
      */
     private static final long serialVersionUID = -3248204995359935007L;
@@ -81,7 +81,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         super();
         init();
     }
-    
+
     /**
      * Initialize the interface layout and elements
      */
@@ -91,14 +91,14 @@ public class DubboSampleGui extends AbstractSamplerGui {
         settingPanel.setBorder(makeBorder());
         Container container = makeTitlePanel();
         settingPanel.add(container);
-        
+
         //Registry Settings
         JPanel registrySettings = new VerticalPanel();
         registrySettings.setBorder(BorderFactory.createTitledBorder("Registry Settings"));
         //Protocol
         JPanel ph = new HorizontalPanel();
         JLabel protocolLable = new JLabel("Protocol:", SwingConstants.RIGHT);
-        registryProtocolText = new JComboBox<String>(new String[]{"none", "zookeeper", "multicast", "redis", "simple"});
+        registryProtocolText = new JComboBox<String>(new String[]{"none", "zookeeper", "nacos", "multicast", "redis", "simple"});
         registryProtocolText.setToolTipText("\"none\" is direct connection");
         protocolLable.setLabelFor(registryProtocolText);
         ph.add(protocolLable);
@@ -184,7 +184,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         rpcPh.add(rpcProtocolText);
         rpcPh.add(makeHelper("RPC protocol name."));
         protocolSettings.add(rpcPh);
-        
+
         //Consumer Settings
         JPanel consumerSettings = new VerticalPanel();
         consumerSettings.setBorder(BorderFactory.createTitledBorder("Consumer&Service Settings"));
@@ -237,7 +237,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         h.add(connectionsText);
         h.add(makeHelper("The maximum connections of every provider. For short connection such as rmi, http and hessian, it's connection limit, but for long connection such as dubbo, it's connection count."));
         consumerSettings.add(h);
-        
+
         JPanel hp1 = new HorizontalPanel();
         //Async
         JLabel asyncLable = new JLabel("     Async:", SwingConstants.RIGHT);
@@ -254,7 +254,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         hp1.add(loadbalanceText);
         hp1.add(makeHelper("Strategy of load balance, random, roundrobin and leastactive are available."));
         consumerSettings.add(hp1);
-        
+
         //Interface Settings
         JPanel interfaceSettings = new VerticalPanel();
         interfaceSettings.setBorder(BorderFactory.createTitledBorder("Interface Settings"));
@@ -276,7 +276,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         mh.add(methodText);
         mh.add(makeHelper("The service method name"));
         interfaceSettings.add(mh);
-        
+
         //表格panel
         JPanel tablePanel = new HorizontalPanel();
         //Args
@@ -313,13 +313,13 @@ public class DubboSampleGui extends AbstractSamplerGui {
         tablePanel.add(addBtn);
         tablePanel.add(delBtn);
         interfaceSettings.add(tablePanel);
-        
+
         //所有设置panel
         settingPanel.add(registrySettings);
         settingPanel.add(protocolSettings);
         settingPanel.add(consumerSettings);
         settingPanel.add(interfaceSettings);
-        
+
         //全局布局设置
         setLayout(new BorderLayout(0, 5));
         setBorder(makeBorder());
@@ -407,7 +407,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         sample.setMethod(methodText.getText());
         sample.setMethodArgs(getMethodArgsData(model.getDataVector()));
     }
-    
+
     private Vector<Vector<String>> paserMethodArgsData(List<MethodArgument> list) {
     	Vector<Vector<String>> res = new Vector<Vector<String>>();
     	for (MethodArgument args : list) {
@@ -418,7 +418,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
     	}
     	return res;
     }
-    
+
     private List<MethodArgument> getMethodArgsData(Vector<Vector<String>> data) {
     	List<MethodArgument> params = new ArrayList<MethodArgument>();
     	if (!data.isEmpty()) {
@@ -471,12 +471,12 @@ public class DubboSampleGui extends AbstractSamplerGui {
         Map<String, URL> provider = providerService.findByService(key);
         if (provider != null && !provider.isEmpty()) {
             URL url = new ArrayList<URL>(provider.values()).get(0);
-            String group = url.getParameter(org.apache.dubbo.common.Constants.GROUP_KEY);
-            String version = url.getParameter(org.apache.dubbo.common.Constants.VERSION_KEY);
-            String timeout = url.getParameter(org.apache.dubbo.common.Constants.TIMEOUT_KEY);
+            String group = url.getParameter(org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY);
+            String version = url.getParameter(org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY);
+            String timeout = url.getParameter(org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY);
             String protocol = url.getProtocol() + "://";
             String interfaceName = url.getServiceInterface();
-            String method = url.getParameter(org.apache.dubbo.common.Constants.METHODS_KEY);
+            String method = url.getParameter(org.apache.dubbo.common.constants.CommonConstants.METHODS_KEY);
             groupText.setText(group);
             versionText.setText(version);
             timeoutText.setText(timeout);

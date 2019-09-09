@@ -18,10 +18,12 @@
 package io.github.ningyu.jmeter.plugin.dubbo.sample;
 
 import io.github.ningyu.jmeter.plugin.util.MD5Util;
-import org.apache.dubbo.common.Constants;
 import org.apache.dubbo.common.URL;
+import org.apache.dubbo.common.constants.CommonConstants;
+import org.apache.dubbo.common.constants.RegistryConstants;
 import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.common.utils.StringUtils;
+import org.apache.dubbo.registry.Constants;
 import org.apache.dubbo.registry.NotifyListener;
 
 import java.io.Serializable;
@@ -51,17 +53,17 @@ public class RegistryServerSync implements NotifyListener, Serializable {
     }
 
     public static final URL SUBSCRIBE = new URL(Constants.ADMIN_PROTOCOL, NetUtils.getLocalHost(), 0, "",
-            Constants.INTERFACE_KEY, Constants.ANY_VALUE,
-            Constants.GROUP_KEY, Constants.ANY_VALUE,
-            Constants.VERSION_KEY, Constants.ANY_VALUE,
-            Constants.CLASSIFIER_KEY, Constants.ANY_VALUE,
-            Constants.CATEGORY_KEY, Constants.PROVIDERS_CATEGORY,
+            CommonConstants.INTERFACE_KEY, CommonConstants.ANY_VALUE,
+            CommonConstants.GROUP_KEY, CommonConstants.ANY_VALUE,
+            CommonConstants.VERSION_KEY, CommonConstants.ANY_VALUE,
+            CommonConstants.CLASSIFIER_KEY, CommonConstants.ANY_VALUE,
+            RegistryConstants.CATEGORY_KEY, RegistryConstants.PROVIDERS_CATEGORY,
 //            Constants.CATEGORY_KEY, Constants.PROVIDERS_CATEGORY + ","
 //            + Constants.CONSUMERS_CATEGORY + ","
 //            + Constants.ROUTERS_CATEGORY + ","
 //            + Constants.CONFIGURATORS_CATEGORY,
-            Constants.ENABLED_KEY, Constants.ANY_VALUE,
-            Constants.CHECK_KEY, String.valueOf(false));
+            CommonConstants.ENABLED_KEY, CommonConstants.ANY_VALUE,
+            org.apache.dubbo.remoting.Constants.CHECK_KEY, String.valueOf(false));
 
     // ConcurrentMap<category, ConcurrentMap<servicename, Map<MD5, URL>>>
     private final ConcurrentMap<String, ConcurrentMap<String, Map<String, URL>>>
@@ -87,21 +89,21 @@ public class RegistryServerSync implements NotifyListener, Serializable {
         final Map<String, Map<String, Map<String, URL>>> categories = new HashMap<>();
         String interfaceName = null;
         for (URL url : urls) {
-            String category = url.getParameter(Constants.CATEGORY_KEY, Constants.PROVIDERS_CATEGORY);
-            if (Constants.EMPTY_PROTOCOL.equalsIgnoreCase(url.getProtocol())) { // NOTE: group and version in empty protocol is *
+            String category = url.getParameter(RegistryConstants.CATEGORY_KEY, RegistryConstants.PROVIDERS_CATEGORY);
+            if (RegistryConstants.EMPTY_PROTOCOL.equalsIgnoreCase(url.getProtocol())) { // NOTE: group and version in empty protocol is *
                 ConcurrentMap<String, Map<String, URL>> services = registryCache.get(category);
                 if (services != null) {
-                    String group = url.getParameter(Constants.GROUP_KEY);
-                    String version = url.getParameter(Constants.VERSION_KEY);
+                    String group = url.getParameter(CommonConstants.GROUP_KEY);
+                    String version = url.getParameter(CommonConstants.VERSION_KEY);
                     // NOTE: group and version in empty protocol is *
-                    if (!Constants.ANY_VALUE.equals(group) && !Constants.ANY_VALUE.equals(version)) {
+                    if (!CommonConstants.ANY_VALUE.equals(group) && !CommonConstants.ANY_VALUE.equals(version)) {
                         services.remove(url.getServiceKey());
                     } else {
                         for (Map.Entry<String, Map<String, URL>> serviceEntry : services.entrySet()) {
                             String service = serviceEntry.getKey();
                             if (this.getInterface(service).equals(url.getServiceInterface())
-                                    && (Constants.ANY_VALUE.equals(group) || StringUtils.isEquals(group, this.getGroup(service)))
-                                    && (Constants.ANY_VALUE.equals(version) || StringUtils.isEquals(version, this.getVersion(service)))) {
+                                    && (CommonConstants.ANY_VALUE.equals(group) || StringUtils.isEquals(group, this.getGroup(service)))
+                                    && (CommonConstants.ANY_VALUE.equals(version) || StringUtils.isEquals(version, this.getVersion(service)))) {
                                 services.remove(service);
                             }
                         }

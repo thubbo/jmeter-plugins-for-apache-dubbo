@@ -42,15 +42,15 @@ import java.util.List;
  * DubboSample
  */
 public class DubboSample extends AbstractSampler {
-    
+
     private static final Logger log = LoggingManager.getLoggerForClass();
 
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6794913295411458705L;
-    
+
     public static String FIELD_DUBBO_REGISTRY_PROTOCOL = "FIELD_DUBBO_REGISTRY_PROTOCOL";
     public static String FIELD_DUBBO_REGISTRY_GROUP = "FIELD_DUBBO_REGISTRY_GROUP";
     public static String FIELD_DUBBO_RPC_PROTOCOL = "FIELD_DUBBO_RPC_PROTOCOL";
@@ -105,7 +105,7 @@ public class DubboSample extends AbstractSampler {
     public void setRegistryGroup(String registryGroup) {
         this.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_GROUP, org.springframework.util.StringUtils.trimAllWhitespace(registryGroup)));
     }
-    
+
     /**
      * get RPC protocol
      * @return the RPC protocol
@@ -169,7 +169,7 @@ public class DubboSample extends AbstractSampler {
     public void setVersion(String version) {
         this.setProperty(new StringProperty(FIELD_DUBBO_VERSION, org.springframework.util.StringUtils.trimAllWhitespace(version)));
     }
-    
+
     /**
      * get retries
      * @return the retries
@@ -185,7 +185,7 @@ public class DubboSample extends AbstractSampler {
     public void setRetries(String retries) {
         this.setProperty(new StringProperty(FIELD_DUBBO_RETRIES, org.springframework.util.StringUtils.trimAllWhitespace(retries)));
     }
-    
+
     /**
      * get cluster
      * @return the cluster
@@ -201,7 +201,7 @@ public class DubboSample extends AbstractSampler {
     public void setCluster(String cluster) {
         this.setProperty(new StringProperty(FIELD_DUBBO_CLUSTER, org.springframework.util.StringUtils.trimAllWhitespace(cluster)));
     }
-    
+
     /**
      * get group
      * @return the group
@@ -209,7 +209,7 @@ public class DubboSample extends AbstractSampler {
     public String getGroup() {
     	return this.getPropertyAsString(FIELD_DUBBO_GROUP, null);
     }
-    
+
     /**
      * set group
      * @param group the group to set
@@ -217,7 +217,7 @@ public class DubboSample extends AbstractSampler {
     public void setGroup(String group) {
     	this.setProperty(new StringProperty(FIELD_DUBBO_GROUP, org.springframework.util.StringUtils.trimAllWhitespace(group)));
     }
-    
+
     /**
      * get connections
      * @return the group
@@ -225,7 +225,7 @@ public class DubboSample extends AbstractSampler {
     public String getConnections() {
     	return this.getPropertyAsString(FIELD_DUBBO_CONNECTIONS, DEFAULT_CONNECTIONS);
     }
-    
+
     /**
      * set connections
      * @param connections the connections to set
@@ -233,7 +233,7 @@ public class DubboSample extends AbstractSampler {
     public void setConnections(String connections) {
     	this.setProperty(new StringProperty(FIELD_DUBBO_CONNECTIONS, org.springframework.util.StringUtils.trimAllWhitespace(connections)));
     }
-    
+
     /**
      * get loadbalance
      * @return the loadbalance
@@ -241,7 +241,7 @@ public class DubboSample extends AbstractSampler {
     public String getLoadbalance() {
     	return this.getPropertyAsString(FIELD_DUBBO_LOADBALANCE);
     }
-    
+
     /**
      * set loadbalance
      * @param loadbalance the loadbalance to set
@@ -249,7 +249,7 @@ public class DubboSample extends AbstractSampler {
     public void setLoadbalance(String loadbalance) {
     	this.setProperty(new StringProperty(FIELD_DUBBO_LOADBALANCE, org.springframework.util.StringUtils.trimAllWhitespace(loadbalance)));
     }
-    
+
     /**
      * get async
      * @return the async
@@ -257,7 +257,7 @@ public class DubboSample extends AbstractSampler {
     public String getAsync() {
     	return this.getPropertyAsString(FIELD_DUBBO_ASYNC);
     }
-    
+
     /**
      * set async
      * @param async the async to set
@@ -368,7 +368,7 @@ public class DubboSample extends AbstractSampler {
         sb.append("Method Args: ").append(getMethodArgs().toString());
         return sb.toString();
     }
-    
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     private Object callDubbo(SampleResult res) {
         // This instance is heavy, encapsulating the connection to the registry and the connection to the provider,
@@ -398,6 +398,14 @@ public class DubboSample extends AbstractSampler {
 			reference.setRegistry(registry);
 			reference.setProtocol(rpcProtocol);
 			break;
+		case Constants.REGISTRY_NACOS:
+            registry = new RegistryConfig();
+            registry.setProtocol(Constants.REGISTRY_NACOS);
+            registry.setGroup(registryGroup);
+            registry.setAddress(address);
+            reference.setRegistry(registry);
+            reference.setProtocol(rpcProtocol);
+		    break;
 		case Constants.REGISTRY_MULTICAST:
 			registry = new RegistryConfig();
 			registry.setProtocol(Constants.REGISTRY_MULTICAST);
@@ -516,7 +524,7 @@ public class DubboSample extends AbstractSampler {
                 res.setSuccessful(false);
                 return ErrorCode.MISS_METHOD.getMessage();
             }
-            
+
             // The registry's address is to generate the ReferenceConfigCache key
             ReferenceConfigCache cache = ReferenceConfigCache.getCache(getAddress(), new ReferenceConfigCache.KeyGenerator() {
                 @Override

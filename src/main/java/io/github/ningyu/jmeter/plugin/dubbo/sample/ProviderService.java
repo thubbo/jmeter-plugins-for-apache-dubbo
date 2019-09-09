@@ -59,12 +59,12 @@ public class ProviderService implements Serializable {
     }
 
     public List<String> getProviders(String protocol, String address, String group) throws RuntimeException {
-        if (protocol.equals("zookeeper") || protocol.equals("redis")){
+        if (protocol.equals("zookeeper") || protocol.equals("nacos") || protocol.equals("redis")){
             return executeRegistry(protocol, address, group);
 //        } else if (protocol.equals("none")) {
 //            return executeTelnet();
         } else {
-            throw new RuntimeException("Registry Protocol please use zookeeper or redis!");
+            throw new RuntimeException("Registry Protocol please use zookeeper or nacos or redis!");
         }
     }
 
@@ -92,6 +92,13 @@ public class ProviderService implements Serializable {
                 registry.setAddress(address);
                 reference.setRegistry(registry);
                 break;
+            case Constants.REGISTRY_NACOS:
+                registry = new RegistryConfig();
+                registry.setProtocol(Constants.REGISTRY_NACOS);
+                registry.setGroup(group);
+                registry.setAddress(address);
+                reference.setRegistry(registry);
+                break;
         }
         reference.setInterface("org.apache.dubbo.registry.RegistryService");
         try {
@@ -108,7 +115,7 @@ public class ProviderService implements Serializable {
             RegistryServerSync registryServerSync = RegistryServerSync.get(address + "_" + group);
             registryService.subscribe(RegistryServerSync.SUBSCRIBE, registryServerSync);
             List<String> ret = new ArrayList<String>();
-            providerUrls = registryServerSync.getRegistryCache().get(org.apache.dubbo.common.Constants.PROVIDERS_CATEGORY);
+            providerUrls = registryServerSync.getRegistryCache().get(org.apache.dubbo.common.constants.RegistryConstants.PROVIDERS_CATEGORY);
             if (providerUrls != null) ret.addAll(providerUrls.keySet());
             return ret;
         } catch (Exception e) {
