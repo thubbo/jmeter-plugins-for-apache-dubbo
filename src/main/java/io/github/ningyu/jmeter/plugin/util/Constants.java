@@ -28,14 +28,15 @@ import java.util.List;
  * Constants
  */
 public class Constants {
-	
+
 	//Registry Protocol
 	public static final String REGISTRY_NONE = "none";
 	public static final String REGISTRY_ZOOKEEPER = "zookeeper";
+    public static final String REGISTRY_NACOS = "nacos";
 	public static final String REGISTRY_MULTICAST = "multicast";
 	public static final String REGISTRY_REDIS = "redis";
 	public static final String REGISTRY_SIMPLE = "simple";
-	
+
 	//RPC Protocol
 	public static final String RPC_PROTOCOL_DUBBO = "dubbo";
 	public static final String RPC_PROTOCOL_RMI = "rmi";
@@ -45,10 +46,10 @@ public class Constants {
 	public static final String RPC_PROTOCOL_THRIFT = "thrift";
 	public static final String RPC_PROTOCOL_MEMCACHED = "memcached";
 	public static final String RPC_PROTOCOL_REDIS = "redis";
-	
+
 	public static final String ASYNC = "async";
 	public static final String SYMBOL = "://";
-	
+
 	public static final int INT_DEFAULT = 0;
 	public static final double DOUBLE_DEFAULT = 0.0d;
 	public static final boolean BOOLEAN_DEFAULT = false;
