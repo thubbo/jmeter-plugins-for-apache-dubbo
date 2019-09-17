@@ -45,10 +45,10 @@ import java.util.stream.Collectors;
  * DubboSample
  */
 public class DubboSample extends AbstractSampler implements Interruptible {
-    
+
     private static final Logger log = LoggingManager.getLoggerForClass();
     private static final long serialVersionUID = -6794913295411458705L;
-    
+
 
     public static ApplicationConfig application = new ApplicationConfig("DubboSample");
 
@@ -94,7 +94,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
         sb.append("Attachment Args: ").append(Constants.getAttachmentArgs(this).toString());
         return sb.toString();
     }
-    
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     private Object callDubbo(SampleResult res) {
         // This instance is heavy, encapsulating the connection to the registry and the connection to the provider,
@@ -124,6 +124,14 @@ public class DubboSample extends AbstractSampler implements Interruptible {
 			reference.setRegistry(registry);
 			reference.setProtocol(rpcProtocol);
 			break;
+		case Constants.REGISTRY_NACOS:
+		    registry = new RegistryConfig();
+		    registry.setProtocol(Constants.REGISTRY_NACOS);
+		    registry.setGroup(registryGroup);
+		    registry.setAddress(address);
+		    reference.setRegistry(registry);
+		    reference.setProtocol(rpcProtocol);
+		    break;
 		case Constants.REGISTRY_MULTICAST:
 			registry = new RegistryConfig();
 			registry.setProtocol(Constants.REGISTRY_MULTICAST);
@@ -249,7 +257,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
                 res.setSuccessful(false);
                 return ErrorCode.MISS_METHOD.getMessage();
             }
-            
+
             // The registry's address is to generate the ReferenceConfigCache key
             ReferenceConfigCache cache = ReferenceConfigCache.getCache(Constants.getAddress(this), new ReferenceConfigCache.KeyGenerator() {
                 @Override
