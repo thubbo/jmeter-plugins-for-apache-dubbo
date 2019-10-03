@@ -26,6 +26,7 @@ import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.utils.ReferenceConfigCache;
 import org.apache.dubbo.rpc.RpcContext;
+import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
@@ -65,8 +66,6 @@ public class DubboSample extends AbstractSampler implements Interruptible {
         res.setResponseData(JsonUtils.toJson(callDubbo(res)), StandardCharsets.UTF_8.name());
         //构造响应数据
         res.setDataType(SampleResult.TEXT);
-        res.setResponseCodeOK();
-        res.setResponseMessageOK();
         res.sampleEnd();
         return res;
     }
@@ -282,13 +281,18 @@ public class DubboSample extends AbstractSampler implements Interruptible {
             Object result = null;
 			try {
 				result = genericService.$invoke(methodName, parameterTypes, parameterValues);
-				res.setSuccessful(true);
+                res.setResponseOK();
 			} catch (Exception e) {
 				log.error("RpcException：", e);
-				//TODO
-				//当接口返回异常时，sample标识为successful，通过响应内容做断言来判断是否标识sample错误，因为sample的错误会统计到用例的error百分比内。
-				//比如接口有一些校验性质的异常，不代表这个操作是错误的，这样就可以灵活的判断，不至于正常的校验返回导致测试用例error百分比的不真实
-				res.setSuccessful(true);
+                res.setSuccessful(false);
+				if (e instanceof RpcException) {
+				    RpcException rpcException = (RpcException) e;
+				    res.setResponseCode(String.valueOf(rpcException.getCode()));
+				    res.setResponseMessage(rpcException.getMessage());
+                } else {
+                    res.setResponseCodeOK();
+                    res.setResponseMessageOK();
+                }
 				result = e;
 			}
             return result;

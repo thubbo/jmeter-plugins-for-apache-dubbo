@@ -450,7 +450,7 @@ public class DubboCommonPanel {
     private void doChange(String key) {
         String address = (StringUtils.isBlank(Constants.DEFAULT_PANEL_ADDRESS) ? addressText.getText() : Constants.DEFAULT_PANEL_ADDRESS);
         ProviderService providerService = ProviderService.get(address);
-        Map<String, URL> provider = providerService.findByService(key);
+        Map<String, URL> provider = providerService.findUrlByServiceName(key);
         if (provider != null && !provider.isEmpty()) {
             URL url = new ArrayList<URL>(provider.values()).get(0);
             String group = url.getParameter(com.alibaba.dubbo.common.Constants.GROUP_KEY);

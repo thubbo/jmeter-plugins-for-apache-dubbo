@@ -46,23 +46,17 @@ public class ProviderService implements Serializable {
     private static ConcurrentMap<String, ProviderService> cache = new ConcurrentHashMap<>();
 
     public static ProviderService get(String key) {
-        ProviderService service = cache.get(key);
-        if (service == null) {
-            cache.putIfAbsent(key, new ProviderService());
-            service = cache.get(key);
-        }
+        ProviderService service = cache.computeIfAbsent(key, k -> new ProviderService());
         return service;
     }
 
-    public Map<String, URL> findByService(String serviceName) {
+    public Map<String, URL> findUrlByServiceName(String serviceName) {
         return providerUrls == null ? null : providerUrls.get(serviceName);
     }
 
     public List<String> getProviders(String protocol, String address, String group) throws RuntimeException {
         if (protocol.equals("zookeeper") || protocol.equals("redis")){
             return executeRegistry(protocol, address, group);
-//        } else if (protocol.equals("none")) {
-//            return executeTelnet();
         } else {
             throw new RuntimeException("Registry Protocol please use zookeeper or redis!");
         }
