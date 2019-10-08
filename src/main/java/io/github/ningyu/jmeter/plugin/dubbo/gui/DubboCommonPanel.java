@@ -80,7 +80,7 @@ public class DubboCommonPanel {
         //Protocol
         JPanel ph = new HorizontalPanel();
         JLabel protocolLable = new JLabel("Protocol:", SwingConstants.RIGHT);
-        registryProtocolText = new JComboBox<String>(new String[]{"","none", "zookeeper", "multicast", "redis", "simple"});
+        registryProtocolText = new JComboBox<String>(new String[]{"","none", "zookeeper", "nacos", "multicast", "redis", "simple"});
         registryProtocolText.setToolTipText("\"none\" is direct connection");
         protocolLable.setLabelFor(registryProtocolText);
         ph.add(protocolLable);
