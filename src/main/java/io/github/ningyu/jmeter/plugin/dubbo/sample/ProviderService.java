@@ -55,10 +55,10 @@ public class ProviderService implements Serializable {
     }
 
     public List<String> getProviders(String protocol, String address, String group) throws RuntimeException {
-        if (protocol.equals("zookeeper") || protocol.equals("redis")){
+        if (protocol.equals("zookeeper") || protocol.equals("nacos") || protocol.equals("redis")){
             return executeRegistry(protocol, address, group);
         } else {
-            throw new RuntimeException("Registry Protocol please use zookeeper or redis!");
+            throw new RuntimeException("Registry Protocol please use zookeeper or nacos or redis!");
         }
     }
 
@@ -75,6 +75,13 @@ public class ProviderService implements Serializable {
             case Constants.REGISTRY_ZOOKEEPER:
                 registry = new RegistryConfig();
                 registry.setProtocol(Constants.REGISTRY_ZOOKEEPER);
+                registry.setGroup(group);
+                registry.setAddress(address);
+                reference.setRegistry(registry);
+                break;
+            case Constants.REGISTRY_NACOS:
+                registry = new RegistryConfig();
+                registry.setProtocol(Constants.REGISTRY_NACOS);
                 registry.setGroup(group);
                 registry.setAddress(address);
                 reference.setRegistry(registry);
