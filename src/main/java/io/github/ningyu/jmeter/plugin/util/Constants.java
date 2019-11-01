@@ -28,14 +28,15 @@ import java.util.List;
  * Constants
  */
 public class Constants {
-	
+
 	//Registry Protocol
 	public static final String REGISTRY_NONE = "none";
 	public static final String REGISTRY_ZOOKEEPER = "zookeeper";
+    public static final String REGISTRY_NACOS = "nacos";
 	public static final String REGISTRY_MULTICAST = "multicast";
 	public static final String REGISTRY_REDIS = "redis";
 	public static final String REGISTRY_SIMPLE = "simple";
-	
+
 	//RPC Protocol
 	public static final String RPC_PROTOCOL_DUBBO = "dubbo";
 	public static final String RPC_PROTOCOL_RMI = "rmi";
@@ -45,10 +46,10 @@ public class Constants {
 	public static final String RPC_PROTOCOL_THRIFT = "thrift";
 	public static final String RPC_PROTOCOL_MEMCACHED = "memcached";
 	public static final String RPC_PROTOCOL_REDIS = "redis";
-	
+
 	public static final String ASYNC = "async";
 	public static final String SYMBOL = "://";
-	
+
 	public static final int INT_DEFAULT = 0;
 	public static final double DOUBLE_DEFAULT = 0.0d;
 	public static final boolean BOOLEAN_DEFAULT = false;
@@ -82,6 +83,8 @@ public class Constants {
 	public static final String FIELD_DUBBO_METHOD = "FIELD_DUBBO_METHOD";
 	public static final String FIELD_DUBBO_METHOD_ARGS = "FIELD_DUBBO_METHOD_ARGS";
 	public static final String FIELD_DUBBO_METHOD_ARGS_SIZE = "FIELD_DUBBO_METHOD_ARGS_SIZE";
+    public static final String FIELD_DUBBO_ATTACHMENT_ARGS = "FIELD_DUBBO_ATTACHMENT_ARGS";
+    public static final String FIELD_DUBBO_ATTACHMENT_ARGS_SIZE = "FIELD_DUBBO_ATTACHMENT_ARGS_SIZE";
 	public static final String DEFAULT_TIMEOUT = "1000";
 	public static final String DEFAULT_VERSION = "1.0";
 	public static final String DEFAULT_RETRIES = "0";
@@ -350,6 +353,37 @@ public class Constants {
             for (int i = 1; i <= methodArgs.size(); i++) {
                 element.setProperty(new StringProperty(FIELD_DUBBO_METHOD_ARGS + "_PARAM_TYPE" + i, methodArgs.get(i-1).getParamType()));
                 element.setProperty(new StringProperty(FIELD_DUBBO_METHOD_ARGS + "_PARAM_VALUE" + i, methodArgs.get(i-1).getParamValue()));
+            }
+        }
+    }
+
+    /**
+     * get attachmentArgs
+     * @return the attachmentArgs
+     */
+    public static final List<MethodArgument> getAttachmentArgs(TestElement element) {
+        int paramsSize = element.getPropertyAsInt(FIELD_DUBBO_ATTACHMENT_ARGS_SIZE, 0);
+        List<MethodArgument> list = new ArrayList<MethodArgument>();
+        for (int i = 1; i <= paramsSize; i++) {
+            String paramType = element.getPropertyAsString(FIELD_DUBBO_ATTACHMENT_ARGS + "_KEY" + i);
+            String paramValue = element.getPropertyAsString(FIELD_DUBBO_ATTACHMENT_ARGS + "_VALUE" + i);
+            MethodArgument args = new MethodArgument(paramType, paramValue);
+            list.add(args);
+        }
+        return list;
+    }
+
+    /**
+     * set attachmentArgs
+     * @param methodArgs the attachmentArgs to set
+     */
+    public static final void setAttachmentArgs(List<MethodArgument> methodArgs, TestElement element) {
+        int size = methodArgs == null ? 0 : methodArgs.size();
+        element.setProperty(new IntegerProperty(FIELD_DUBBO_ATTACHMENT_ARGS_SIZE, size));
+        if (size > 0) {
+            for (int i = 1; i <= methodArgs.size(); i++) {
+                element.setProperty(new StringProperty(FIELD_DUBBO_ATTACHMENT_ARGS + "_KEY" + i, methodArgs.get(i-1).getParamType()));
+                element.setProperty(new StringProperty(FIELD_DUBBO_ATTACHMENT_ARGS + "_VALUE" + i, methodArgs.get(i-1).getParamValue()));
             }
         }
     }

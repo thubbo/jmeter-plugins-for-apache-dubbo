@@ -25,6 +25,7 @@ import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.utils.ReferenceConfigCache;
+import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
@@ -37,15 +38,17 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * DubboSample
  */
 public class DubboSample extends AbstractSampler implements Interruptible {
-    
+
     private static final Logger log = LoggingManager.getLoggerForClass();
     private static final long serialVersionUID = -6794913295411458705L;
-    
+
 
     public static ApplicationConfig application = new ApplicationConfig("DubboSample");
 
@@ -88,9 +91,10 @@ public class DubboSample extends AbstractSampler implements Interruptible {
         sb.append("Interface: ").append(Constants.getInterface(this)).append("\n");
         sb.append("Method: ").append(Constants.getMethod(this)).append("\n");
         sb.append("Method Args: ").append(Constants.getMethodArgs(this).toString());
+        sb.append("Attachment Args: ").append(Constants.getAttachmentArgs(this).toString());
         return sb.toString();
     }
-    
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     private Object callDubbo(SampleResult res) {
         // This instance is heavy, encapsulating the connection to the registry and the connection to the provider,
@@ -120,6 +124,14 @@ public class DubboSample extends AbstractSampler implements Interruptible {
 			reference.setRegistry(registry);
 			reference.setProtocol(rpcProtocol);
 			break;
+		case Constants.REGISTRY_NACOS:
+		    registry = new RegistryConfig();
+		    registry.setProtocol(Constants.REGISTRY_NACOS);
+		    registry.setGroup(registryGroup);
+		    registry.setAddress(address);
+		    reference.setRegistry(registry);
+		    reference.setProtocol(rpcProtocol);
+		    break;
 		case Constants.REGISTRY_MULTICAST:
 			registry = new RegistryConfig();
 			registry.setProtocol(Constants.REGISTRY_MULTICAST);
@@ -145,7 +157,14 @@ public class DubboSample extends AbstractSampler implements Interruptible {
 		default:
 			// direct invoke provider
 			StringBuffer sb = new StringBuffer();
-			sb.append(Constants.getRpcProtocol(this)).append(Constants.getAddress(this)).append("/").append(Constants.getInterface(this));
+			sb.append(Constants.getRpcProtocol(this))
+                    .append(Constants.getAddress(this))
+                    .append("/").append(Constants.getInterface(this));
+			//# fix dubbo 2.7.3 Generic bug https://github.com/apache/dubbo/pull/4787
+            String version = Constants.getVersion(this);
+            if (!StringUtils.isBlank(version)) {
+                sb.append(":").append(version);
+            }
 			log.debug("rpc invoker url : " + sb.toString());
 			reference.setUrl(sb.toString());
 		}
@@ -238,7 +257,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
                 res.setSuccessful(false);
                 return ErrorCode.MISS_METHOD.getMessage();
             }
-            
+
             // The registry's address is to generate the ReferenceConfigCache key
             ReferenceConfigCache cache = ReferenceConfigCache.getCache(Constants.getAddress(this), new ReferenceConfigCache.KeyGenerator() {
                 @Override
@@ -261,6 +280,11 @@ public class DubboSample extends AbstractSampler implements Interruptible {
             }
             parameterTypes = paramterTypeList.toArray(new String[paramterTypeList.size()]);
             parameterValues = parameterValuesList.toArray(new Object[parameterValuesList.size()]);
+
+            List<MethodArgument> attachmentArgs = Constants.getAttachmentArgs(this);
+            if (attachmentArgs != null && !attachmentArgs.isEmpty()) {
+                RpcContext.getContext().setAttachments(attachmentArgs.stream().collect(Collectors.toMap(MethodArgument::getParamType, MethodArgument::getParamValue)));
+            }
 
             res.sampleStart();
             Object result = null;
