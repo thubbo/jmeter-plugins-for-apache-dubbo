@@ -58,7 +58,8 @@ public class GenericServiceTest {
         reference.setVersion("1.0.0");
         RegistryConfig registry = new RegistryConfig();
         registry.setProtocol(Constants.REGISTRY_ZOOKEEPER);
-        registry.setAddress("192.168.0.58:2181,192.168.0.59:2181,192.168.0.60:2181");
+        registry.setAddress("192.168.0.44:2181,192.168.0.44:2182,192.168.0.44:2183");
+        registry.setTimeout(4000);
         reference.setRegistry(registry);
         reference.setTimeout(2000);
         reference.setGeneric(true);

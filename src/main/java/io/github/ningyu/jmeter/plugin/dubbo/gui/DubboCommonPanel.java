@@ -43,25 +43,36 @@ import java.util.Vector;
  * DubboCommonPanel </br>
  */
 public class DubboCommonPanel {
+    /** Registry */
     private JComboBox<String> registryProtocolText;
-    private JComboBox<String> rpcProtocolText;
     private JTextField addressText;
     private JTextField registryGroupText;
+    private JTextField registryTimeoutText;
+    /** ConfigCenter */
+    private JComboBox configCenterProtocolText;
+    private JTextField configCenterGroupText;
+    private JTextField configCenterNamespaceText;
+    private JTextField configCenterAddressText;
+    private JTextField configCenterTimeoutText;
+    /** Rpc Protocol */
+    private JComboBox<String> rpcProtocolText;
+    /** Consumer & Service */
     private JTextField timeoutText;
     private JTextField versionText;
     private JTextField retriesText;
     private JTextField clusterText;
-    private JTextField interfaceText;
-    private JTextField methodText;
     private JTextField groupText;
     private JTextField connectionsText;
     private JComboBox<String> loadbalanceText;
     private JComboBox<String> asyncText;
-    //参数表格
+    /** Interface */
+    private JTextField interfaceText;
+    private JTextField methodText;
+    /** Method Args Table */
     private DefaultTableModel model;
     private String[] columnNames = {"paramType", "paramValue"};
     private String[] tmpRow = {"", ""};
-    //隐式参数表格
+    /** Attachment Table */
     private DefaultTableModel modelAttachment;
     private String[] columnNamesAttachment = {"key", "value"};
     private int textColumns = 2;
@@ -86,6 +97,13 @@ public class DubboCommonPanel {
         ph.add(protocolLable);
         ph.add(registryProtocolText);
         ph.add(makeHelper("Registry center address protocol, The 'none' is direct connection. "));
+        //Group
+        JLabel registryGroupLable = new JLabel("Group:", SwingConstants.RIGHT);
+        registryGroupText = new JTextField();
+        registryGroupLable.setLabelFor(registryGroupText);
+        ph.add(registryGroupLable);
+        ph.add(registryGroupText);
+        ph.add(makeHelper("Service registration grouping, cross-group services will not affect each other, and can not be called each other, suitable for environmental isolation."));
         registrySettings.add(ph);
         //Address
         JPanel ah = new HorizontalPanel();
@@ -95,14 +113,61 @@ public class DubboCommonPanel {
         ah.add(addressLable);
         ah.add(addressText);
         ah.add(makeHelper("Use the registry to allow multiple addresses, Use direct connection to allow only one address! Multiple address format: ip1:port1,ip2:port2 . Direct address format: ip:port . "));
-        JLabel registryGroupLable = new JLabel("Group:", SwingConstants.RIGHT);
-        registryGroupText = new JTextField();
-        registryGroupLable.setLabelFor(registryGroupText);
-        ah.add(registryGroupLable);
-        ah.add(registryGroupText);
-        ah.add(makeHelper("Service registration grouping, cross-group services will not affect each other, and can not be called each other, suitable for environmental isolation."));
+        //Timeout
+        JLabel registryTimeoutLable = new JLabel("Timeout:", SwingConstants.RIGHT);
+        registryTimeoutText = new JTextField();
+        registryTimeoutLable.setLabelFor(registryTimeoutText);
+        ah.add(registryTimeoutLable);
+        ah.add(registryTimeoutText);
+        ah.add(makeHelper("The timeout(ms) of the request to registry."));
         registrySettings.add(ah);
         return registrySettings;
+    }
+
+    public JPanel drawConfigCenterSettingsPanel() {
+        //Config Center Settings
+        JPanel configCenterSettings = new VerticalPanel();
+        configCenterSettings.setBorder(BorderFactory.createTitledBorder("Config Center Settings"));
+        //Protocol
+        JPanel ph = new HorizontalPanel();
+        JLabel protocolLable = new JLabel("Protocol:", SwingConstants.RIGHT);
+        configCenterProtocolText = new JComboBox<String>(new String[]{"","zookeeper", "nacos", "apollo"});
+        protocolLable.setLabelFor(configCenterProtocolText);
+        ph.add(protocolLable);
+        ph.add(configCenterProtocolText);
+        ph.add(makeHelper("Which configuration center to use: apollo, zookeeper, nacos, etc. 2.7.0+"));
+        //Group
+        JLabel configCenterGroupLable = new JLabel("Group:", SwingConstants.RIGHT);
+        configCenterGroupText = new JTextField();
+        configCenterGroupLable.setLabelFor(configCenterGroupText);
+        ph.add(configCenterGroupLable);
+        ph.add(configCenterGroupText);
+        ph.add(makeHelper("The meaning varies according to the configuration center selected. 2.7.0+"));
+        //Namespace
+        JLabel configCenterNamespaceLable = new JLabel("Namespace:", SwingConstants.RIGHT);
+        configCenterNamespaceText = new JTextField();
+        configCenterNamespaceLable.setLabelFor(configCenterNamespaceText);
+        ph.add(configCenterNamespaceLable);
+        ph.add(configCenterNamespaceText);
+        ph.add(makeHelper("Using for multi-tenant isolation generally, the actual meaning varies depending on the configuration center. 2.7.0+"));
+        configCenterSettings.add(ph);
+        //Address
+        JPanel ah = new HorizontalPanel();
+        JLabel configCenterAddressLable = new JLabel("Address:", SwingConstants.RIGHT);
+        configCenterAddressText = new JTextField(textColumns);
+        configCenterAddressLable.setLabelFor(configCenterAddressText);
+        ah.add(configCenterAddressLable);
+        ah.add(configCenterAddressText);
+        ah.add(makeHelper("Configuration center address. 2.7.0+"));
+        //Timeout
+        JLabel configCenterTimeoutLable = new JLabel("Timeout:", SwingConstants.RIGHT);
+        configCenterTimeoutText = new JTextField();
+        configCenterTimeoutLable.setLabelFor(configCenterTimeoutText);
+        ah.add(configCenterTimeoutLable);
+        ah.add(configCenterTimeoutText);
+        ah.add(makeHelper("Gets the configured timeout. 2.7.0+ "));
+        configCenterSettings.add(ah);
+        return configCenterSettings;
     }
 
     public JPanel drawProtocolSettingsPanel() {
@@ -340,8 +405,17 @@ public class DubboCommonPanel {
 
     public void configureRegistry(TestElement element) {
         registryProtocolText.setSelectedItem(Constants.getRegistryProtocol(element));
-        addressText.setText(Constants.getAddress(element));
         registryGroupText.setText(Constants.getRegistryGroup(element));
+        addressText.setText(Constants.getAddress(element));
+        registryTimeoutText.setText(Constants.getRegistryTimeout(element));
+    }
+
+    public void configureConfigCenter(TestElement element) {
+        configCenterProtocolText.setSelectedItem(Constants.getConfigCenterProtocol(element));
+        configCenterGroupText.setText(Constants.getConfigCenterGroup(element));
+        configCenterNamespaceText.setText(Constants.getConfigCenterNamespace(element));
+        configCenterAddressText.setText(Constants.getConfigCenterAddress(element));
+        configCenterTimeoutText.setText(Constants.getConfigCenterTimeout(element));
     }
 
     public void configureProtocol(TestElement element) {
@@ -377,6 +451,13 @@ public class DubboCommonPanel {
         Constants.setRegistryGroup(registryGroupText.getText(), element);
         Constants.setAddress(addressText.getText(), element);
     }
+    public void modifyConfigCenter(TestElement element) {
+        Constants.setConfigCenterProtocol(configCenterProtocolText.getSelectedItem().toString(), element);
+        Constants.setConfigCenterGroup(configCenterGroupText.getText(), element);
+        Constants.setConfigCenterNamespace(configCenterNamespaceText.getText(), element);
+        Constants.setConfigCenterAddress(configCenterAddressText.getText(), element);
+        Constants.setConfigCenterTimeout(configCenterTimeoutText.getText(), element);
+    }
     public void modifyProtocol(TestElement element) {
         Constants.setRpcProtocol(rpcProtocolText.getSelectedItem().toString(), element);
     }
@@ -400,6 +481,13 @@ public class DubboCommonPanel {
         registryProtocolText.setSelectedIndex(0);
         registryGroupText.setText("");
         addressText.setText("");
+    }
+    public void clearConfigCenter() {
+        configCenterProtocolText.setSelectedIndex(0);
+        configCenterGroupText.setText("");
+        configCenterNamespaceText.setText("");
+        configCenterAddressText.setText("");
+        configCenterTimeoutText.setText("");
     }
     public void clearProtocol() {
         rpcProtocolText.setSelectedIndex(0);
