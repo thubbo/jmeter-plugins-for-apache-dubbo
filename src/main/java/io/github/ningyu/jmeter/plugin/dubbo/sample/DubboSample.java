@@ -22,6 +22,7 @@ import io.github.ningyu.jmeter.plugin.util.ErrorCode;
 import io.github.ningyu.jmeter.plugin.util.JsonUtils;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.config.ApplicationConfig;
+import org.apache.dubbo.config.ConfigCenterConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.utils.ReferenceConfigCache;
@@ -39,7 +40,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -100,72 +100,84 @@ public class DubboSample extends AbstractSampler implements Interruptible {
         ReferenceConfig reference = new ReferenceConfig();
         // set application
         reference.setApplication(application);
-        RegistryConfig registry = null;
-        // check address
+        /** registry center */
         String address = Constants.getAddress(this);
         if (StringUtils.isBlank(address)) {
             setResponseError(res, ErrorCode.MISS_ADDRESS);
             return ErrorCode.MISS_ADDRESS.getMessage();
         }
-        // get rpc protocol
+        RegistryConfig registry = null;
         String rpcProtocol = Constants.getRpcProtocol(this).replaceAll("://", "");
-        // get registry protocol
         String protocol = Constants.getRegistryProtocol(this);
-        // get registry group
         String registryGroup = Constants.getRegistryGroup(this);
-		switch (protocol) {
-		case Constants.REGISTRY_ZOOKEEPER:
-			registry = new RegistryConfig();
-			registry.setProtocol(Constants.REGISTRY_ZOOKEEPER);
-            registry.setGroup(registryGroup);
-			registry.setAddress(address);
-			reference.setRegistry(registry);
-			reference.setProtocol(rpcProtocol);
-			break;
-		case Constants.REGISTRY_NACOS:
-		    registry = new RegistryConfig();
-		    registry.setProtocol(Constants.REGISTRY_NACOS);
-		    registry.setGroup(registryGroup);
-		    registry.setAddress(address);
-		    reference.setRegistry(registry);
-		    reference.setProtocol(rpcProtocol);
-		    break;
-		case Constants.REGISTRY_MULTICAST:
-			registry = new RegistryConfig();
-			registry.setProtocol(Constants.REGISTRY_MULTICAST);
-            registry.setGroup(registryGroup);
-			registry.setAddress(address);
-			reference.setRegistry(registry);
-			reference.setProtocol(rpcProtocol);
-			break;
-		case Constants.REGISTRY_REDIS:
-			registry = new RegistryConfig();
-			registry.setProtocol(Constants.REGISTRY_REDIS);
-            registry.setGroup(registryGroup);
-			registry.setAddress(address);
-			reference.setRegistry(registry);
-			reference.setProtocol(rpcProtocol);
-			break;
-		case Constants.REGISTRY_SIMPLE:
-			registry = new RegistryConfig();
-			registry.setAddress(address);
-			reference.setRegistry(registry);
-			reference.setProtocol(rpcProtocol);
-			break;
-		default:
-			// direct invoke provider
-			StringBuffer sb = new StringBuffer();
-			sb.append(Constants.getRpcProtocol(this))
+        Integer registryTimeout = null;
+        try {
+            if (!StringUtils.isBlank(Constants.getRegistryTimeout(this))) {
+                registryTimeout = Integer.valueOf(Constants.getRegistryTimeout(this));
+            }
+        } catch (NumberFormatException e) {
+            setResponseError(res, ErrorCode.TIMEOUT_ERROR);
+            return ErrorCode.TIMEOUT_ERROR.getMessage();
+        }
+        if (StringUtils.isBlank(protocol) || Constants.REGISTRY_NONE.equals(protocol)) {
+            //direct connection
+            StringBuffer sb = new StringBuffer();
+            sb.append(Constants.getRpcProtocol(this))
                     .append(Constants.getAddress(this))
                     .append("/").append(Constants.getInterface(this));
-			//# fix dubbo 2.7.4 Generic bug https://github.com/apache/dubbo/pull/4787
-//            String version = Constants.getVersion(this);
-//            if (!StringUtils.isBlank(version)) {
-//                sb.append(":").append(version);
-//            }
-			log.debug("rpc invoker url : " + sb.toString());
-			reference.setUrl(sb.toString());
-		}
+            log.debug("rpc invoker url : " + sb.toString());
+            reference.setUrl(sb.toString());
+        } else if(Constants.REGISTRY_SIMPLE.equals(protocol)){
+            registry = new RegistryConfig();
+            registry.setAddress(address);
+            reference.setProtocol(rpcProtocol);
+            reference.setRegistry(registry);
+        } else {
+            registry = new RegistryConfig();
+            registry.setProtocol(protocol);
+            registry.setGroup(registryGroup);
+            registry.setAddress(address);
+            if (registryTimeout != null) {
+                registry.setTimeout(registryTimeout);
+            }
+            reference.setProtocol(rpcProtocol);
+            reference.setRegistry(registry);
+        }
+        /** config center */
+        try {
+            String configCenterProtocol = Constants.getConfigCenterProtocol(this);
+            if (!StringUtils.isBlank(configCenterProtocol)) {
+                String configCenterGroup = Constants.getConfigCenterGroup(this);
+                String configCenterNamespace = Constants.getConfigCenterNamespace(this);
+                String configCenterAddress = Constants.getConfigCenterAddress(this);
+                if (StringUtils.isBlank(configCenterAddress)) {
+                    setResponseError(res, ErrorCode.MISS_ADDRESS);
+                    return ErrorCode.MISS_ADDRESS.getMessage();
+                }
+                Long configCenterTimeout = null;
+                try {
+                    if (!StringUtils.isBlank(Constants.getConfigCenterTimeout(this))) {
+                        configCenterTimeout = Long.valueOf(Constants.getConfigCenterTimeout(this));
+                    }
+                } catch (NumberFormatException e) {
+                    setResponseError(res, ErrorCode.TIMEOUT_ERROR);
+                    return ErrorCode.TIMEOUT_ERROR.getMessage();
+                }
+                ConfigCenterConfig configCenter = new ConfigCenterConfig();
+                configCenter.setProtocol(configCenterProtocol);
+                configCenter.setGroup(configCenterGroup);
+                configCenter.setNamespace(configCenterNamespace);
+                configCenter.setAddress(configCenterAddress);
+                if (configCenterTimeout != null) {
+                    configCenter.setTimeout(configCenterTimeout);
+                }
+                reference.setConfigCenter(configCenter);
+            }
+        } catch (IllegalStateException e) {
+            /** Duplicate Config */
+            setResponseError(res, ErrorCode.DUPLICATE_CONFIGCENTERCONFIG);
+            return ErrorCode.DUPLICATE_CONFIGCENTERCONFIG.getMessage();
+        }
         try {
 		    // set interface
 		    String interfaceName = Constants.getInterface(this);

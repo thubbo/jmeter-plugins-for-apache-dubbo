@@ -63,7 +63,7 @@ public class RegistryServerSync implements NotifyListener, Serializable {
 //            + Constants.ROUTERS_CATEGORY + ","
 //            + Constants.CONFIGURATORS_CATEGORY,
             CommonConstants.ENABLED_KEY, CommonConstants.ANY_VALUE,
-            "check", String.valueOf(false));
+            CommonConstants.CHECK_KEY, String.valueOf(false));
 
     // ConcurrentMap<category, ConcurrentMap<servicename, Map<MD5, URL>>>
     private final ConcurrentMap<String, ConcurrentMap<String, Map<String, URL>>>

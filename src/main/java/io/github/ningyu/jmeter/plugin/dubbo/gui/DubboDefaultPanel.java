@@ -27,24 +27,28 @@ public class DubboDefaultPanel extends DubboCommonPanel {
 
     public void drawPanel(JPanel parent) {
         parent.add(drawRegistrySettingsPanel());
+        parent.add(drawConfigCenterSettingsPanel());
         parent.add(drawProtocolSettingsPanel());
         parent.add(drawConsumerSettingsPanel());
     }
 
     public void configure(TestElement element) {
         configureRegistry(element);
+        configureConfigCenter(element);
         configureProtocol(element);
         configureConsumer(element);
     }
 
     public void modifyTestElement(TestElement element) {
         modifyRegistry(element);
+        modifyConfigCenter(element);
         modifyProtocol(element);
         modifyConsumer(element);
     }
 
     public void clearGui() {
         clearRegistry();
+        clearConfigCenter();
         clearProtocol();
         clearConsumer();
     }

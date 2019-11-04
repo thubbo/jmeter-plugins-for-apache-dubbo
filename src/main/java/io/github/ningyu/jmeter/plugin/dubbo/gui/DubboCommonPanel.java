@@ -450,6 +450,7 @@ public class DubboCommonPanel {
         Constants.setRegistryProtocol(registryProtocolText.getSelectedItem().toString(), element);
         Constants.setRegistryGroup(registryGroupText.getText(), element);
         Constants.setAddress(addressText.getText(), element);
+        Constants.setRegistryTimeout(registryTimeoutText.getText(), element);
     }
     public void modifyConfigCenter(TestElement element) {
         Constants.setConfigCenterProtocol(configCenterProtocolText.getSelectedItem().toString(), element);
@@ -481,6 +482,7 @@ public class DubboCommonPanel {
         registryProtocolText.setSelectedIndex(0);
         registryGroupText.setText("");
         addressText.setText("");
+        registryTimeoutText.setText("");
     }
     public void clearConfigCenter() {
         configCenterProtocolText.setSelectedIndex(0);
