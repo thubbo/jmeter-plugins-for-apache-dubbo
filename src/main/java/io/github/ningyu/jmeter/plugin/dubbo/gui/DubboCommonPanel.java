@@ -47,11 +47,15 @@ public class DubboCommonPanel {
     private JComboBox<String> registryProtocolText;
     private JTextField addressText;
     private JTextField registryGroupText;
+    private JTextField registryUserNameText;
+    private JTextField registryPasswordText;
     private JTextField registryTimeoutText;
     /** ConfigCenter */
     private JComboBox configCenterProtocolText;
     private JTextField configCenterGroupText;
     private JTextField configCenterNamespaceText;
+    private JTextField configCenterUserNameText;
+    private JTextField configCenterPasswordText;
     private JTextField configCenterAddressText;
     private JTextField configCenterTimeoutText;
     /** Rpc Protocol */
@@ -87,7 +91,7 @@ public class DubboCommonPanel {
     public JPanel drawRegistrySettingsPanel() {
         //Registry Settings
         JPanel registrySettings = new VerticalPanel();
-        registrySettings.setBorder(BorderFactory.createTitledBorder("Registry Settings"));
+        registrySettings.setBorder(BorderFactory.createTitledBorder("Registry Center"));
         //Protocol
         JPanel ph = new HorizontalPanel();
         JLabel protocolLable = new JLabel("Protocol:", SwingConstants.RIGHT);
@@ -104,6 +108,20 @@ public class DubboCommonPanel {
         ph.add(registryGroupLable);
         ph.add(registryGroupText);
         ph.add(makeHelper("Service registration grouping, cross-group services will not affect each other, and can not be called each other, suitable for environmental isolation."));
+        //UserName
+        JLabel registryUserNameLable = new JLabel("UserName:", SwingConstants.RIGHT);
+        registryUserNameText = new JTextField();
+        registryUserNameLable.setLabelFor(registryUserNameText);
+        ph.add(registryUserNameLable);
+        ph.add(registryUserNameText);
+        ph.add(makeHelper("The usename of the registry. Do not set it if the registry doesn't need validation."));
+        //Password
+        JLabel registryPasswordLable = new JLabel("Password:", SwingConstants.RIGHT);
+        registryPasswordText = new JTextField();
+        registryPasswordLable.setLabelFor(registryPasswordText);
+        ph.add(registryPasswordLable);
+        ph.add(registryPasswordText);
+        ph.add(makeHelper("The password of the registry. Do not set it if the registry doesn't need validation."));
         registrySettings.add(ph);
         //Address
         JPanel ah = new HorizontalPanel();
@@ -127,7 +145,7 @@ public class DubboCommonPanel {
     public JPanel drawConfigCenterSettingsPanel() {
         //Config Center Settings
         JPanel configCenterSettings = new VerticalPanel();
-        configCenterSettings.setBorder(BorderFactory.createTitledBorder("Config Center Settings"));
+        configCenterSettings.setBorder(BorderFactory.createTitledBorder("Config Center"));
         //Protocol
         JPanel ph = new HorizontalPanel();
         JLabel protocolLable = new JLabel("Protocol:", SwingConstants.RIGHT);
@@ -150,6 +168,20 @@ public class DubboCommonPanel {
         ph.add(configCenterNamespaceLable);
         ph.add(configCenterNamespaceText);
         ph.add(makeHelper("Using for multi-tenant isolation generally, the actual meaning varies depending on the configuration center. 2.7.0+"));
+        //UserName
+        JLabel configCenterUserNameLable = new JLabel("UserName:", SwingConstants.RIGHT);
+        configCenterUserNameText = new JTextField();
+        configCenterUserNameLable.setLabelFor(configCenterUserNameText);
+        ph.add(configCenterUserNameLable);
+        ph.add(configCenterUserNameText);
+        ph.add(makeHelper("the username if the configuration center requires validation, Apollo is not yet enabled. 2.7.0+"));
+        //Password
+        JLabel configCenterPasswordLable = new JLabel("Password:", SwingConstants.RIGHT);
+        configCenterPasswordText = new JTextField();
+        configCenterPasswordLable.setLabelFor(configCenterPasswordText);
+        ph.add(configCenterPasswordLable);
+        ph.add(configCenterPasswordText);
+        ph.add(makeHelper("password if configuration center needs to do check, Apollo is not yet enabled. 2.7.0+"));
         configCenterSettings.add(ph);
         //Address
         JPanel ah = new HorizontalPanel();
@@ -173,7 +205,7 @@ public class DubboCommonPanel {
     public JPanel drawProtocolSettingsPanel() {
         //RPC Protocol Settings
         JPanel protocolSettings = new VerticalPanel();
-        protocolSettings.setBorder(BorderFactory.createTitledBorder("RPC Protocol Settings"));
+        protocolSettings.setBorder(BorderFactory.createTitledBorder("RPC Protocol"));
         //RPC Protocol
         JPanel rpcPh = new HorizontalPanel();
         JLabel rpcProtocolLable = new JLabel("Protocol:", SwingConstants.RIGHT);
@@ -189,7 +221,7 @@ public class DubboCommonPanel {
     public JPanel drawConsumerSettingsPanel() {
         //Consumer Settings
         JPanel consumerSettings = new VerticalPanel();
-        consumerSettings.setBorder(BorderFactory.createTitledBorder("Consumer&Service Settings"));
+        consumerSettings.setBorder(BorderFactory.createTitledBorder("Consumer & Service"));
         JPanel h = new HorizontalPanel();
         //Timeout
         JLabel timeoutLable = new JLabel(" Timeout:", SwingConstants.RIGHT);
@@ -262,7 +294,7 @@ public class DubboCommonPanel {
     public JPanel drawInterfaceSettingsPanel() {
         //Interface Settings
         JPanel interfaceSettings = new VerticalPanel();
-        interfaceSettings.setBorder(BorderFactory.createTitledBorder("Interface Settings"));
+        interfaceSettings.setBorder(BorderFactory.createTitledBorder("Interface"));
         //Selection Interface
         JPanel sh = new HorizontalPanel();
         JButton jButton = new JButton("Get Provider List");
@@ -406,6 +438,8 @@ public class DubboCommonPanel {
     public void configureRegistry(TestElement element) {
         registryProtocolText.setSelectedItem(Constants.getRegistryProtocol(element));
         registryGroupText.setText(Constants.getRegistryGroup(element));
+        registryUserNameText.setText(Constants.getRegistryUserName(element));
+        registryPasswordText.setText(Constants.getRegistryPassword(element));
         addressText.setText(Constants.getAddress(element));
         registryTimeoutText.setText(Constants.getRegistryTimeout(element));
     }
@@ -414,6 +448,8 @@ public class DubboCommonPanel {
         configCenterProtocolText.setSelectedItem(Constants.getConfigCenterProtocol(element));
         configCenterGroupText.setText(Constants.getConfigCenterGroup(element));
         configCenterNamespaceText.setText(Constants.getConfigCenterNamespace(element));
+        configCenterUserNameText.setText(Constants.getConfigCenterUserName(element));
+        configCenterPasswordText.setText(Constants.getConfigCenterPassword(element));
         configCenterAddressText.setText(Constants.getConfigCenterAddress(element));
         configCenterTimeoutText.setText(Constants.getConfigCenterTimeout(element));
     }
@@ -449,6 +485,8 @@ public class DubboCommonPanel {
     public void modifyRegistry(TestElement element) {
         Constants.setRegistryProtocol(registryProtocolText.getSelectedItem().toString(), element);
         Constants.setRegistryGroup(registryGroupText.getText(), element);
+        Constants.setRegistryUserName(registryUserNameText.getText(), element);
+        Constants.setRegistryPassword(registryPasswordText.getText(), element);
         Constants.setAddress(addressText.getText(), element);
         Constants.setRegistryTimeout(registryTimeoutText.getText(), element);
     }
@@ -456,6 +494,8 @@ public class DubboCommonPanel {
         Constants.setConfigCenterProtocol(configCenterProtocolText.getSelectedItem().toString(), element);
         Constants.setConfigCenterGroup(configCenterGroupText.getText(), element);
         Constants.setConfigCenterNamespace(configCenterNamespaceText.getText(), element);
+        Constants.setConfigCenterUserName(configCenterUserNameText.getText(), element);
+        Constants.setConfigCenterPassword(configCenterPasswordText.getText(), element);
         Constants.setConfigCenterAddress(configCenterAddressText.getText(), element);
         Constants.setConfigCenterTimeout(configCenterTimeoutText.getText(), element);
     }
@@ -481,6 +521,8 @@ public class DubboCommonPanel {
     public void clearRegistry() {
         registryProtocolText.setSelectedIndex(0);
         registryGroupText.setText("");
+        registryUserNameText.setText("");
+        registryPasswordText.setText("");
         addressText.setText("");
         registryTimeoutText.setText("");
     }
@@ -488,6 +530,8 @@ public class DubboCommonPanel {
         configCenterProtocolText.setSelectedIndex(0);
         configCenterGroupText.setText("");
         configCenterNamespaceText.setText("");
+        configCenterUserNameText.setText("");
+        configCenterPasswordText.setText("");
         configCenterAddressText.setText("");
         configCenterTimeoutText.setText("");
     }
