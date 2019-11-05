@@ -33,6 +33,7 @@ public class Constants {
 	public static final String REGISTRY_NONE = "none";
 	public static final String REGISTRY_ZOOKEEPER = "zookeeper";
     public static final String REGISTRY_NACOS = "nacos";
+    public static final String APOLLO = "apollo";
 	public static final String REGISTRY_MULTICAST = "multicast";
 	public static final String REGISTRY_REDIS = "redis";
 	public static final String REGISTRY_SIMPLE = "simple";
@@ -69,6 +70,16 @@ public class Constants {
 
 	public static final String FIELD_DUBBO_REGISTRY_PROTOCOL = "FIELD_DUBBO_REGISTRY_PROTOCOL";
 	public static final String FIELD_DUBBO_REGISTRY_GROUP = "FIELD_DUBBO_REGISTRY_GROUP";
+	public static final String FIELD_DUBBO_REGISTRY_USER_NAME = "FIELD_DUBBO_REGISTRY_USER_NAME";
+	public static final String FIELD_DUBBO_REGISTRY_PASSWORD = "FIELD_DUBBO_REGISTRY_PASSWORD";
+	public static final String FIELD_DUBBO_REGISTRY_TIMEOUT = "FIELD_DUBBO_REGISTRY_TIMEOUT";
+    public static final String FIELD_DUBBO_CONFIG_CENTER_PROTOCOL = "FIELD_DUBBO_CONFIG_CENTER_PROTOCOL";
+    public static final String FIELD_DUBBO_CONFIG_CENTER_GROUP = "FIELD_DUBBO_CONFIG_CENTER_GROUP";
+    public static final String FIELD_DUBBO_CONFIG_CENTER_NAMESPACE = "FIELD_DUBBO_CONFIG_CENTER_NAMESPACE";
+    public static final String FIELD_DUBBO_CONFIG_CENTER_USER_NAME = "FIELD_DUBBO_CONFIG_CENTER_USER_NAME";
+    public static final String FIELD_DUBBO_CONFIG_CENTER_PASSWORD = "FIELD_DUBBO_CONFIG_CENTER_PASSWORD";
+    public static final String FIELD_DUBBO_CONFIG_CENTER_TIMEOUT = "FIELD_DUBBO_CONFIG_CENTER_TIMEOUT";
+    public static final String FIELD_DUBBO_CONFIG_CENTER_ADDRESS = "FIELD_DUBBO_CONFIG_CENTER_ADDRESS";
 	public static final String FIELD_DUBBO_RPC_PROTOCOL = "FIELD_DUBBO_RPC_PROTOCOL";
 	public static final String FIELD_DUBBO_ADDRESS = "FIELD_DUBBO_ADDRESS";
 	public static final String FIELD_DUBBO_TIMEOUT = "FIELD_DUBBO_TIMEOUT";
@@ -132,6 +143,166 @@ public class Constants {
      */
     public static final void setRegistryGroup(String registryGroup, TestElement element) {
         element.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_GROUP, StringUtils.trimAllWhitespace(registryGroup)));
+    }
+
+    /**
+     * get Registry username
+     * @return the username
+     */
+    public static final String getRegistryUserName(TestElement element) {
+        return element.getPropertyAsString(FIELD_DUBBO_REGISTRY_USER_NAME);
+    }
+
+    /**
+     * set Registry username
+     * @param username the username to set
+     */
+    public static final void setRegistryUserName(String username, TestElement element) {
+        element.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_USER_NAME, StringUtils.trimAllWhitespace(username)));
+    }
+
+    /**
+     * get Registry password
+     * @return the password
+     */
+    public static final String getRegistryPassword(TestElement element) {
+        return element.getPropertyAsString(FIELD_DUBBO_REGISTRY_PASSWORD);
+    }
+
+    /**
+     * set Registry password
+     * @param password the password to set
+     */
+    public static final void setRegistryPassword(String password, TestElement element) {
+        element.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_PASSWORD, StringUtils.trimAllWhitespace(password)));
+    }
+
+    /**
+     * get Registry timeout
+     * @return the timeout
+     */
+    public static final String getRegistryTimeout(TestElement element) {
+        return element.getPropertyAsString(FIELD_DUBBO_REGISTRY_TIMEOUT);
+    }
+
+    /**
+     * set Registry timeout
+     * @param timeout the group to set
+     */
+    public static final void setRegistryTimeout(String timeout, TestElement element) {
+        element.setProperty(new StringProperty(FIELD_DUBBO_REGISTRY_TIMEOUT, StringUtils.trimAllWhitespace(timeout)));
+    }
+
+    /**
+     * get ConfigCenter protocol
+     * @return the protocol
+     */
+    public static final String getConfigCenterProtocol(TestElement element) {
+        return element.getPropertyAsString(FIELD_DUBBO_CONFIG_CENTER_PROTOCOL);
+    }
+
+    /**
+     * set ConfigCenter protocol
+     * @param protocol the protocol to set
+     */
+    public static final void setConfigCenterProtocol(String protocol, TestElement element) {
+        element.setProperty(new StringProperty(FIELD_DUBBO_CONFIG_CENTER_PROTOCOL, StringUtils.trimAllWhitespace(protocol)));
+    }
+
+    /**
+     * get ConfigCenter group
+     * @return the group
+     */
+    public static final String getConfigCenterGroup(TestElement element) {
+        return element.getPropertyAsString(FIELD_DUBBO_CONFIG_CENTER_GROUP);
+    }
+
+    /**
+     * set ConfigCenter group
+     * @param group the group to set
+     */
+    public static final void setConfigCenterGroup(String group, TestElement element) {
+        element.setProperty(new StringProperty(FIELD_DUBBO_CONFIG_CENTER_GROUP, StringUtils.trimAllWhitespace(group)));
+    }
+
+    /**
+     * get ConfigCenter namespace
+     * @return the namespace
+     */
+    public static final String getConfigCenterNamespace(TestElement element) {
+        return element.getPropertyAsString(FIELD_DUBBO_CONFIG_CENTER_NAMESPACE);
+    }
+
+    /**
+     * set ConfigCenter namespace
+     * @param namespace the namespace to set
+     */
+    public static final void setConfigCenterNamespace(String namespace, TestElement element) {
+        element.setProperty(new StringProperty(FIELD_DUBBO_CONFIG_CENTER_NAMESPACE, StringUtils.trimAllWhitespace(namespace)));
+    }
+
+    /**
+     * get ConfigCenter username
+     * @return the username
+     */
+    public static final String getConfigCenterUserName(TestElement element) {
+        return element.getPropertyAsString(FIELD_DUBBO_CONFIG_CENTER_USER_NAME);
+    }
+
+    /**
+     * set ConfigCenter username
+     * @param username the username to set
+     */
+    public static final void setConfigCenterUserName(String username, TestElement element) {
+        element.setProperty(new StringProperty(FIELD_DUBBO_CONFIG_CENTER_USER_NAME, StringUtils.trimAllWhitespace(username)));
+    }
+
+    /**
+     * get ConfigCenter password
+     * @return the password
+     */
+    public static final String getConfigCenterPassword(TestElement element) {
+        return element.getPropertyAsString(FIELD_DUBBO_CONFIG_CENTER_PASSWORD);
+    }
+
+    /**
+     * set ConfigCenter password
+     * @param password the password to set
+     */
+    public static final void setConfigCenterPassword(String password, TestElement element) {
+        element.setProperty(new StringProperty(FIELD_DUBBO_CONFIG_CENTER_PASSWORD, StringUtils.trimAllWhitespace(password)));
+    }
+
+    /**
+     * get ConfigCenter address
+     * @return the address
+     */
+    public static final String getConfigCenterAddress(TestElement element) {
+        return element.getPropertyAsString(FIELD_DUBBO_CONFIG_CENTER_ADDRESS);
+    }
+
+    /**
+     * set ConfigCenter namespace
+     * @param address the address to set
+     */
+    public static final void setConfigCenterAddress(String address, TestElement element) {
+        element.setProperty(new StringProperty(FIELD_DUBBO_CONFIG_CENTER_ADDRESS, StringUtils.trimAllWhitespace(address)));
+    }
+
+    /**
+     * get ConfigCenter timeout
+     * @return the timeout
+     */
+    public static final String getConfigCenterTimeout(TestElement element) {
+        return element.getPropertyAsString(FIELD_DUBBO_CONFIG_CENTER_TIMEOUT);
+    }
+
+    /**
+     * set ConfigCenter namespace
+     * @param timeout the timeout to set
+     */
+    public static final void setConfigCenterTimeout(String timeout, TestElement element) {
+        element.setProperty(new StringProperty(FIELD_DUBBO_CONFIG_CENTER_TIMEOUT, StringUtils.trimAllWhitespace(timeout)));
     }
 
     /**

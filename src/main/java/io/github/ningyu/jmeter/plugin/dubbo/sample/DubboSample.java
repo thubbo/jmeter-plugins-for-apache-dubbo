@@ -22,10 +22,12 @@ import io.github.ningyu.jmeter.plugin.util.ErrorCode;
 import io.github.ningyu.jmeter.plugin.util.JsonUtils;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.config.ApplicationConfig;
+import org.apache.dubbo.config.ConfigCenterConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.utils.ReferenceConfigCache;
 import org.apache.dubbo.rpc.RpcContext;
+import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
@@ -38,7 +40,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -65,9 +66,6 @@ public class DubboSample extends AbstractSampler implements Interruptible {
         res.setResponseData(JsonUtils.toJson(callDubbo(res)), StandardCharsets.UTF_8.name());
         //构造响应数据
         res.setDataType(SampleResult.TEXT);
-        res.setResponseCodeOK();
-        res.setResponseMessageOK();
-        res.sampleEnd();
         return res;
     }
 
@@ -102,77 +100,89 @@ public class DubboSample extends AbstractSampler implements Interruptible {
         ReferenceConfig reference = new ReferenceConfig();
         // set application
         reference.setApplication(application);
-        RegistryConfig registry = null;
-        // check address
+        /** registry center */
         String address = Constants.getAddress(this);
         if (StringUtils.isBlank(address)) {
-            res.setSuccessful(false);
+            setResponseError(res, ErrorCode.MISS_ADDRESS);
             return ErrorCode.MISS_ADDRESS.getMessage();
         }
-        // get rpc protocol
+        RegistryConfig registry = null;
         String rpcProtocol = Constants.getRpcProtocol(this).replaceAll("://", "");
-        // get registry protocol
         String protocol = Constants.getRegistryProtocol(this);
-        // get registry group
         String registryGroup = Constants.getRegistryGroup(this);
-		switch (protocol) {
-		case Constants.REGISTRY_ZOOKEEPER:
-			registry = new RegistryConfig();
-			registry.setProtocol(Constants.REGISTRY_ZOOKEEPER);
-            registry.setGroup(registryGroup);
-			registry.setAddress(address);
-			reference.setRegistry(registry);
-			reference.setProtocol(rpcProtocol);
-			break;
-		case Constants.REGISTRY_NACOS:
-		    registry = new RegistryConfig();
-		    registry.setProtocol(Constants.REGISTRY_NACOS);
-		    registry.setGroup(registryGroup);
-		    registry.setAddress(address);
-		    reference.setRegistry(registry);
-		    reference.setProtocol(rpcProtocol);
-		    break;
-		case Constants.REGISTRY_MULTICAST:
-			registry = new RegistryConfig();
-			registry.setProtocol(Constants.REGISTRY_MULTICAST);
-            registry.setGroup(registryGroup);
-			registry.setAddress(address);
-			reference.setRegistry(registry);
-			reference.setProtocol(rpcProtocol);
-			break;
-		case Constants.REGISTRY_REDIS:
-			registry = new RegistryConfig();
-			registry.setProtocol(Constants.REGISTRY_REDIS);
-            registry.setGroup(registryGroup);
-			registry.setAddress(address);
-			reference.setRegistry(registry);
-			reference.setProtocol(rpcProtocol);
-			break;
-		case Constants.REGISTRY_SIMPLE:
-			registry = new RegistryConfig();
-			registry.setAddress(address);
-			reference.setRegistry(registry);
-			reference.setProtocol(rpcProtocol);
-			break;
-		default:
-			// direct invoke provider
-			StringBuffer sb = new StringBuffer();
-			sb.append(Constants.getRpcProtocol(this))
+        Integer registryTimeout = null;
+        try {
+            if (!StringUtils.isBlank(Constants.getRegistryTimeout(this))) {
+                registryTimeout = Integer.valueOf(Constants.getRegistryTimeout(this));
+            }
+        } catch (NumberFormatException e) {
+            setResponseError(res, ErrorCode.TIMEOUT_ERROR);
+            return ErrorCode.TIMEOUT_ERROR.getMessage();
+        }
+        if (StringUtils.isBlank(protocol) || Constants.REGISTRY_NONE.equals(protocol)) {
+            //direct connection
+            StringBuffer sb = new StringBuffer();
+            sb.append(Constants.getRpcProtocol(this))
                     .append(Constants.getAddress(this))
                     .append("/").append(Constants.getInterface(this));
-			//# fix dubbo 2.7.3 Generic bug https://github.com/apache/dubbo/pull/4787
-            String version = Constants.getVersion(this);
-            if (!StringUtils.isBlank(version)) {
-                sb.append(":").append(version);
+            log.debug("rpc invoker url : " + sb.toString());
+            reference.setUrl(sb.toString());
+        } else if(Constants.REGISTRY_SIMPLE.equals(protocol)){
+            registry = new RegistryConfig();
+            registry.setAddress(address);
+            reference.setProtocol(rpcProtocol);
+            reference.setRegistry(registry);
+        } else {
+            registry = new RegistryConfig();
+            registry.setProtocol(protocol);
+            registry.setGroup(registryGroup);
+            registry.setAddress(address);
+            if (registryTimeout != null) {
+                registry.setTimeout(registryTimeout);
             }
-			log.debug("rpc invoker url : " + sb.toString());
-			reference.setUrl(sb.toString());
-		}
+            reference.setProtocol(rpcProtocol);
+            reference.setRegistry(registry);
+        }
+        /** config center */
+        try {
+            String configCenterProtocol = Constants.getConfigCenterProtocol(this);
+            if (!StringUtils.isBlank(configCenterProtocol)) {
+                String configCenterGroup = Constants.getConfigCenterGroup(this);
+                String configCenterNamespace = Constants.getConfigCenterNamespace(this);
+                String configCenterAddress = Constants.getConfigCenterAddress(this);
+                if (StringUtils.isBlank(configCenterAddress)) {
+                    setResponseError(res, ErrorCode.MISS_ADDRESS);
+                    return ErrorCode.MISS_ADDRESS.getMessage();
+                }
+                Long configCenterTimeout = null;
+                try {
+                    if (!StringUtils.isBlank(Constants.getConfigCenterTimeout(this))) {
+                        configCenterTimeout = Long.valueOf(Constants.getConfigCenterTimeout(this));
+                    }
+                } catch (NumberFormatException e) {
+                    setResponseError(res, ErrorCode.TIMEOUT_ERROR);
+                    return ErrorCode.TIMEOUT_ERROR.getMessage();
+                }
+                ConfigCenterConfig configCenter = new ConfigCenterConfig();
+                configCenter.setProtocol(configCenterProtocol);
+                configCenter.setGroup(configCenterGroup);
+                configCenter.setNamespace(configCenterNamespace);
+                configCenter.setAddress(configCenterAddress);
+                if (configCenterTimeout != null) {
+                    configCenter.setTimeout(configCenterTimeout);
+                }
+                reference.setConfigCenter(configCenter);
+            }
+        } catch (IllegalStateException e) {
+            /** Duplicate Config */
+            setResponseError(res, ErrorCode.DUPLICATE_CONFIGCENTERCONFIG);
+            return ErrorCode.DUPLICATE_CONFIGCENTERCONFIG.getMessage();
+        }
         try {
 		    // set interface
 		    String interfaceName = Constants.getInterface(this);
 		    if (StringUtils.isBlank(interfaceName)) {
-                res.setSuccessful(false);
+                setResponseError(res, ErrorCode.MISS_INTERFACE);
                 return ErrorCode.MISS_INTERFACE.getMessage();
             }
             reference.setInterface(interfaceName);
@@ -184,7 +194,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
                     retries = Integer.valueOf(Constants.getRetries(this));
                 }
             } catch (NumberFormatException e) {
-                res.setSuccessful(false);
+                setResponseError(res, ErrorCode.RETRIES_ERROR);
                 return ErrorCode.RETRIES_ERROR.getMessage();
             }
             if (retries != null) {
@@ -210,7 +220,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
                     timeout = Integer.valueOf(Constants.getTimeout(this));
                 }
             } catch (NumberFormatException e) {
-                res.setSuccessful(false);
+                setResponseError(res, ErrorCode.TIMEOUT_ERROR);
                 return ErrorCode.TIMEOUT_ERROR.getMessage();
             }
             if (timeout != null) {
@@ -230,7 +240,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
                     connections = Integer.valueOf(Constants.getConnections(this));
                 }
             } catch (NumberFormatException e) {
-                res.setSuccessful(false);
+                setResponseError(res, ErrorCode.CONNECTIONS_ERROR);
                 return ErrorCode.CONNECTIONS_ERROR.getMessage();
             }
             if (connections != null) {
@@ -254,7 +264,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
 
             String methodName = Constants.getMethod(this);
             if (StringUtils.isBlank(methodName)) {
-                res.setSuccessful(false);
+                setResponseError(res, ErrorCode.MISS_METHOD);
                 return ErrorCode.MISS_METHOD.getMessage();
             }
 
@@ -267,7 +277,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
 			});
             GenericService genericService = (GenericService) cache.get(reference);
             if (genericService == null) {
-                res.setSuccessful(false);
+                setResponseError(res, ErrorCode.GENERIC_SERVICE_IS_NULL);
                 return MessageFormat.format(ErrorCode.GENERIC_SERVICE_IS_NULL.getMessage(), interfaceName);
             }
             String[] parameterTypes = null;
@@ -290,19 +300,22 @@ public class DubboSample extends AbstractSampler implements Interruptible {
             Object result = null;
 			try {
 				result = genericService.$invoke(methodName, parameterTypes, parameterValues);
-				res.setSuccessful(true);
+                res.setResponseOK();
 			} catch (Exception e) {
-				log.error("RpcException：", e);
-				//TODO
-				//当接口返回异常时，sample标识为successful，通过响应内容做断言来判断是否标识sample错误，因为sample的错误会统计到用例的error百分比内。
-				//比如接口有一些校验性质的异常，不代表这个操作是错误的，这样就可以灵活的判断，不至于正常的校验返回导致测试用例error百分比的不真实
-				res.setSuccessful(true);
+				log.error("Exception：", e);
+                if (e instanceof RpcException) {
+                    RpcException rpcException = (RpcException) e;
+                    setResponseError(res, String.valueOf(rpcException.getCode()), rpcException.getMessage());
+                } else {
+                    setResponseError(res, ErrorCode.UNKNOWN_EXCEPTION);
+                }
 				result = e;
 			}
+            res.sampleEnd();
             return result;
         } catch (Exception e) {
             log.error("UnknownException：", e);
-            res.setSuccessful(false);
+            setResponseError(res, ErrorCode.UNKNOWN_EXCEPTION);
             return e;
         } finally {
         	//TODO 不能在sample结束时destroy
@@ -311,6 +324,15 @@ public class DubboSample extends AbstractSampler implements Interruptible {
 //            }
 //            reference.destroy();
         }
+    }
+
+    public void setResponseError(SampleResult res, ErrorCode errorCode) {
+        setResponseError(res, errorCode.getCode(), errorCode.getMessage());
+    }
+    public void setResponseError(SampleResult res, String code, String message) {
+        res.setSuccessful(false);
+        res.setResponseCode(code);
+        res.setResponseMessage(message);
     }
 
     @Override

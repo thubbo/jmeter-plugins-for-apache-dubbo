@@ -19,6 +19,8 @@ public enum ErrorCode {
     GENERIC_SERVICE_IS_NULL("GENERIC_SERVICE_IS_NULL","Not found exported service: {0}, may be version or group mismatch!"),
     MISS_METHOD("MISS_METHOD","Method is empty!"),
     MISS_ADDRESS("MISS_ADDRESS","Address is empty!"),
+    UNKNOWN_EXCEPTION("UNKNOWN_EXCEPTION","Unknown exception!"),
+    DUPLICATE_CONFIGCENTERCONFIG("DUPLICATE_CONFIGCENTERCONFIG","Duplicate Config found for ConfigCenterConfig!"),
     ;
 
     String code;
