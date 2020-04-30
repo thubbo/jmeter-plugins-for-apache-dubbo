@@ -102,10 +102,15 @@ public class Constants {
 	public static final String DEFAULT_CLUSTER = "failfast";
 	public static final String DEFAULT_CONNECTIONS = "100";
 
-	//冗余配置元件中的address、protocols、group,用于在sample gui获取配置元件中的默认值
+    //Jmeter元素名称
+    public static final String JMETER_TESTELEMENT_NAME = "TestElement.name";
+
+    //冗余配置元件中的address、protocols、group,用于在sample gui获取配置元件中的默认值
     public static String DEFAULT_PANEL_ADDRESS = "";
     public static String DEFAULT_PANEL_PROTOCOLS = "";
     public static String DEFAULT_PANEL_GROUP = "";
+
+
 
     public static final void redundancy(TestElement element) {
         DEFAULT_PANEL_ADDRESS = Constants.getAddress(element);
@@ -565,6 +570,9 @@ public class Constants {
      */
     public static String referenceConfigToString(TestElement element){
         StringBuilder sb = new StringBuilder();
+
+        sb.append(element.getPropertyAsString(JMETER_TESTELEMENT_NAME));
+
         String protocol = getRegistryProtocol(element);
         sb.append(protocol);
 
