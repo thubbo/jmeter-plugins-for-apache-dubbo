@@ -559,4 +559,84 @@ public class Constants {
         }
     }
 
+    /**
+     * 为了唯一化一个testElement中的referenceConfig，将其中的内容做了字符串处理。
+     * 便于作为key，因为仅仅使用其中的某几项是不足以唯一化的。
+     */
+    public static String referenceConfigToString(TestElement element){
+        StringBuilder sb = new StringBuilder();
+        String protocol = getRegistryProtocol(element);
+        sb.append(protocol);
+
+        String registryGroup = getRegistryGroup(element);
+        sb.append(registryGroup);
+
+        String registryUserName = getRegistryUserName(element);
+        sb.append(registryUserName);
+
+        String registryPassword = getRegistryPassword(element);
+        sb.append(registryPassword);
+
+        String registryTimeout = getRegistryTimeout(element);
+        sb.append(registryTimeout);
+
+        String configCenterProtocol = getConfigCenterProtocol(element);
+        sb.append(configCenterProtocol);
+
+        String configCenterGroup = getConfigCenterGroup(element);
+        sb.append(configCenterGroup);
+
+        String configCenterNamespace = getConfigCenterNamespace(element);
+        sb.append(configCenterNamespace);
+
+        String configCenterUserName = getConfigCenterUserName(element);
+        sb.append(configCenterUserName);
+
+        String configCenterPassword = getConfigCenterPassword(element);
+        sb.append(configCenterPassword);
+
+        String configCenterAddress = getConfigCenterAddress(element);
+        sb.append(configCenterAddress);
+
+        String configCenterTimeout = getConfigCenterTimeout(element);
+        sb.append(configCenterTimeout);
+
+        String rpcProtocol = getRpcProtocol(element);
+        sb.append(rpcProtocol);
+
+        String address = getAddress(element);
+        sb.append(address);
+
+        String timeout = getTimeout(element);
+        sb.append(timeout);
+
+        String version = getVersion(element);
+        sb.append(version);
+
+        String retries = getRetries(element);
+        sb.append(retries);
+
+        String cluster = getCluster(element);
+        sb.append(cluster);
+
+        String group = getGroup(element);
+        sb.append(group);
+
+        String connections = getConnections(element);
+        sb.append(connections);
+
+        String loadbalance = getLoadbalance(element);
+        sb.append(loadbalance);
+
+        String async = getAsync(element);
+        sb.append(async);
+
+        String anInterface = getInterface(element);
+        sb.append(anInterface);
+
+        String method = getMethod(element);
+        sb.append(method);
+
+        return sb.toString();
+    }
 }

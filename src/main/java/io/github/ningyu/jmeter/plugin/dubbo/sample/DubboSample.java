@@ -33,6 +33,7 @@ import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.Interruptible;
 import org.apache.jmeter.samplers.SampleResult;
+import org.apache.jmeter.testelement.TestStateListener;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
@@ -45,18 +46,15 @@ import java.util.stream.Collectors;
 /**
  * DubboSample
  */
-public class DubboSample extends AbstractSampler implements Interruptible {
+public class DubboSample extends AbstractSampler implements Interruptible, TestStateListener {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
     private static final long serialVersionUID = -6794913295411458705L;
 
-
     public static ApplicationConfig application = new ApplicationConfig("DubboSample");
 
-
-
     @SuppressWarnings("deprecation")
-	@Override
+    @Override
     public SampleResult sample(Entry entry) {
         SampleResult res = new SampleResult();
         res.setSampleLabel(getName());
@@ -74,7 +72,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
      */
     private String getSampleData() {
         log.info("sample中的实例id"+this.toString()+",element名称"+this.getName());
-    	StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("Registry Protocol: ").append(Constants.getRegistryProtocol(this)).append("\n");
         sb.append("Address: ").append(Constants.getAddress(this)).append("\n");
         sb.append("RPC Protocol: ").append(Constants.getRpcProtocol(this)).append("\n");
@@ -179,15 +177,15 @@ public class DubboSample extends AbstractSampler implements Interruptible {
             return ErrorCode.DUPLICATE_CONFIGCENTERCONFIG.getMessage();
         }
         try {
-		    // set interface
-		    String interfaceName = Constants.getInterface(this);
-		    if (StringUtils.isBlank(interfaceName)) {
+            // set interface
+            String interfaceName = Constants.getInterface(this);
+            if (StringUtils.isBlank(interfaceName)) {
                 setResponseError(res, ErrorCode.MISS_INTERFACE);
                 return ErrorCode.MISS_INTERFACE.getMessage();
             }
             reference.setInterface(interfaceName);
 
-		    // set retries
+            // set retries
             Integer retries = null;
             try {
                 if (!StringUtils.isBlank(Constants.getRetries(this))) {
@@ -269,12 +267,12 @@ public class DubboSample extends AbstractSampler implements Interruptible {
             }
 
             // The registry's address is to generate the ReferenceConfigCache key
-            ReferenceConfigCache cache = ReferenceConfigCache.getCache(Constants.getAddress(this), new ReferenceConfigCache.KeyGenerator() {
+            ReferenceConfigCache cache = ReferenceConfigCache.getCache(Constants.referenceConfigToString(this), new ReferenceConfigCache.KeyGenerator() {
                 @Override
                 public String generateKey(org.apache.dubbo.config.ReferenceConfig<?> referenceConfig) {
                     return referenceConfig.toString();
                 }
-			});
+            });
             GenericService genericService = (GenericService) cache.get(reference);
             if (genericService == null) {
                 setResponseError(res, ErrorCode.GENERIC_SERVICE_IS_NULL);
@@ -286,7 +284,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
             List<String> paramterTypeList =  new ArrayList<String>();;
             List<Object> parameterValuesList = new ArrayList<Object>();;
             for(MethodArgument arg : args) {
-            	ClassUtils.parseParameter(paramterTypeList, parameterValuesList, arg);
+                ClassUtils.parseParameter(paramterTypeList, parameterValuesList, arg);
             }
             parameterTypes = paramterTypeList.toArray(new String[paramterTypeList.size()]);
             parameterValues = parameterValuesList.toArray(new Object[parameterValuesList.size()]);
@@ -298,19 +296,19 @@ public class DubboSample extends AbstractSampler implements Interruptible {
 
             res.sampleStart();
             Object result = null;
-			try {
-				result = genericService.$invoke(methodName, parameterTypes, parameterValues);
+            try {
+                result = genericService.$invoke(methodName, parameterTypes, parameterValues);
                 res.setResponseOK();
-			} catch (Exception e) {
-				log.error("Exception：", e);
+            } catch (Exception e) {
+                log.error("Exception：", e);
                 if (e instanceof RpcException) {
                     RpcException rpcException = (RpcException) e;
                     setResponseError(res, String.valueOf(rpcException.getCode()), rpcException.getMessage());
                 } else {
                     setResponseError(res, ErrorCode.UNKNOWN_EXCEPTION);
                 }
-				result = e;
-			}
+                result = e;
+            }
             res.sampleEnd();
             return result;
         } catch (Exception e) {
@@ -318,7 +316,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
             setResponseError(res, ErrorCode.UNKNOWN_EXCEPTION);
             return e;
         } finally {
-        	//TODO 不能在sample结束时destroy
+            //TODO 不能在sample结束时destroy
 //            if (registry != null) {
 //                registry.destroyAll();
 //            }
@@ -339,5 +337,34 @@ public class DubboSample extends AbstractSampler implements Interruptible {
     public boolean interrupt() {
         Thread.currentThread().interrupt();
         return true;
+    }
+
+    @Override
+    public void testStarted() {
+
+    }
+
+    @Override
+    public void testStarted(String s) {
+
+    }
+
+    /**
+     * 这里干掉连接
+     */
+    @Override
+    public void testEnded() {
+        ReferenceConfigCache cache = ReferenceConfigCache.getCache(Constants.referenceConfigToString(this), new ReferenceConfigCache.KeyGenerator() {
+            @Override
+            public String generateKey(org.apache.dubbo.config.ReferenceConfig<?> referenceConfig) {
+                return referenceConfig.toString();
+            }
+        });
+        cache.destroyAll();
+    }
+
+    @Override
+    public void testEnded(String s) {
+
     }
 }

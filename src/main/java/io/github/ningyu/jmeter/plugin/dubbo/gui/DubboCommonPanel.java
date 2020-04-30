@@ -555,11 +555,11 @@ public class DubboCommonPanel {
         modelAttachment.setDataVector(null, columnNamesAttachment);
     }
 
-    private List<MethodArgument> getMethodArgsData(Vector<Vector<String>> data) {
+    private List<MethodArgument> getMethodArgsData(Vector<Vector> data) {
         List<MethodArgument> params = new ArrayList<MethodArgument>();
         if (!data.isEmpty()) {
             //处理参数
-            Iterator<Vector<String>> it = data.iterator();
+            Iterator<Vector> it = data.iterator();
             while(it.hasNext()) {
                 Vector<String> param = it.next();
                 if (!param.isEmpty()) {
