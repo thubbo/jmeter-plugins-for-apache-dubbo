@@ -24,6 +24,7 @@ import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ConfigCenterConfig;
 import org.apache.dubbo.config.ReferenceConfig;
+import org.apache.dubbo.config.ReferenceConfigBase;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.utils.ReferenceConfigCache;
 import org.apache.dubbo.rpc.RpcContext;
@@ -270,8 +271,9 @@ public class DubboSample extends AbstractSampler implements Interruptible {
 
             // The registry's address is to generate the ReferenceConfigCache key
             ReferenceConfigCache cache = ReferenceConfigCache.getCache(Constants.getAddress(this), new ReferenceConfigCache.KeyGenerator() {
+
                 @Override
-                public String generateKey(org.apache.dubbo.config.ReferenceConfig<?> referenceConfig) {
+                public String generateKey(ReferenceConfigBase<?> referenceConfig) {
                     return referenceConfig.toString();
                 }
 			});
