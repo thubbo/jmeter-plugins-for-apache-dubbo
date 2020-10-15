@@ -16,13 +16,12 @@
  */
 package io.github.ningyu.jmeter.plugin.util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
 import java.lang.reflect.Type;
+import java.util.Locale;
 
 /**
  * JsonUtils
@@ -36,6 +35,12 @@ public class JsonUtils {
 			.setPrettyPrinting()
 			.disableHtmlEscaping()
 			.serializeNulls()
+			.registerTypeAdapter(Locale.class, new JsonDeserializer<Locale>() {
+				@Override
+				public Locale deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+					return ClassUtils.parseLocale(json.getAsJsonPrimitive().getAsString());
+				}
+			})
 			.create();
 
 	public static String toJson(Object obj) {

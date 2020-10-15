@@ -51,7 +51,7 @@ public class GenericServiceTest {
         System.out.println(json);
     }
 
-    @Test
+//    @Test
     public void testZk() {
         for(int i=0;i<5;i++) {
             ApplicationConfig application = new ApplicationConfig();

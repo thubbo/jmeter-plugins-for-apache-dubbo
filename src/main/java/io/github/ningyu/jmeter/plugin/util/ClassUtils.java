@@ -23,8 +23,10 @@ import org.apache.log.Logger;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * ClassUtils
@@ -194,6 +196,17 @@ public class ClassUtils {
 					|| "Boolean[]".equals(className)) {
 				paramterTypeList.add("java.lang.Boolean[]");
 				parameterValuesList.add(StringUtils.isBlank(arg.getParamValue()) ? null : JsonUtils.formJson(arg.getParamValue(), new TypeToken<Boolean[]>() {}.getType()));
+			} else if ("java.util.Locale".equals(className)) {
+				paramterTypeList.add("java.util.Locale");
+				parameterValuesList.add(parseLocale(arg.getParamValue()));
+			} else if ("java.util.Locale[]".equals(className)) {
+				paramterTypeList.add("java.util.Locale[]");
+				List<String> list = JsonUtils.formJson(arg.getParamValue(), new TypeToken<List<String>>() {}.getType());
+				List<Locale> localeList = new ArrayList<>();
+				for (String locale : list) {
+					localeList.add(parseLocale(locale));
+				}
+				parameterValuesList.add(localeList.toArray(new Locale[localeList.size()]));
 			} else {
 				if (className.endsWith("[]")) {
 					List<?> list = null;
@@ -225,6 +238,55 @@ public class ClassUtils {
 			}
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Invalid parameter => [ParamType="+arg.getParamType()+",ParamValue="+arg.getParamValue()+"]", e);
+		}
+	}
+
+	public static Locale parseLocale(String locale) {
+		switch (locale) {
+			case "ENGLISH":
+				return Locale.ENGLISH;
+			case "FRENCH":
+				return Locale.FRENCH;
+			case "GERMAN":
+				return Locale.GERMAN;
+			case "ITALIAN":
+				return Locale.ITALIAN;
+			case "JAPANESE":
+				return Locale.JAPANESE;
+			case "KOREAN":
+				return Locale.KOREAN;
+			case "CHINESE":
+				return Locale.CHINESE;
+			case "SIMPLIFIED_CHINESE":
+				return Locale.SIMPLIFIED_CHINESE;
+			case "TRADITIONAL_CHINESE":
+				return Locale.TRADITIONAL_CHINESE;
+			case "FRANCE":
+				return Locale.FRANCE;
+			case "GERMANY":
+				return Locale.GERMANY;
+			case "ITALY":
+				return Locale.ITALY;
+			case "JAPAN":
+				return Locale.JAPAN;
+			case "KOREA":
+				return Locale.KOREA;
+			case "CHINA":
+				return Locale.CHINA;
+			case "PRC":
+				return Locale.PRC;
+			case "TAIWAN":
+				return Locale.TAIWAN;
+			case "UK":
+				return Locale.UK;
+			case "US":
+				return Locale.US;
+			case "CANADA":
+				return Locale.CANADA;
+			case "CANADA_FRENCH":
+				return Locale.CANADA_FRENCH;
+			default :
+				return Locale.ROOT;
 		}
 	}
 }
