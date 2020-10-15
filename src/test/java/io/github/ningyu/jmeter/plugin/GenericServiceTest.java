@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GenericServiceTest {
-    @Test
+//    @Test
     public void test() {
         ApplicationConfig application = new ApplicationConfig();
         application.setName("api-generic-consumer");
@@ -33,7 +33,7 @@ public class GenericServiceTest {
         System.out.println(json);
     }
 
-    @Test
+//    @Test
     public void testAttachment() {
         ApplicationConfig application = new ApplicationConfig();
         application.setName("api-generic-consumer");
@@ -58,13 +58,14 @@ public class GenericServiceTest {
             application.setName("api-generic-consumer");
             ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
             reference.setVersion("1.0.0");
+            reference.setGroup("");
             RegistryConfig registry = new RegistryConfig();
             registry.setProtocol(Constants.REGISTRY_ZOOKEEPER);
             registry.setAddress("192.168.0.44:2181,192.168.0.44:2182,192.168.0.44:2183");
             registry.setTimeout(10000);
             reference.setRegistry(registry);
             ConfigCenterConfig cc = new ConfigCenterConfig();
-            cc.setAddress("192.168.0.58:2181,192.168.0.59:2181,192.168.0.60:2181");
+            cc.setAddress("192.168.0.44:2181,192.168.0.44:2182,192.168.0.44:2183");
             cc.setProtocol(Constants.REGISTRY_ZOOKEEPER);
             cc.setTimeout(Long.valueOf("10000"));
             cc.setGroup("");
@@ -81,7 +82,7 @@ public class GenericServiceTest {
         }
     }
 
-    @Test
+//    @Test
     public void testEnumA() {
         List<String> paramterTypeList = new ArrayList<>();
         List<Object> parameterValuesList = new ArrayList<>();
@@ -91,7 +92,7 @@ public class GenericServiceTest {
         System.out.println(parameterValuesList.toString());
     }
 
-    @Test
+//    @Test
     public void testEnumB() {
         List<String> paramterTypeList = new ArrayList<>();
         List<Object> parameterValuesList = new ArrayList<>();

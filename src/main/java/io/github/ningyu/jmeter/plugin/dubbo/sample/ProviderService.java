@@ -20,7 +20,6 @@ package io.github.ningyu.jmeter.plugin.dubbo.sample;
 import io.github.ningyu.jmeter.plugin.util.Constants;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.config.ReferenceConfig;
-import org.apache.dubbo.config.ReferenceConfigBase;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.utils.ReferenceConfigCache;
 import org.apache.dubbo.registry.RegistryService;
@@ -103,13 +102,7 @@ public class ProviderService implements Serializable {
         }
         reference.setInterface("org.apache.dubbo.registry.RegistryService");
         try {
-            ReferenceConfigCache cache = ReferenceConfigCache.getCache(address + "_" + group, new ReferenceConfigCache.KeyGenerator() {
-
-                @Override
-                public String generateKey(ReferenceConfigBase<?> referenceConfig) {
-                    return referenceConfig.toString();
-                }
-            });
+            ReferenceConfigCache cache = ReferenceConfigCache.getCache(address + "_" + group);
             RegistryService registryService = (RegistryService) cache.get(reference);
             if (registryService == null) {
                 throw new RuntimeException("Can't get the interface list, please check if the address is wrong!");
