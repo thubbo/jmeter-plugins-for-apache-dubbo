@@ -1,11 +1,17 @@
-package io.github.ningyu.jmeter.plugin;
+package io.github.ningyu.jmeter.plugin.test;
 
 import com.google.gson.internal.LinkedTreeMap;
+import io.github.ningyu.jmeter.plugin.bean.LocaleTestBean;
 import io.github.ningyu.jmeter.plugin.dubbo.sample.MethodArgument;
 import io.github.ningyu.jmeter.plugin.util.ClassUtils;
+import io.github.ningyu.jmeter.plugin.util.Constants;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -41,8 +47,8 @@ public class ClassUtilsTest {
 
     @Test
     public void testGeneric() {
-        String paramValue = "{\"locale\":\"CHINESE\",\"name\":\"aaa\",\"item\":{\"class\":\"io.github.ningyu.jmeter.plugin.TestBean\",\"name\":\"bbb\"}}";
-        String paramType = "io.github.ningyu.jmeter.plugin.LocaleTestBean";
+        String paramValue = "{\"locale\":\"CHINESE\",\"name\":\"aaa\",\"item\":{\"class\":\"io.github.ningyu.jmeter.plugin.bean.TestBean\",\"name\":\"bbb\"}}";
+        String paramType = "io.github.ningyu.jmeter.plugin.bean.LocaleTestBean";
         MethodArgument arg = new MethodArgument(paramType, paramValue);
         List<String> paramterTypeList = new ArrayList<>();
         List<Object> parameterValuesList = new ArrayList<>();
@@ -54,5 +60,44 @@ public class ClassUtilsTest {
         Assert.assertEquals(((LocaleTestBean)parameterValuesList.get(0)).getItem().getClass(), LinkedTreeMap.class);
         Assert.assertEquals(((Map)((LocaleTestBean)parameterValuesList.get(0)).getItem()).get("name"), "bbb");
         Assert.assertEquals(((Map)((LocaleTestBean)parameterValuesList.get(0)).getItem()).get("item"), null);
+    }
+
+    @Test
+    public void testLocalDateTime() {
+        String paramValue = "2020-10-15 20:08:56";
+        String paramType = "java.time.LocalDateTime";
+        MethodArgument arg = new MethodArgument(paramType, paramValue);
+        List<String> paramterTypeList = new ArrayList<>();
+        List<Object> parameterValuesList = new ArrayList<>();
+        ClassUtils.parseParameter(paramterTypeList, parameterValuesList, arg);
+        Assert.assertEquals(paramterTypeList.get(0),paramType);
+        Assert.assertEquals(parameterValuesList.get(0).getClass(), LocalDateTime.class);
+        Assert.assertEquals(((LocalDateTime)parameterValuesList.get(0)).format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)), paramValue);
+    }
+
+    @Test
+    public void testLocalDate() {
+        String paramValue = "2020-10-15 20:08:56";
+        String paramType = "java.time.LocalDate";
+        MethodArgument arg = new MethodArgument(paramType, paramValue);
+        List<String> paramterTypeList = new ArrayList<>();
+        List<Object> parameterValuesList = new ArrayList<>();
+        ClassUtils.parseParameter(paramterTypeList, parameterValuesList, arg);
+        Assert.assertEquals(paramterTypeList.get(0),paramType);
+        Assert.assertEquals(parameterValuesList.get(0).getClass(), LocalDate.class);
+        Assert.assertEquals(((LocalDate)parameterValuesList.get(0)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), "2020-10-15");
+    }
+
+    @Test
+    public void testLocalTime() {
+        String paramValue = "2020-10-15 20:08:56";
+        String paramType = "java.time.LocalTime";
+        MethodArgument arg = new MethodArgument(paramType, paramValue);
+        List<String> paramterTypeList = new ArrayList<>();
+        List<Object> parameterValuesList = new ArrayList<>();
+        ClassUtils.parseParameter(paramterTypeList, parameterValuesList, arg);
+        Assert.assertEquals(paramterTypeList.get(0),paramType);
+        Assert.assertEquals(parameterValuesList.get(0).getClass(), LocalTime.class);
+        Assert.assertEquals(((LocalTime)parameterValuesList.get(0)).format(DateTimeFormatter.ofPattern("HH:mm:ss")), "20:08:56");
     }
 }

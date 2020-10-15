@@ -1,4 +1,4 @@
-package io.github.ningyu.jmeter.plugin;
+package io.github.ningyu.jmeter.plugin.bean;
 
 import java.io.Serializable;
 

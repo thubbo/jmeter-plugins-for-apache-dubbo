@@ -1,4 +1,4 @@
-package io.github.ningyu.jmeter.plugin;
+package io.github.ningyu.jmeter.plugin.test;
 
 import io.github.ningyu.jmeter.plugin.dubbo.sample.MethodArgument;
 import io.github.ningyu.jmeter.plugin.util.ClassUtils;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GenericServiceTest {
-//    @Test
+    @Test
     public void test() {
         ApplicationConfig application = new ApplicationConfig();
         application.setName("api-generic-consumer");
@@ -33,7 +33,7 @@ public class GenericServiceTest {
         System.out.println(json);
     }
 
-//    @Test
+    @Test
     public void testAttachment() {
         ApplicationConfig application = new ApplicationConfig();
         application.setName("api-generic-consumer");
@@ -51,7 +51,7 @@ public class GenericServiceTest {
         System.out.println(json);
     }
 
-//    @Test
+    @Test
     public void testZk() {
         for(int i=0;i<5;i++) {
             ApplicationConfig application = new ApplicationConfig();
@@ -82,7 +82,7 @@ public class GenericServiceTest {
         }
     }
 
-//    @Test
+    @Test
     public void testEnumA() {
         List<String> paramterTypeList = new ArrayList<>();
         List<Object> parameterValuesList = new ArrayList<>();
@@ -92,7 +92,7 @@ public class GenericServiceTest {
         System.out.println(parameterValuesList.toString());
     }
 
-//    @Test
+    @Test
     public void testEnumB() {
         List<String> paramterTypeList = new ArrayList<>();
         List<Object> parameterValuesList = new ArrayList<>();

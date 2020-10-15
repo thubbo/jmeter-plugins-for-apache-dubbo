@@ -21,6 +21,10 @@ import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 /**
@@ -31,7 +35,7 @@ public class JsonUtils {
 	private static final Logger logger = LoggingManager.getLoggerForClass();
 
 	private static final Gson gson = new GsonBuilder()
-			.setDateFormat("yyyy-MM-dd HH:mm:ss")
+			.setDateFormat(Constants.DATE_FORMAT)
 			.setPrettyPrinting()
 			.disableHtmlEscaping()
 			.serializeNulls()
@@ -39,6 +43,26 @@ public class JsonUtils {
 				@Override
 				public Locale deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 					return ClassUtils.parseLocale(json.getAsJsonPrimitive().getAsString());
+				}
+			})
+			.registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
+				@Override
+				public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+					return LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
+				}
+			})
+			.registerTypeAdapter(LocalDate.class, new JsonDeserializer<LocalDate>() {
+				@Override
+				public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+					LocalDateTime localDateTime = LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
+					return localDateTime.toLocalDate();
+				}
+			})
+			.registerTypeAdapter(LocalTime.class, new JsonDeserializer<LocalTime>() {
+				@Override
+				public LocalTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+					LocalDateTime localDateTime = LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
+					return localDateTime.toLocalTime();
 				}
 			})
 			.create();

@@ -23,6 +23,8 @@ import org.apache.log.Logger;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -207,6 +209,17 @@ public class ClassUtils {
 					localeList.add(parseLocale(locale));
 				}
 				parameterValuesList.add(localeList.toArray(new Locale[localeList.size()]));
+			} else if ("java.time.LocalDateTime".equals(className)) {
+				paramterTypeList.add("java.time.LocalDateTime");
+				parameterValuesList.add(LocalDateTime.parse(arg.getParamValue(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)));
+			} else if ("java.time.LocalDate".equals(className)) {
+				paramterTypeList.add("java.time.LocalDate");
+				LocalDateTime localDateTime = LocalDateTime.parse(arg.getParamValue(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
+				parameterValuesList.add(localDateTime.toLocalDate());
+			} else if ("java.time.LocalTime".equals(className)) {
+				paramterTypeList.add("java.time.LocalTime");
+				LocalDateTime localDateTime = LocalDateTime.parse(arg.getParamValue(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
+				parameterValuesList.add(localDateTime.toLocalTime());
 			} else {
 				if (className.endsWith("[]")) {
 					List<?> list = null;
