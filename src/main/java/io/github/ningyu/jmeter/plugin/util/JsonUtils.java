@@ -16,7 +16,10 @@
  */
 package io.github.ningyu.jmeter.plugin.util;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonSyntaxException;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
@@ -39,31 +42,19 @@ public class JsonUtils {
 			.setPrettyPrinting()
 			.disableHtmlEscaping()
 			.serializeNulls()
-			.registerTypeAdapter(Locale.class, new JsonDeserializer<Locale>() {
-				@Override
-				public Locale deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-					return ClassUtils.parseLocale(json.getAsJsonPrimitive().getAsString());
-				}
+			.registerTypeAdapter(Locale.class, (JsonDeserializer<Locale>) (json, typeOfT, context) -> {
+				return ClassUtils.parseLocale(json.getAsJsonPrimitive().getAsString());
 			})
-			.registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
-				@Override
-				public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-					return LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
-				}
+			.registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> {
+				return LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
 			})
-			.registerTypeAdapter(LocalDate.class, new JsonDeserializer<LocalDate>() {
-				@Override
-				public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-					LocalDateTime localDateTime = LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
-					return localDateTime.toLocalDate();
-				}
+			.registerTypeAdapter(LocalDate.class, (JsonDeserializer<LocalDate>) (json, typeOfT, context) -> {
+				LocalDateTime localDateTime = LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
+				return localDateTime.toLocalDate();
 			})
-			.registerTypeAdapter(LocalTime.class, new JsonDeserializer<LocalTime>() {
-				@Override
-				public LocalTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-					LocalDateTime localDateTime = LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
-					return localDateTime.toLocalTime();
-				}
+			.registerTypeAdapter(LocalTime.class, (JsonDeserializer<LocalTime>) (json, typeOfT, context) -> {
+				LocalDateTime localDateTime = LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
+				return localDateTime.toLocalTime();
 			})
 			.create();
 
@@ -75,7 +66,7 @@ public class JsonUtils {
 		return gson.toJson(obj, type);
 	}
 
-	public static <T> T formJson(String json, Class<T> classOfT) {
+	public static <T> T fromJson(String json, Class<T> classOfT) {
 		try {
 			return gson.fromJson(json, classOfT);
 		} catch (JsonSyntaxException e) {
@@ -85,7 +76,7 @@ public class JsonUtils {
 		return null;
 	}
 
-	public static <T> T formJson(String json, Type type) {
+	public static <T> T fromJson(String json, Type type) {
 		try {
 			return gson.fromJson(json, type);
 		} catch (JsonSyntaxException e) {
