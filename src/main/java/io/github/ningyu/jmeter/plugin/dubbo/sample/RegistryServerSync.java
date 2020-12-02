@@ -27,11 +27,7 @@ import org.apache.dubbo.registry.Constants;
 import org.apache.dubbo.registry.NotifyListener;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 

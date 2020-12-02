@@ -1,4 +1,4 @@
-package io.github.ningyu.jmeter.plugin;
+package io.github.ningyu.jmeter.plugin.test;
 
 import io.github.ningyu.jmeter.plugin.dubbo.sample.MethodArgument;
 import io.github.ningyu.jmeter.plugin.util.ClassUtils;
@@ -58,13 +58,14 @@ public class GenericServiceTest {
             application.setName("api-generic-consumer");
             ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
             reference.setVersion("1.0.0");
+            reference.setGroup("");
             RegistryConfig registry = new RegistryConfig();
             registry.setProtocol(Constants.REGISTRY_ZOOKEEPER);
             registry.setAddress("192.168.0.44:2181,192.168.0.44:2182,192.168.0.44:2183");
             registry.setTimeout(10000);
             reference.setRegistry(registry);
             ConfigCenterConfig cc = new ConfigCenterConfig();
-            cc.setAddress("192.168.0.58:2181,192.168.0.59:2181,192.168.0.60:2181");
+            cc.setAddress("192.168.0.44:2181,192.168.0.44:2182,192.168.0.44:2183");
             cc.setProtocol(Constants.REGISTRY_ZOOKEEPER);
             cc.setTimeout(Long.valueOf("10000"));
             cc.setGroup("");

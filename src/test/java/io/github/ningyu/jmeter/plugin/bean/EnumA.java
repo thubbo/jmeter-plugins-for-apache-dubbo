@@ -2,7 +2,7 @@
  * Copyright (c) 2018, Jiuye SCM and/or its affiliates. All rights reserved.
  */
 
-package io.github.ningyu.jmeter.plugin;
+package io.github.ningyu.jmeter.plugin.bean;
 
 /**
  * <功能描述>

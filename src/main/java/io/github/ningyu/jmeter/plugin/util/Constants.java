@@ -102,6 +102,8 @@ public class Constants {
 	public static final String DEFAULT_CLUSTER = "failfast";
 	public static final String DEFAULT_CONNECTIONS = "100";
 
+	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
 	//冗余配置元件中的address、protocols、group,用于在sample gui获取配置元件中的默认值
     public static String DEFAULT_PANEL_ADDRESS = "";
     public static String DEFAULT_PANEL_PROTOCOLS = "";

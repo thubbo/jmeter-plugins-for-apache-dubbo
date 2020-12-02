@@ -16,14 +16,19 @@
  */
 package io.github.ningyu.jmeter.plugin.util;
 
-import java.lang.reflect.Type;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonSyntaxException;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
+import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * JsonUtils
@@ -33,10 +38,24 @@ public class JsonUtils {
 	private static final Logger logger = LoggingManager.getLoggerForClass();
 
 	private static final Gson gson = new GsonBuilder()
-			.setDateFormat("yyyy-MM-dd HH:mm:ss")
+			.setDateFormat(Constants.DATE_FORMAT)
 			.setPrettyPrinting()
 			.disableHtmlEscaping()
 			.serializeNulls()
+			.registerTypeAdapter(Locale.class, (JsonDeserializer<Locale>) (json, typeOfT, context) -> {
+				return ClassUtils.parseLocale(json.getAsJsonPrimitive().getAsString());
+			})
+			.registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> {
+				return LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
+			})
+			.registerTypeAdapter(LocalDate.class, (JsonDeserializer<LocalDate>) (json, typeOfT, context) -> {
+				LocalDateTime localDateTime = LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
+				return localDateTime.toLocalDate();
+			})
+			.registerTypeAdapter(LocalTime.class, (JsonDeserializer<LocalTime>) (json, typeOfT, context) -> {
+				LocalDateTime localDateTime = LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
+				return localDateTime.toLocalTime();
+			})
 			.create();
 
 	public static String toJson(Object obj) {
@@ -47,7 +66,7 @@ public class JsonUtils {
 		return gson.toJson(obj, type);
 	}
 
-	public static <T> T formJson(String json, Class<T> classOfT) {
+	public static <T> T fromJson(String json, Class<T> classOfT) {
 		try {
 			return gson.fromJson(json, classOfT);
 		} catch (JsonSyntaxException e) {
@@ -57,7 +76,7 @@ public class JsonUtils {
 		return null;
 	}
 
-	public static <T> T formJson(String json, Type type) {
+	public static <T> T fromJson(String json, Type type) {
 		try {
 			return gson.fromJson(json, type);
 		} catch (JsonSyntaxException e) {
