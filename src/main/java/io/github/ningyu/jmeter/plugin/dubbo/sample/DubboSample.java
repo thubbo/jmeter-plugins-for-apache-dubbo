@@ -53,7 +53,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
 
     public static ApplicationConfig application = new ApplicationConfig("DubboSample");
 
-
+    private GenericService genericService;
 
     @SuppressWarnings("deprecation")
 	@Override
@@ -95,185 +95,194 @@ public class DubboSample extends AbstractSampler implements Interruptible {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private Object callDubbo(SampleResult res) {
-        // This instance is heavy, encapsulating the connection to the registry and the connection to the provider,
-        // so please cache yourself, otherwise memory and connection leaks may occur.
-        ReferenceConfig reference = new ReferenceConfig();
-        // set application
-        reference.setApplication(application);
-        /** registry center */
-        String address = Constants.getAddress(this);
-        if (StringUtils.isBlank(address)) {
-            setResponseError(res, ErrorCode.MISS_ADDRESS);
-            return ErrorCode.MISS_ADDRESS.getMessage();
-        }
-        RegistryConfig registry = null;
-        String rpcProtocol = Constants.getRpcProtocol(this).replaceAll("://", "");
-        String protocol = Constants.getRegistryProtocol(this);
-        String registryGroup = Constants.getRegistryGroup(this);
-        Integer registryTimeout = null;
-        try {
-            if (!StringUtils.isBlank(Constants.getRegistryTimeout(this))) {
-                registryTimeout = Integer.valueOf(Constants.getRegistryTimeout(this));
+        if (genericService == null) {
+            // This instance is heavy, encapsulating the connection to the registry and the connection to the provider,
+            // so please cache yourself, otherwise memory and connection leaks may occur.
+            ReferenceConfig reference = new ReferenceConfig();
+            // set application
+            reference.setApplication(application);
+            /** registry center */
+            String address = Constants.getAddress(this);
+            if (StringUtils.isBlank(address)) {
+                setResponseError(res, ErrorCode.MISS_ADDRESS);
+                return ErrorCode.MISS_ADDRESS.getMessage();
             }
-        } catch (NumberFormatException e) {
-            setResponseError(res, ErrorCode.TIMEOUT_ERROR);
-            return ErrorCode.TIMEOUT_ERROR.getMessage();
-        }
-        if (StringUtils.isBlank(protocol) || Constants.REGISTRY_NONE.equals(protocol)) {
-            //direct connection
-            StringBuffer sb = new StringBuffer();
-            sb.append(Constants.getRpcProtocol(this))
-                    .append(Constants.getAddress(this))
-                    .append("/").append(Constants.getInterface(this));
-            log.debug("rpc invoker url : " + sb.toString());
-            reference.setUrl(sb.toString());
-        } else if(Constants.REGISTRY_SIMPLE.equals(protocol)){
-            registry = new RegistryConfig();
-            registry.setAddress(address);
-            reference.setProtocol(rpcProtocol);
-            reference.setRegistry(registry);
-        } else {
-            registry = new RegistryConfig();
-            registry.setProtocol(protocol);
-            registry.setGroup(registryGroup);
-            registry.setAddress(address);
-            if (registryTimeout != null) {
-                registry.setTimeout(registryTimeout);
-            }
-            reference.setProtocol(rpcProtocol);
-            reference.setRegistry(registry);
-        }
-        /** config center */
-        try {
-            String configCenterProtocol = Constants.getConfigCenterProtocol(this);
-            if (!StringUtils.isBlank(configCenterProtocol)) {
-                String configCenterGroup = Constants.getConfigCenterGroup(this);
-                String configCenterNamespace = Constants.getConfigCenterNamespace(this);
-                String configCenterAddress = Constants.getConfigCenterAddress(this);
-                if (StringUtils.isBlank(configCenterAddress)) {
-                    setResponseError(res, ErrorCode.MISS_ADDRESS);
-                    return ErrorCode.MISS_ADDRESS.getMessage();
-                }
-                Long configCenterTimeout = null;
-                try {
-                    if (!StringUtils.isBlank(Constants.getConfigCenterTimeout(this))) {
-                        configCenterTimeout = Long.valueOf(Constants.getConfigCenterTimeout(this));
-                    }
-                } catch (NumberFormatException e) {
-                    setResponseError(res, ErrorCode.TIMEOUT_ERROR);
-                    return ErrorCode.TIMEOUT_ERROR.getMessage();
-                }
-                ConfigCenterConfig configCenter = new ConfigCenterConfig();
-                configCenter.setProtocol(configCenterProtocol);
-                configCenter.setGroup(configCenterGroup);
-                configCenter.setNamespace(configCenterNamespace);
-                configCenter.setAddress(configCenterAddress);
-                if (configCenterTimeout != null) {
-                    configCenter.setTimeout(configCenterTimeout);
-                }
-                reference.setConfigCenter(configCenter);
-            }
-        } catch (IllegalStateException e) {
-            /** Duplicate Config */
-            setResponseError(res, ErrorCode.DUPLICATE_CONFIGCENTERCONFIG);
-            return ErrorCode.DUPLICATE_CONFIGCENTERCONFIG.getMessage();
-        }
-        try {
-		    // set interface
-		    String interfaceName = Constants.getInterface(this);
-		    if (StringUtils.isBlank(interfaceName)) {
-                setResponseError(res, ErrorCode.MISS_INTERFACE);
-                return ErrorCode.MISS_INTERFACE.getMessage();
-            }
-            reference.setInterface(interfaceName);
-
-		    // set retries
-            Integer retries = null;
+            RegistryConfig registry = null;
+            String rpcProtocol = Constants.getRpcProtocol(this).replaceAll("://", "");
+            String protocol = Constants.getRegistryProtocol(this);
+            String registryGroup = Constants.getRegistryGroup(this);
+            Integer registryTimeout = null;
             try {
-                if (!StringUtils.isBlank(Constants.getRetries(this))) {
-                    retries = Integer.valueOf(Constants.getRetries(this));
-                }
-            } catch (NumberFormatException e) {
-                setResponseError(res, ErrorCode.RETRIES_ERROR);
-                return ErrorCode.RETRIES_ERROR.getMessage();
-            }
-            if (retries != null) {
-                reference.setRetries(retries);
-            }
-
-            // set cluster
-            String cluster = Constants.getCluster(this);
-            if (!StringUtils.isBlank(cluster)) {
-                reference.setCluster(Constants.getCluster(this));
-            }
-
-            // set version
-            String version = Constants.getVersion(this);
-            if (!StringUtils.isBlank(version)) {
-                reference.setVersion(version);
-            }
-
-            // set timeout
-            Integer timeout = null;
-            try {
-                if (!StringUtils.isBlank(Constants.getTimeout(this))) {
-                    timeout = Integer.valueOf(Constants.getTimeout(this));
+                if (!StringUtils.isBlank(Constants.getRegistryTimeout(this))) {
+                    registryTimeout = Integer.valueOf(Constants.getRegistryTimeout(this));
                 }
             } catch (NumberFormatException e) {
                 setResponseError(res, ErrorCode.TIMEOUT_ERROR);
                 return ErrorCode.TIMEOUT_ERROR.getMessage();
             }
-            if (timeout != null) {
-                reference.setTimeout(timeout);
-            }
-
-            // set group
-            String group = Constants.getGroup(this);
-            if (!StringUtils.isBlank(group)) {
-                reference.setGroup(group);
-            }
-
-            // set connections
-            Integer connections = null;
-            try {
-                if (!StringUtils.isBlank(Constants.getConnections(this))) {
-                    connections = Integer.valueOf(Constants.getConnections(this));
+            if (StringUtils.isBlank(protocol) || Constants.REGISTRY_NONE.equals(protocol)) {
+                //direct connection
+                StringBuffer sb = new StringBuffer();
+                sb.append(Constants.getRpcProtocol(this))
+                        .append(Constants.getAddress(this))
+                        .append("/").append(Constants.getInterface(this));
+                log.debug("rpc invoker url : " + sb.toString());
+                reference.setUrl(sb.toString());
+            } else if (Constants.REGISTRY_SIMPLE.equals(protocol)) {
+                registry = new RegistryConfig();
+                registry.setAddress(address);
+                reference.setProtocol(rpcProtocol);
+                reference.setRegistry(registry);
+            } else {
+                registry = new RegistryConfig();
+                registry.setProtocol(protocol);
+                registry.setGroup(registryGroup);
+                registry.setAddress(address);
+                if (registryTimeout != null) {
+                    registry.setTimeout(registryTimeout);
                 }
-            } catch (NumberFormatException e) {
-                setResponseError(res, ErrorCode.CONNECTIONS_ERROR);
-                return ErrorCode.CONNECTIONS_ERROR.getMessage();
+                reference.setProtocol(rpcProtocol);
+                reference.setRegistry(registry);
             }
-            if (connections != null) {
-                reference.setConnections(connections);
+            /** config center */
+            try {
+                String configCenterProtocol = Constants.getConfigCenterProtocol(this);
+                if (!StringUtils.isBlank(configCenterProtocol)) {
+                    String configCenterGroup = Constants.getConfigCenterGroup(this);
+                    String configCenterNamespace = Constants.getConfigCenterNamespace(this);
+                    String configCenterAddress = Constants.getConfigCenterAddress(this);
+                    if (StringUtils.isBlank(configCenterAddress)) {
+                        setResponseError(res, ErrorCode.MISS_ADDRESS);
+                        return ErrorCode.MISS_ADDRESS.getMessage();
+                    }
+                    Long configCenterTimeout = null;
+                    try {
+                        if (!StringUtils.isBlank(Constants.getConfigCenterTimeout(this))) {
+                            configCenterTimeout = Long.valueOf(Constants.getConfigCenterTimeout(this));
+                        }
+                    } catch (NumberFormatException e) {
+                        setResponseError(res, ErrorCode.TIMEOUT_ERROR);
+                        return ErrorCode.TIMEOUT_ERROR.getMessage();
+                    }
+                    ConfigCenterConfig configCenter = new ConfigCenterConfig();
+                    configCenter.setProtocol(configCenterProtocol);
+                    configCenter.setGroup(configCenterGroup);
+                    configCenter.setNamespace(configCenterNamespace);
+                    configCenter.setAddress(configCenterAddress);
+                    if (configCenterTimeout != null) {
+                        configCenter.setTimeout(configCenterTimeout);
+                    }
+                    reference.setConfigCenter(configCenter);
+                }
+            } catch (IllegalStateException e) {
+                /** Duplicate Config */
+                setResponseError(res, ErrorCode.DUPLICATE_CONFIGCENTERCONFIG);
+                return ErrorCode.DUPLICATE_CONFIGCENTERCONFIG.getMessage();
             }
+            try {
+                // set interface
+                String interfaceName = Constants.getInterface(this);
+                if (StringUtils.isBlank(interfaceName)) {
+                    setResponseError(res, ErrorCode.MISS_INTERFACE);
+                    return ErrorCode.MISS_INTERFACE.getMessage();
+                }
+                reference.setInterface(interfaceName);
 
-            // set loadBalance
-            String loadBalance = Constants.getLoadbalance(this);
-            if (!StringUtils.isBlank(loadBalance)) {
-                reference.setLoadbalance(loadBalance);
+                // set retries
+                Integer retries = null;
+                try {
+                    if (!StringUtils.isBlank(Constants.getRetries(this))) {
+                        retries = Integer.valueOf(Constants.getRetries(this));
+                    }
+                } catch (NumberFormatException e) {
+                    setResponseError(res, ErrorCode.RETRIES_ERROR);
+                    return ErrorCode.RETRIES_ERROR.getMessage();
+                }
+                if (retries != null) {
+                    reference.setRetries(retries);
+                }
+
+                // set cluster
+                String cluster = Constants.getCluster(this);
+                if (!StringUtils.isBlank(cluster)) {
+                    reference.setCluster(Constants.getCluster(this));
+                }
+
+                // set version
+                String version = Constants.getVersion(this);
+                if (!StringUtils.isBlank(version)) {
+                    reference.setVersion(version);
+                }
+
+                // set timeout
+                Integer timeout = null;
+                try {
+                    if (!StringUtils.isBlank(Constants.getTimeout(this))) {
+                        timeout = Integer.valueOf(Constants.getTimeout(this));
+                    }
+                } catch (NumberFormatException e) {
+                    setResponseError(res, ErrorCode.TIMEOUT_ERROR);
+                    return ErrorCode.TIMEOUT_ERROR.getMessage();
+                }
+                if (timeout != null) {
+                    reference.setTimeout(timeout);
+                }
+
+                // set group
+                String group = Constants.getGroup(this);
+                if (!StringUtils.isBlank(group)) {
+                    reference.setGroup(group);
+                }
+
+                // set connections
+                Integer connections = null;
+                try {
+                    if (!StringUtils.isBlank(Constants.getConnections(this))) {
+                        connections = Integer.valueOf(Constants.getConnections(this));
+                    }
+                } catch (NumberFormatException e) {
+                    setResponseError(res, ErrorCode.CONNECTIONS_ERROR);
+                    return ErrorCode.CONNECTIONS_ERROR.getMessage();
+                }
+                if (connections != null) {
+                    reference.setConnections(connections);
+                }
+
+                // set loadBalance
+                String loadBalance = Constants.getLoadbalance(this);
+                if (!StringUtils.isBlank(loadBalance)) {
+                    reference.setLoadbalance(loadBalance);
+                }
+
+                // set async
+                String async = Constants.getAsync(this);
+                if (!StringUtils.isBlank(async)) {
+                    reference.setAsync(Constants.ASYNC.equals(async) ? true : false);
+                }
+
+                // set generic
+                reference.setGeneric(true);
+                // The registry's address is to generate the ReferenceConfigCache key
+                ReferenceConfigCache cache = ReferenceConfigCache.getCache(Constants.getAddress(this));
+                genericService = (GenericService) cache.get(reference);
+
+            } catch (Exception e) {
+                log.error("UnknownException：", e);
+                setResponseError(res, ErrorCode.UNKNOWN_EXCEPTION);
+                return e;
             }
+        }
 
-            // set async
-            String async = Constants.getAsync(this);
-            if (!StringUtils.isBlank(async)) {
-                reference.setAsync(Constants.ASYNC.equals(async) ? true : false);
-            }
-
-            // set generic
-            reference.setGeneric(true);
-
+        try {
             String methodName = Constants.getMethod(this);
             if (StringUtils.isBlank(methodName)) {
                 setResponseError(res, ErrorCode.MISS_METHOD);
                 return ErrorCode.MISS_METHOD.getMessage();
             }
 
-            // The registry's address is to generate the ReferenceConfigCache key
-            ReferenceConfigCache cache = ReferenceConfigCache.getCache(Constants.getAddress(this));
-            GenericService genericService = (GenericService) cache.get(reference);
             if (genericService == null) {
                 setResponseError(res, ErrorCode.GENERIC_SERVICE_IS_NULL);
-                return MessageFormat.format(ErrorCode.GENERIC_SERVICE_IS_NULL.getMessage(), interfaceName);
+                return MessageFormat.format(ErrorCode.GENERIC_SERVICE_IS_NULL.getMessage(), Constants.getInterface(this));
             }
             String[] parameterTypes = null;
             Object[] parameterValues = null;
