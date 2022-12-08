@@ -73,7 +73,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
      * Construct request data
      */
     private String getSampleData() {
-//        log.info("sample中的实例id"+this.toString()+",element名称"+this.getName());
+        log.info("sample中的实例id"+this.toString()+",element名称"+this.getName());
     	StringBuilder sb = new StringBuilder();
         sb.append("Registry Protocol: ").append(Constants.getRegistryProtocol(this)).append("\n");
         sb.append("Address: ").append(Constants.getAddress(this)).append("\n");
