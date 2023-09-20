@@ -75,7 +75,7 @@ public class ProviderService implements Serializable {
     private List<String> executeRegistry(String protocol, String address, String group) throws RuntimeException {
         ReferenceConfig reference = new ReferenceConfig();
         // set application
-        reference.setApplication(DubboSample.application);
+        reference.setApplication(DubboSample3.application);
         RegistryConfig registry = null;
         switch (protocol) {
             case Constants.REGISTRY_ZOOKEEPER:
