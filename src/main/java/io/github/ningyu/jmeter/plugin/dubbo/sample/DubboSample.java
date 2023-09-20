@@ -25,7 +25,7 @@ import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ConfigCenterConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
-import org.apache.dubbo.config.utils.ReferenceConfigCache;
+import org.apache.dubbo.config.utils.SimpleReferenceCache;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.service.GenericService;
@@ -269,7 +269,7 @@ public class DubboSample extends AbstractSampler implements Interruptible {
             }
 
             // The registry's address is to generate the ReferenceConfigCache key
-            ReferenceConfigCache cache = ReferenceConfigCache.getCache(Constants.getAddress(this));
+            SimpleReferenceCache cache = SimpleReferenceCache.getCache(Constants.getAddress(this));
             GenericService genericService = (GenericService) cache.get(reference);
             if (genericService == null) {
                 setResponseError(res, ErrorCode.GENERIC_SERVICE_IS_NULL);

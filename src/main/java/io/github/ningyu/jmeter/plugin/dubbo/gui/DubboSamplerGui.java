@@ -30,13 +30,13 @@ import java.awt.*;
  * DubboSampleGui </br>
  * invoke sequence**clearGui()->createTestElement()->modifyTestElement()->configure()**
  */
-public class DubboSampleGui extends AbstractSamplerGui {
+public class DubboSamplerGui extends AbstractSamplerGui {
     
     private static final Logger log = LoggingManager.getLoggerForClass();
     private static final long serialVersionUID = -3248204995359935007L;
     private final DubboPanel panel;
 
-    public DubboSampleGui() {
+    public DubboSamplerGui() {
         super();
         panel = new DubboPanel();
         init();
@@ -108,7 +108,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
      */
     @Override
     public String getStaticLabel() {
-        return "Dubbo Sample";
+        return "Dubbo3 Sampler";
     }
 
     /**
