@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ProviderServiceTest {
 
-    @Test
+//    @Test
     public void testGetProviders() {
         ProviderService providerService = new ProviderService();
         List<String> result = providerService.getProviders("zookeeper", "qa-config.zookeeper.service.consul:2181", "");

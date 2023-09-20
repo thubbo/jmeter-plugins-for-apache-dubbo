@@ -1,5 +1,7 @@
 package io.github.ningyu.jmeter.plugin.test;
 
+import io.github.ningyu.jmeter.plugin.bean.EnumA;
+import io.github.ningyu.jmeter.plugin.bean.EnumB;
 import io.github.ningyu.jmeter.plugin.dubbo.sample.MethodArgument;
 import io.github.ningyu.jmeter.plugin.util.ClassUtils;
 import io.github.ningyu.jmeter.plugin.util.Constants;
@@ -10,6 +12,7 @@ import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.service.GenericService;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -21,14 +24,14 @@ public class GenericServiceTest {
         ApplicationConfig application = new ApplicationConfig();
         application.setName("api-generic-consumer");
         ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
-        reference.setUrl("dubbo://192.168.56.1:20880/org.apache.dubbo.samples.basic.api.DemoService");
+        reference.setUrl("dubbo://192.168.9.182:28077/com.pupu.account.api.ITemperatureRecordingApi");
         reference.setVersion("1.0.0");
         reference.setTimeout(2000);
         reference.setGeneric(true);
         reference.setApplication(application);
-        reference.setInterface("com.jiuyescm.account.api.IUserService");
+        reference.setInterface("com.pupu.account.api.ITemperatureRecordingApi");
         GenericService genericService = reference.get();
-        Object obj = genericService.$invoke("getUserById", new String[]{Long.class.getName()}, new Long[]{1L});
+        Object obj = genericService.$invoke("countByAdminUser", new String[]{String.class.getName()}, new String[]{"118303"});
         String json = JsonUtils.toJson(obj);
         System.out.println(json);
     }
@@ -38,15 +41,15 @@ public class GenericServiceTest {
         ApplicationConfig application = new ApplicationConfig();
         application.setName("api-generic-consumer");
         ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
-        reference.setUrl("dubbo://192.168.56.1:20880/org.apache.dubbo.samples.basic.api.DemoService");
+        reference.setUrl("dubbo://192.168.9.182:28077/com.pupu.account.api.ITemperatureRecordingApi");
         reference.setVersion("1.0.0");
         reference.setTimeout(2000);
         reference.setGeneric(true);
         reference.setApplication(application);
-        reference.setInterface("com.jiuyescm.account.api.IUserService");
+        reference.setInterface("com.pupu.account.api.ITemperatureRecordingApi");
         GenericService genericService = reference.get();
         RpcContext.getContext().setAttachment("test.ningyu","this is attachmentValue");
-        Object obj = genericService.$invoke("sayHello", new String[]{String.class.getName()}, new String[]{"ningyu"});
+        Object obj = genericService.$invoke("countByAdminUser", new String[]{String.class.getName()}, new String[]{"118303"});
         String json = JsonUtils.toJson(obj);
         System.out.println(json);
     }
@@ -61,11 +64,15 @@ public class GenericServiceTest {
             reference.setGroup("");
             RegistryConfig registry = new RegistryConfig();
             registry.setProtocol(Constants.REGISTRY_ZOOKEEPER);
-            registry.setAddress("192.168.0.44:2181,192.168.0.44:2182,192.168.0.44:2183");
+            registry.setAddress("qa-config.zookeeper.service.consul");
+            registry.setPort(2181);
+//            registry.setAddress("192.168.0.44:2181,192.168.0.44:2182,192.168.0.44:2183");
             registry.setTimeout(10000);
             reference.setRegistry(registry);
             ConfigCenterConfig cc = new ConfigCenterConfig();
-            cc.setAddress("192.168.0.44:2181,192.168.0.44:2182,192.168.0.44:2183");
+//            cc.setAddress("192.168.0.44:2181,192.168.0.44:2182,192.168.0.44:2183");
+            cc.setAddress("qa-config.zookeeper.service.consul:2181");
+
             cc.setProtocol(Constants.REGISTRY_ZOOKEEPER);
             cc.setTimeout(Long.valueOf("10000"));
             cc.setGroup("");
@@ -74,9 +81,9 @@ public class GenericServiceTest {
             reference.setTimeout(2000);
             reference.setGeneric(true);
             reference.setApplication(application);
-            reference.setInterface("com.jiuyescm.account.api.IUserService");
+            reference.setInterface("com.pupu.account.api.ITemperatureRecordingApi");
             GenericService genericService = reference.get();
-            Object obj = genericService.$invoke("getUserById", new String[]{Long.class.getName()}, new Long[]{1L});
+            Object obj = genericService.$invoke("countByAdminUser", new String[]{String.class.getName()}, new String[]{"118303"});
             String json = JsonUtils.toJson(obj);
             System.out.println(json);
         }
@@ -86,19 +93,21 @@ public class GenericServiceTest {
     public void testEnumA() {
         List<String> paramterTypeList = new ArrayList<>();
         List<Object> parameterValuesList = new ArrayList<>();
-        MethodArgument arg = new MethodArgument("io.github.ningyu.jmeter.plugin.EnumA1", "WECHAT");
+        MethodArgument arg = new MethodArgument("io.github.ningyu.jmeter.plugin.bean.EnumA", "WECHAT");
         ClassUtils.parseParameter(paramterTypeList, parameterValuesList, arg);
         System.out.println(paramterTypeList.toString());
         System.out.println(parameterValuesList.toString());
+        Assert.assertEquals(EnumA.WECHAT, parameterValuesList.get(0));
     }
 
     @Test
     public void testEnumB() {
         List<String> paramterTypeList = new ArrayList<>();
         List<Object> parameterValuesList = new ArrayList<>();
-        MethodArgument arg = new MethodArgument("io.github.ningyu.jmeter.plugin.EnumB1", "PASSED");
+        MethodArgument arg = new MethodArgument("io.github.ningyu.jmeter.plugin.bean.EnumB", "PASSED");
         ClassUtils.parseParameter(paramterTypeList, parameterValuesList, arg);
         System.out.println(paramterTypeList.toString());
         System.out.println(parameterValuesList.toString());
+        Assert.assertEquals(EnumB.PASSED, parameterValuesList.get(0));
     }
 }
