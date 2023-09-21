@@ -58,6 +58,7 @@ public class RegistryServerSync implements NotifyListener, Serializable {
 //            + Constants.CONSUMERS_CATEGORY + ","
 //            + Constants.ROUTERS_CATEGORY + ","
 //            + Constants.CONFIGURATORS_CATEGORY,
+//            CommonConstants.INTERFACE_KEY, "com.pupu.depot.api.apply.IReplenishApplyDetailApi",
             CommonConstants.ENABLED_KEY, CommonConstants.ANY_VALUE,
             CommonConstants.CHECK_KEY, String.valueOf(false));
 
