@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 /**
  * DubboSample
  */
-public class DubboSample3 extends AbstractSampler implements Interruptible {
+public class DubboSample extends AbstractSampler implements Interruptible {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
     private static final long serialVersionUID = -6794913295411458705L;

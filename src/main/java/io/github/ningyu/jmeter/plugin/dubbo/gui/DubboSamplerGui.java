@@ -16,7 +16,7 @@
  */
 package io.github.ningyu.jmeter.plugin.dubbo.gui;
 
-import io.github.ningyu.jmeter.plugin.dubbo.sample.DubboSample3;
+import io.github.ningyu.jmeter.plugin.dubbo.sample.DubboSample;
 import org.apache.jmeter.gui.util.VerticalPanel;
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
@@ -85,7 +85,7 @@ public class DubboSamplerGui extends AbstractSamplerGui {
     public TestElement createTestElement() {
         log.debug("创建sample对象");
         //创建sample对象
-        DubboSample3 sample = new DubboSample3();
+        DubboSample sample = new DubboSample();
         modifyTestElement(sample);
         return sample;
     }
@@ -108,7 +108,7 @@ public class DubboSamplerGui extends AbstractSamplerGui {
      */
     @Override
     public String getStaticLabel() {
-        return "Dubbo3 Sampler";
+        return "Dubbo Sampler";
     }
 
     /**
